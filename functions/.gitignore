@@ -1,2 +1,4 @@
 node_modules/
+
+# file containing secrets and keys
 permissions.json
