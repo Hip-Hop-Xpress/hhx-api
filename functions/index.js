@@ -15,9 +15,18 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
+/**
+ * Test endpoints
+ */
+
 // GET /hello-world
 app.get('/hello-world', (req, res) => {
   return res.status(200).send('Hello World!');
+});
+
+// GET alive
+app.get('/alive', (req, res) => {
+  return res.status(200).send('The Hip Hop Xpress API is alive!');
 });
 
 /**
