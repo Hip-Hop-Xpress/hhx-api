@@ -15,12 +15,16 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
-// get
+// GET /hello-world
 app.get('/hello-world', (req, res) => {
   return res.status(200).send('Hello World!');
 });
 
-// create
+/**
+ * CRUD Operations
+ */
+
+// POST create
 app.post('/api/create', (req, res) => {
   console.log(req.body);
   console.log(typeof req.body);
@@ -35,6 +39,83 @@ app.post('/api/create', (req, res) => {
         return res.status(500).send(error);
       }
     })();
+});
+
+// GET read item
+app.get('/api/read/:item_id', (req, res) => {
+  (async () => {
+    try {
+      const document = db.collection('items').doc(req.params.item_id);
+      let item = await document.get();
+      let response = item.data();
+      return res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+});
+
+// GET read all
+app.get('/api/read', (req, res) => {
+  (async () => {
+    try {
+      let query = db.collection('items');
+      let response = [];
+
+      await query.get().then(querySnapshot => {
+        let docs = querySnapshot.docs;
+        
+        // Hopefully this still works even with linting error...
+        // eslint-disable-next-line promise/always-return
+        for (let doc of docs) {
+          const selectedItem = {
+            id: doc.id,
+            item: doc.data().item
+          };
+
+          response.push(selectedItem);
+        }
+
+        
+      });
+
+      return res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+});
+
+// PUT Update
+app.put('/api/update/:item_id', (req, res) => {
+  (async () => {
+    try {
+      const document = db.collection('items').doc(req.params.item_id);
+      await document.update({
+        item: req.body.item
+      });
+      return res.status(200).send();
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+});
+
+// DELETE delete
+app.delete('/api/delete/:item_id', (req, res) => {
+  (async () => {
+    try {
+      const document = db.collection('items').doc(req.params.item_id);
+      await document.delete();
+      return res.status(200).send();
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
 });
 
 exports.app = functions.https.onRequest(app);
