@@ -27,5 +27,6 @@ These are the endpoints currently under development and are being planned.
 
 Resource | POST | GET | PUT | DELETE
 ---------|------|-----|-----|-------
+`/artistHistories` | Create new data for historic artist | Retrieve all historic artists | Bulk update of all historic artists | Remove all historic artists
 
 
