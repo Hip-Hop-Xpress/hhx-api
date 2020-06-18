@@ -20,9 +20,18 @@ These are the collections currently under development for use in the mobile app:
 
 ## Usage
 
-### Endpoints
+### Endpoints (*WIP*)
 The following endpoints are currently being planned and developed.
+
+#### Information and histories about artists on the physical lab
 Resource | POST | GET | PUT | DELETE
 ---------|------|-----|-----|-------
-`/artistHistories` | Create new data for historic artist | Retrieve all historic artists | Bulk update of all historic artists | Remove all historic artists
+`/histories` | Create new data for historic artist | Retrieve all historic artists | Bulk update of all historic artists | Remove all historic artists
+`/histories/{id}` | Error | Retrieve information of artist with given `id` | Update information of artist with `id` | Delete artist with `id`
 
+#### Information about artists featured by the Hip Hop Xpress
+Resource | POST | GET | PUT | DELETE
+---------|------|-----|-----|-------
+`/featured` | Create data for a featured artist | Retrieve all artists featured by the Hip Hop Xpress | Bulk update of all featured artists | Remove all featured artists
+`/featured/{id}` | Error | Retrieve info of featured artist with `id` | Update information of artist with `id` | Delete artist with `id`
+`/featured/current` | Error | Retrieve info of currently featured artist | Update information of currently featured artist | Delete current artist
