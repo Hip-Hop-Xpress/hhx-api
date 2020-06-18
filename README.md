@@ -25,3 +25,7 @@ These are the endpoints currently under development and are being planned.
 
 (*WIP*)
 
+Resource | POST | GET | PUT | DELETE
+---------|------|-----|-----|-------
+
+
