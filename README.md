@@ -21,12 +21,8 @@ These are the collections currently under development for use in the mobile app:
 ## Usage
 
 ### Endpoints
-These are the endpoints currently under development and are being planned.
-
-(*WIP*)
-
+The following endpoints are currently being planned and developed.
 Resource | POST | GET | PUT | DELETE
 ---------|------|-----|-----|-------
 `/artistHistories` | Create new data for historic artist | Retrieve all historic artists | Bulk update of all historic artists | Remove all historic artists
-
 
