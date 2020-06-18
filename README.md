@@ -24,14 +24,20 @@ These are the collections currently under development for use in the mobile app:
 The following endpoints are currently being planned and developed.
 
 #### Information and histories about artists on the physical lab
-Resource | POST | GET | PUT | DELETE
----------|------|-----|-----|-------
+Endpoint | `POST` | `GET` | `PUT` | `DELETE`
+-|-|-|-|-
 `/histories` | Create new data for historic artist | Retrieve all historic artists | Bulk update of all historic artists | Remove all historic artists
 `/histories/{id}` | Error | Retrieve information of artist with given `id` | Update information of artist with `id` | Delete artist with `id`
 
 #### Information about artists featured by the Hip Hop Xpress
-Resource | POST | GET | PUT | DELETE
----------|------|-----|-----|-------
+Endpoint | `POST` | `GET` | `PUT` | `DELETE`
+-|-|-|-|-
 `/featured` | Create data for a featured artist | Retrieve all artists featured by the Hip Hop Xpress | Bulk update of all featured artists | Remove all featured artists
 `/featured/{id}` | Error | Retrieve info of featured artist with `id` | Update information of artist with `id` | Delete artist with `id`
 `/featured/current` | Error | Retrieve info of currently featured artist | Update information of currently featured artist | Delete current artist
+
+#### Updates regarding the Hip Hop Xpress
+Endpoint | `POST` | `GET` | `PUT` | `DELETE`
+-|-|-|-|-
+`/updates` | Create new update | Retrieve all updates | Bulk update of all update info | Remove all updates
+`/updates/{date}` | Error | Retrieve update at specified date | Update information of update post at `date` | Remove update post at `date`
