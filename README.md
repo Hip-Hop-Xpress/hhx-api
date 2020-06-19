@@ -2,11 +2,11 @@
 The Hip Hop Xpress API will serve as a connection point between the physical lab (Double Dutch Boom Bus), the members of HHX, and clients/users of the mobile app and other HHX related applications.
 
 # Table of Contents :control_knobs:
-* [Hip Hop Xpress API](#hip-hop-xpress-api)
-* [Current Progress](#current-progress)
-* [Collections](#collections)
-* [Usage](#usage)
-  * [Endpoints](#endpoints)
+* [Hip Hop Xpress API](#hip-hop-xpress-api-headphones)
+* [Current Progress](#current-progress-hammer)
+* [Collections](#collections-books)
+* [Usage](#usage-blue_book)
+  * [Endpoints](#endpoints-electric_plug)
     * [Historical artists](#historical-artists)
     * [Featured artists](#featured-artists)
     * [Updates](#updates)
