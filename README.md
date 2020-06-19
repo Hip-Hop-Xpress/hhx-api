@@ -39,7 +39,7 @@ Information and histories about artists on the physical lab
 Endpoint | `POST` | `GET` | `PUT` | `DELETE`
 -|-|-|-|-
 `/histories` | Create new data for historic artist | Retrieve all historic artists | Bulk update of all historic artists | Remove all historic artists
-`/histories/{id}` | Error | Retrieve information of artist with given `id` | Update information of artist with `id` | Delete artist with `id`
+`/histories/:id` | Error | Retrieve information of artist with given `id` | Update information of artist with `id` | Delete artist with `id`
 
 
 ### **Featured artists**
@@ -48,7 +48,7 @@ Information about artists featured by the Hip Hop Xpress
 Endpoint | `POST` | `GET` | `PUT` | `DELETE`
 -|-|-|-|-
 `/featured` | Create data for a featured artist | Retrieve all artists featured by the Hip Hop Xpress | Bulk update of all featured artists | Remove all featured artists
-`/featured/{id}` | Error | Retrieve info of featured artist with `id` | Update information of artist with `id` | Delete artist with `id`
+`/featured/:id` | Error | Retrieve info of featured artist with `id` | Update information of artist with `id` | Delete artist with `id`
 `/featured/current` | Error | Retrieve info of currently featured artist | Update information of currently featured artist | Delete current artist
 
 
@@ -58,4 +58,12 @@ Posts with updates regarding progress, projects, and news about the Hip Hop Xpre
 Endpoint | `POST` | `GET` | `PUT` | `DELETE`
 -|-|-|-|-
 `/updates` | Create new update | Retrieve all updates | Bulk update of all update info | Remove all updates
-`/updates/{date}` | Error | Retrieve update at specified date | Update information of update post at `date` | Remove update post at `date`
+`/updates/:date` | Error | Retrieve update at specified date | Update information of update post at `date` | Remove update post at `date`
+
+
+### **Social Media**
+List of all social media platforms associated with the Hip Hop Xpress
+Endpoint | `POST` | `GET` | `PUT` | `DELETE`
+-|-|-|-|-
+`/socials` | Create new social media info | Retrieve all social media info | Bulk update of all social media info | Remove all social media info
+`/socials/:type` | Error | Retrieve social media info of `type` (ex. `"instagram"`) | Update social media info of `type` | Remove social media info of `type`
