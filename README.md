@@ -10,8 +10,11 @@ The Hip Hop Xpress API will serve as a connection point between the physical lab
   * [Endpoints](#endpoints-electric_plug)
     * [Historical artists](#historical-artists)
     * [Variations](#variations)
+    * [Courses](#courses)
+    * [Projects](#projects)
     * [Featured artists](#featured-artists)
     * [Updates](#updates)
+    * [Location](#location)
     * [Social Media](#social-media)
 
 # Current Progress :hammer:
@@ -75,6 +78,19 @@ Information on past courses held by the Hip Hop Xpress
   `/courses/:id` | Error | Retrieve info of course with `id` | Update info of course with `id` | Delete course with `id`
 </details>
 
+### **Projects**
+Information on the current, ongoing projects by or under the Hip Hop Xpress
+
+<details>
+  <summary>Projects endpoint details</summary>
+
+  Endpoint | `POST` | `GET` | `PUT` | `DELETE`
+  -|-|-|-|-
+  `/projects` | Create data for project | Retrieve info for all projects | Bulk update of all projects | Remove all info for projects
+  `/projects/:id` | Error | Retrieve info of project with `id` | Update info of project with `id` | Delete project with `id`
+
+</details>
+
 ### **Featured artists**
 Information about artists featured by the Hip Hop Xpress
 
@@ -103,6 +119,17 @@ Posts with updates regarding progress, projects, and news about the Hip Hop Xpre
 
 </details>
 
+### **Location**
+Current location of the Double Dutch Boom Bus or other Hip Hop Xpress devices.
+
+<details>
+  <summary>Location endpoint details</summary>
+
+  Endpoint | `POST` | `GET` | `PUT` | `DELETE`
+  -|-|-|-|-
+  `/location` | Write new location for the lab | Get location of lab | Update location information about lab | Delete location info
+
+</details>
 
 ### **Social Media**
 List of all social media platforms associated with the Hip Hop Xpress
