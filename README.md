@@ -64,6 +64,16 @@ Information on past iterations/'variations' of the Hip Hop Xpress
 
 </details>
 
+### Courses
+Information on past courses held by the Hip Hop Xpress
+<details>
+  <summary>Courses endpoint details</summary>
+
+  Endpoint | `POST` | `GET` | `PUT` | `DELETE`
+  -|-|-|-|-
+  `/courses` | Create data for course | Retrieve all courses | Bulk update of all courses | Remove all data for courses
+  `/courses/:id` | Error | Retrieve info of course with `id` | Update info of course with `id` | Delete course with `id`
+</details>
 
 ### **Featured artists**
 Information about artists featured by the Hip Hop Xpress
