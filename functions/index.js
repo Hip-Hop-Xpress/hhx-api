@@ -8,7 +8,8 @@ const cors = require('cors');
 const app = express();
 app.use(cors({ origin: true}));
 
-var serviceAccount = require("./permissions.json");
+var serviceAccount = require('./permissions.json');
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://hhx-api-48896.firebaseio.com/"
