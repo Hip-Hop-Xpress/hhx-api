@@ -46,3 +46,24 @@ routes.put('/', (req, res) => {
 routes.delete('/', (req, res) => {
 
 });
+
+/**
+ * GET /variations/:id
+ */
+routes.get('/:id', (req, res) => {
+
+})
+
+/**
+ * PUT /variations/:id
+ */
+routes.put('/:id', (req, res) => {
+
+})
+
+/**
+ * DELETE /variations/:id
+ */
+routes.delete('/:id', (req, res) => {
+
+})
