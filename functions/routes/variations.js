@@ -3,7 +3,6 @@
 const Joi = require('@hapi/joi');
 const routes = require('express').Router();
 const admin = require('firebase-admin');
-const { isSchema } = require('@hapi/joi');
 const db = admin.firestore();
 
 /**
@@ -17,6 +16,7 @@ const db = admin.firestore();
  * // TODO: add support for query strings
  */
 
+ // POST /variations schema
 const postSchema = Joi.object({
   id: Joi.number()
     .integer()
@@ -48,24 +48,32 @@ const postSchema = Joi.object({
     .required()
 });
 
-/*
- Schema:
- {
-    id: integer
-    name: string,
-    date: string,
-    description: [
-      array of strings
-    ],
-    images: [
-      {
-        url: string of URL pointing to image URL,
-        caption: string,
-        componentImage: boolean,
-      },
-    ]
-  }
- */
+// PUT /variations/:id schema
+const putSchema = Joi.object({
+  id: Joi.number()
+    .integer()
+    .positive(),
+    
+  name: Joi.string()
+    .min(1),
+
+  date: Joi.string()
+    .min(4),
+  
+  description: Joi.array()
+    .items(Joi.string().required())
+    .min(1),
+
+  images: Joi.array()
+    .items(
+      Joi.object({
+        url: Joi.string().uri().required(),
+        caption: Joi.string().required(),
+        componentImage: Joi.bool().required()
+      })
+    )
+    .min(1)
+})
 
 /**
  * POST /variations
@@ -106,8 +114,6 @@ routes.get('/', (req, res) => {
       await query.get().then(snapshot => {
         let docs = snapshot.docs;
 
-        // There must be some way to avoid this linting error...
-        // eslint-disable-next-line promise/always-return
         for (let variation of docs) {
           // Insert all data from server doc to response doc
           const selectedItem = {
@@ -121,10 +127,13 @@ routes.get('/', (req, res) => {
           // Put the response doc into the response list
           response.push(selectedItem);
         }
+
+        // Send the response once every doc has been put in
+        return res.status(200).send(response);
       });
 
-      // Send the response once every doc has been put in
-      return res.status(200).send(response);
+      // Return null for linter's sake
+      return null;
 
     } catch (error) {
       console.log(error);
@@ -157,7 +166,9 @@ routes.get('/:id', (req, res) => {
 routes.put('/:id', (req, res) => {
   (async () => {
     try {
-      // TODO: validate request body for correct schema
+      // Validate request body for correct schema
+      await putSchema.validateAsync(req.body);
+
       const document = db.collection('variations').doc(req.params.id);
       await document.update(req.body);
       return res.status(200).send();
