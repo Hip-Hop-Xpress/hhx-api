@@ -56,9 +56,6 @@ const db = admin.firestore();
  * POST /variations
  */
 routes.post('/', (req, res) => {
-  console.log('Request info:');
-  console.log(typeof req.body);
-  console.log(req.body);
   (async () => {
     try {
       await db.collection('variations').doc(`/${req.body.id}/`)
@@ -83,14 +80,18 @@ routes.post('/', (req, res) => {
 routes.get('/', (req, res) => {
   (async () => {
     try {
+      // Query the collection and setup response
       let query = db.collection('variations');
       let response = [];
 
-      await query.get().then(querySnapshot => {
-        let docs = querySnapshot.docs;
+      // Get all documents from collection
+      await query.get().then(snapshot => {
+        let docs = snapshot.docs;
 
+        // There must be some way to avoid this linting error...
         // eslint-disable-next-line promise/always-return
         for (let variation of docs) {
+          // Insert all data from server doc to response doc
           const selectedItem = {
             id: variation.id,
             name: variation.data().name,
@@ -99,11 +100,14 @@ routes.get('/', (req, res) => {
             images: variation.data().images,
           };
 
+          // Put the response doc into the response list
           response.push(selectedItem);
         }
       });
 
+      // Send the response once every doc has been put in
       return res.status(200).send(response);
+
     } catch (error) {
       console.log(error);
       return res.status(500).send(error);
@@ -116,7 +120,24 @@ routes.get('/', (req, res) => {
  * PUT /variations
  */
 routes.put('/', (req, res) => {
+  (async () => {
+    try {
+      let query = db.collection('variations');
+    
+      await query.get().then(snapshot => {
+        let docs = snapshot.docs;
 
+        // eslint-disable-next-line promise/always-return
+        for (let variation of docs) {
+          variation.update({name: req.body.name});
+        }
+      })
+      return res.status(200).send();
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
 });
 
 /**
