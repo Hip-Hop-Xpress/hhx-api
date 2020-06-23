@@ -2,6 +2,9 @@
 
 const routes = require('express').Router();
 const admin = require('firebase-admin');
+
+// may have to set up database authentication
+
 const db = admin.firestore();
 
 /**
@@ -22,7 +25,36 @@ routes.post('/', (req, res) => {
  * GET /variations
  */
 routes.get('/', (req, res) => {
-  return res.status(200).send('Variations endpoint is alive!');
+  console.log('start GET /variations');
+  (async () => {
+    try {
+      let query = db.collection('variations');
+      console.log("query", query)
+      let response = [];
+
+      await query.get().then(querySnapshot => {
+        let docs = querySnapshot.docs;
+        console.log("docs", docs)
+
+        // eslint-disable-next-line promise/always-return
+        for (let doc of docs) {
+          console.log("doc", doc)
+          const selectedItem = {
+            id: doc.id,
+            item: doc.data().item
+          };
+
+          response.push(selectedItem);
+        }
+      });
+
+      return res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+
 });
 
 /**
