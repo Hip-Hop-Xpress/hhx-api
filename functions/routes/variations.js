@@ -45,9 +45,11 @@ const putSchema = Joi.object({
  * 
  *   POST, GET               /variations
  *         GET, PUT, DELETE  /variations/:id
- *   POST, GET,              /variations/:id/images
+ *   POST, GET               /variations/:id/images
+ *   POST, GET               /variations/:id/description
  * 
  * TODO: add support for query strings eventually
+ * TODO: fix DRY for error handling and accessing simple items
  */
 
 /**
@@ -240,5 +242,30 @@ routes.get('/:id/images', (req, res) => {
     }
   })();
 });
+
+/**
+ * GET /variations/:id/description
+ */
+routes.get('/:id/description', (req, res) => {
+  (async () => {
+    try {
+      const document = db.collection('variations').doc(req.params.id);
+      
+      await document.get().then(doc => {
+        if (!doc.exists) {
+          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+        } else {
+          return res.status(200).send(doc.data().description);
+        }
+      });
+
+      return null;
+
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(e);
+    }
+  })();
+})
 
 module.exports = routes;
