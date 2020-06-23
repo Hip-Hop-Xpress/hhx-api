@@ -141,7 +141,17 @@ routes.get('/:id', (req, res) => {
  * PUT /variations/:id
  */
 routes.put('/:id', (req, res) => {
-
+  (async () => {
+    try {
+      // TODO: validate request body for correct schema
+      const document = db.collection('variations').doc(req.params.id);
+      await document.update(req.body);
+      return res.status(200).send();
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(e);
+    }
+  })();
 })
 
 /**
