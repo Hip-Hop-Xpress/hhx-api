@@ -91,7 +91,7 @@ routes.post('/', (req, res) => {
           description: req.body.description,
           images: req.body.images,
         });
-      return res.status(200).send();
+      return res.status(200).send(`Successfully added variation with id ${req.body.id}`);
     } catch (error) {
       console.log(error);
       return res.status(500).send(error);
@@ -151,7 +151,7 @@ routes.get('/:id', (req, res) => {
     try {
       const document = db.collection('variations').doc(req.params.id);
 
-      let item = await document.get().then(
+      await document.get().then(
         doc => {
           if (!doc.exists) {
             return res.status(404).send('Document does not exist');
@@ -163,7 +163,7 @@ routes.get('/:id', (req, res) => {
       );
       
       // for linting purposes
-      return item;
+      return null;
 
     } catch (e) {
       console.log(e);
@@ -183,7 +183,7 @@ routes.put('/:id', (req, res) => {
 
       const document = db.collection('variations').doc(req.params.id);
       await document.update(req.body);
-      return res.status(200).send();
+      return res.status(200).send(`Successfully updated variation ${req.params.id}!`);
     } catch (e) {
       console.log(e);
       return res.status(500).send(e.details);
@@ -199,7 +199,7 @@ routes.delete('/:id', (req, res) => {
     try {
       const document = db.collection('variations').doc(req.params.id);
       await document.delete();
-      return res.status(200).send();
+      return res.status(200).send(`Variation id ${req.params.id} no longer exists`);
     } catch (e) {
       console.log(e);
       return res.status(500).send(e);
