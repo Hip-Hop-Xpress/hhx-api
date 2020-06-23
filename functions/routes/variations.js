@@ -1,4 +1,4 @@
-// Variations routes will go here
+// Variations API route
 
 const routes = require('express').Router();
 const admin = require('firebase-admin');
