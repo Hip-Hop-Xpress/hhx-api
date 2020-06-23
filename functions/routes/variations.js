@@ -120,8 +120,18 @@ routes.get('/', (req, res) => {
  * GET /variations/:id
  */
 routes.get('/:id', (req, res) => {
-
-})
+  (async () => {
+    try {
+      const document = db.collection('variations').doc(req.params.id);
+      let item = await document.get();
+      let response = item.data();
+      return res.status(200).send(response);
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(e);
+    }
+  })();
+});
 
 /**
  * PUT /variations/:id
