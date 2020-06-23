@@ -61,9 +61,9 @@ Information on past iterations/'variations' of the Hip Hop Xpress
 
   Endpoint | `POST` | `GET` | `PUT` | `DELETE`
   -|-|-|-|-
-  `/variations` | Create new data for variation | Retrieve data for all variations | Bulk update of all variations | Remove all variations
-  `/variations/:id` | Error | Retrieve data for variation `id` | Update info for variation `id` | Remove variation `id`
-  `/variations/:id/images` | Add new images for variation `id` | Retrieve all images from variation `id` | Update all images for variation `id` | Remove images for variation `id`
+  `/variations` | Create new data for variation | Retrieve data for all variations | Error | Error
+  `/variations/:id` | Error | Retrieve data for variation `id` | Update data for variation `id` | Remove variation `id`
+  `/variations/:id/images` | Add new image for variation `id` | Retrieve all images from variation `id` | Update all images for variation `id` | Remove images for variation `id`
 
 </details>
 
