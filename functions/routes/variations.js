@@ -117,37 +117,6 @@ routes.get('/', (req, res) => {
 });
 
 /**
- * PUT /variations
- */
-routes.put('/', (req, res) => {
-  (async () => {
-    try {
-      let query = db.collection('variations');
-    
-      await query.get().then(snapshot => {
-        let docs = snapshot.docs;
-
-        // eslint-disable-next-line promise/always-return
-        for (let variation of docs) {
-          variation.update({name: req.body.name});
-        }
-      })
-      return res.status(200).send();
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send(error);
-    }
-  })();
-});
-
-/**
- * DELETE /variations
- */
-routes.delete('/', (req, res) => {
-
-});
-
-/**
  * GET /variations/:id
  */
 routes.get('/:id', (req, res) => {
