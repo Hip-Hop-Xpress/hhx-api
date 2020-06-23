@@ -150,9 +150,21 @@ routes.get('/:id', (req, res) => {
   (async () => {
     try {
       const document = db.collection('variations').doc(req.params.id);
-      let item = await document.get();
-      let response = item.data();
-      return res.status(200).send(response);
+
+      let item = await document.get().then(
+        doc => {
+          if (!doc.exists) {
+            return res.status(404).send('Document does not exist');
+          } else {
+            let response = item.data();
+            return res.status(200).send(response);
+          }
+        }
+      );
+      
+      // for linting purposes
+      return null;
+
     } catch (e) {
       console.log(e);
       return res.status(500).send(e);
@@ -174,7 +186,7 @@ routes.put('/:id', (req, res) => {
       return res.status(200).send();
     } catch (e) {
       console.log(e);
-      return res.status(500).send(e);
+      return res.status(500).send(e.details);
     }
   })();
 })
