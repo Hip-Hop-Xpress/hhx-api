@@ -9,6 +9,10 @@ const db = admin.firestore();
  *  /variations
  *  /variations/:id
  *  /variations/:id/images
+ * 
+ * // TODO: add schema validation
+ * // TODO: add other error codes (id not found, etc)
+ * // TODO: add support for query strings
  */
 
 /*
@@ -144,7 +148,16 @@ routes.put('/:id', (req, res) => {
  * DELETE /variations/:id
  */
 routes.delete('/:id', (req, res) => {
-
+  (async () => {
+    try {
+      const document = db.collection('variations').doc(req.params.id);
+      await document.delete();
+      return res.status(200).send();
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(e);
+    }
+  })();
 })
 
 module.exports = routes;
