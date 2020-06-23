@@ -13,9 +13,9 @@ const variationName        = Joi.string().min(1);
 const variationDate        = Joi.string().min(4);
 const variationDescription = Joi.array().min(1).items(Joi.string().required());
 const variationImage       = Joi.object({
-                              url: Joi.string().uri().required(),
-                              caption: Joi.string().required(),
-                              componentImage: Joi.bool().required()
+                               url:            Joi.string().uri().required(),
+                               caption:        Joi.string().required(),
+                               componentImage: Joi.bool().required()
                             });
 const variationImages      = Joi.array().min(1).items(variationImage);
                             
@@ -38,7 +38,7 @@ const putSchema = Joi.object({
   date:        variationDate,
   description: variationDescription,
   images:      variationImages
-})
+});
 
 /**
  * Variations endpoints
@@ -129,7 +129,7 @@ routes.get('/:id', (req, res) => {
       await document.get().then(
         doc => {
           if (!doc.exists) {
-            return res.status(404).send('Document does not exist');
+            return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
           } else {
             let response = doc.data();
             return res.status(200).send(response);
@@ -164,7 +164,7 @@ routes.put('/:id', (req, res) => {
       return res.status(500).send(e.details);
     }
   })();
-})
+});
 
 /**
  * DELETE /variations/:id
@@ -180,6 +180,31 @@ routes.delete('/:id', (req, res) => {
       return res.status(500).send(e);
     }
   })();
-})
+});
+
+/**
+ * GET /variations/:id/images
+ */
+routes.get('/:id/images', (req, res) => {
+  (async () => {
+    try {
+      const document = db.collection('variations').doc(req.params.id);
+      
+      await document.get().then(doc => {
+        if (!doc.exists) {
+          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+        } else {
+          return res.status(200).send(doc.data().images);
+        }
+      });
+
+      return null;
+
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(e);
+    }
+  })();
+});
 
 module.exports = routes;
