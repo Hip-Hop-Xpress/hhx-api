@@ -17,6 +17,11 @@ admin.initializeApp({
 const db = admin.firestore();
 
 /**
+ * Hip Hop Xpress Endpoint Imports
+ */
+const variations = require('./routes/variations');
+
+/**
  * Test endpoints
  */
 
@@ -29,6 +34,11 @@ app.get('/hello-world', (req, res) => {
 app.get('/alive', (req, res) => {
   return res.status(200).send('The Hip Hop Xpress API is alive!');
 });
+
+/**
+ * Hip Hop Xpress Endpoints
+ */
+app.use('/variations', variations);
 
 /**
  * CRUD Operations
