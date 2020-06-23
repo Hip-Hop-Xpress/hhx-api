@@ -45,7 +45,7 @@ const putSchema = Joi.object({
  * 
  *   POST, GET               /variations
  *         GET, PUT, DELETE  /variations/:id
- *   POST, GET,      DELETE  /variations/:id/images
+ *   POST, GET,              /variations/:id/images
  * 
  * TODO: add support for query strings eventually
  */
@@ -181,6 +181,40 @@ routes.delete('/:id', (req, res) => {
     }
   })();
 });
+
+/**
+ * POST /variations/:id/images
+ */
+routes.post('/:id/images', (req, res) => {
+  (async () => {
+    try {
+      await variationImage.validateAsync(req.body);
+
+      let images = [];
+      const document = db.collection('variations').doc(req.params.id);
+      const docRef = document;
+
+      await document.get().then(doc => {
+        if (!doc.exists) {
+          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+        }
+
+        images = doc.data().images;
+        images.push(req.body);
+        docRef.update({images: images});
+
+        return res.status(200).send(`Image for variation id ${req.params.id} successfully added!`);
+
+      });
+
+      return null;
+
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(e);
+    }
+  })();
+})
 
 /**
  * GET /variations/:id/images
