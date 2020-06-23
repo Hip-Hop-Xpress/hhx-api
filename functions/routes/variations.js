@@ -156,14 +156,14 @@ routes.get('/:id', (req, res) => {
           if (!doc.exists) {
             return res.status(404).send('Document does not exist');
           } else {
-            let response = item.data();
+            let response = doc.data();
             return res.status(200).send(response);
           }
         }
       );
       
       // for linting purposes
-      return null;
+      return item;
 
     } catch (e) {
       console.log(e);
