@@ -6,74 +6,49 @@ const admin = require('firebase-admin');
 const db = admin.firestore();
 
 /**
- * Variations endpoints
- *  /variations
- *  /variations/:id
- *  /variations/:id/images
- * 
- * // TODO: add schema validation
- * // TODO: add other error codes (id not found, etc)
- * // TODO: add support for query strings
+ * Schematics for Variation data
  */
+const variationId          = Joi.number().integer().positive();
+const variationName        = Joi.string().min(1);
+const variationDate        = Joi.string().min(4);
+const variationDescription = Joi.array().min(1).items(Joi.string().required());
+const variationImage       = Joi.object({
+                              url: Joi.string().uri().required(),
+                              caption: Joi.string().required(),
+                              componentImage: Joi.bool().required()
+                            });
+const variationImages      = Joi.array().min(1).items(variationImage);
+                            
 
- // POST /variations schema
+/**
+ * POST /variations schema
+ */
 const postSchema = Joi.object({
-  id: Joi.number()
-    .integer()
-    .positive()
-    .required(),
-    
-  name: Joi.string()
-    .min(1)
-    .required(),
-
-  date: Joi.string()
-    .min(4)
-    .required(),
-  
-  description: Joi.array()
-    .items(Joi.string().required())
-    .min(1)
-    .required(),
-
-  images: Joi.array()
-    .items(
-      Joi.object({
-        url: Joi.string().uri().required(),
-        caption: Joi.string().required(),
-        componentImage: Joi.bool().required()
-      })
-    )
-    .min(1)
-    .required()
+  id:          variationId.required(),
+  name:        variationName.required(),
+  date:        variationDate.required(),
+  description: variationDescription.required(),
+  images:      variationImages.required()
 });
 
 // PUT /variations/:id schema
 const putSchema = Joi.object({
-  id: Joi.number()
-    .integer()
-    .positive(),
-    
-  name: Joi.string()
-    .min(1),
-
-  date: Joi.string()
-    .min(4),
-  
-  description: Joi.array()
-    .items(Joi.string().required())
-    .min(1),
-
-  images: Joi.array()
-    .items(
-      Joi.object({
-        url: Joi.string().uri().required(),
-        caption: Joi.string().required(),
-        componentImage: Joi.bool().required()
-      })
-    )
-    .min(1)
+  id:          variationId,
+  name:        variationName,
+  date:        variationDate,
+  description: variationDescription,
+  images:      variationImages
 })
+
+/**
+ * Variations endpoints
+ * 
+ *   POST, GET               /variations
+ *         GET, PUT, DELETE  /variations/:id
+ *   POST, GET,      DELETE  /variations/:id/images
+ * 
+ * TODO: add support for query strings eventually
+ */
 
 /**
  * POST /variations
