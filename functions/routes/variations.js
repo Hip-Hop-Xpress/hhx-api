@@ -244,6 +244,56 @@ routes.get('/:id/images', (req, res) => {
 });
 
 /**
+ * POST /variations/:id/description
+ */
+routes.post('/:id/description', (req, res) => {
+  (async () => {
+    try {
+      let additions = [];
+      
+      // Check that the body is either string or array of strings, and
+      // add body contents to 'additions' if valid
+      if (typeof req.body === 'string' || req.body instanceof String) {
+        additions.push(req.body);
+      } else if (Array.isArray(req.body)) {
+        await variationDescription.validateAsync(req.body);
+        additions = req.body;
+      } else {
+        return res.status(422).send('Error: body must be string or array of strings');
+      }
+
+      const document = db.collection('variations').doc(req.params.id);
+      const docRef = document;
+
+      await document.get().then(doc => {
+        if (!doc.exists) {
+          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+        }
+
+        // Get the current description and add the additions
+        let desc = doc.data().description;
+        for (let paragraph of additions) {
+          desc.push(paragraph);
+        }
+
+        // Update the description and send response
+        docRef.update({description: desc});
+        return res.status(200).send(
+          `Description item(s) for variation id ${req.params.id} successfully added!`
+        );
+
+      });
+
+      return null;
+
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(e);
+    }
+  })();
+})
+
+/**
  * GET /variations/:id/description
  */
 routes.get('/:id/description', (req, res) => {
