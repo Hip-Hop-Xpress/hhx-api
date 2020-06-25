@@ -23,7 +23,7 @@ _Note_: This will likely change over the course of development.
 Try these endpoints to make sure your connection to the API is working.
 ```javascript
 GET /hello-world  // Hello World!
-GET /alive  // The Hip Hop Xpress API is alive!
+GET /alive        // The Hip Hop Xpress API is alive!
 ```
 
-[Click here to view all the endpoints!](Endpoints.md)
+[Click here to view all the endpoints!](Endpoints)
