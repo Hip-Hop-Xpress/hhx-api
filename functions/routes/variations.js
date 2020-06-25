@@ -8,13 +8,13 @@ const db = admin.firestore();
 /**
  * Schematics for Variation data
  */
-const variationId          = Joi.number().integer().positive();
+const variationId          = Joi.number().integer().min(0);
 const variationName        = Joi.string().min(1);
 const variationDate        = Joi.string().min(4);
 const variationDescription = Joi.array().min(1).items(Joi.string().required());
 const variationImage       = Joi.object({
                                url:            Joi.string().uri().required(),
-                               caption:        Joi.string().required(),
+                               caption:        Joi.string().min(0),  // can be empty
                                componentImage: Joi.bool().required()
                             });
 const variationImages      = Joi.array().min(1).items(variationImage);
