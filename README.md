@@ -1,18 +1,18 @@
 # Hip Hop Xpress API :headphones:
-The Hip Hop Xpress API will serve as a connection point between the physical lab (Double Dutch Boom Bus), the members of HHX, and clients/users of the mobile app and other HHX related applications.
+The Hip Hop Xpress API will serve as a connection point between all facets of the Hip Hop Xpress, including its administration, participants, members/students, and all applications.
 
-# Table of Contents :control_knobs:
-*This section is a work in progress.* :pick:
+## Table of Contents
 * [Hip Hop Xpress API](#hip-hop-xpress-api-headphones)
 * [Current Progress](#current-progress-hammer)
 * [Collections](#collections-books)
 * [Endpoints](#endpoints-electric_plug)
 
-# Current Progress :hammer:
-As of now (June 2020), the Hip Hop Xpress API is under development and will be first used as a connection for use in the mobile app using [Firebase](https://firebase.google.com/).
+## Current Progress :hammer:
+The current development version of the API is up and running. You can view the in-progress documentation on the [Wiki](https://github.com/Hip-Hop-Xpress/hhx-api/wiki).
+
+The API will continue to be developed over the course of the year.
 
 ## Collections :books:
-*This section is a work in progress.* :pick:
 
 These are the collections currently under development for use in the mobile app (version 1 of the API):
 * Information and histories about artists on the physical lab
