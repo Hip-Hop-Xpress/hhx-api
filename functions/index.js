@@ -37,7 +37,7 @@ app.get('/alive', (req, res) => {
 /**
  * Hip Hop Xpress Endpoint routes
  */
-app.use('/variations', variations);
+app.use('/v1/variations', variations);
 
 // For unhandled routes
 app.all('*', (req, res, next) => {
