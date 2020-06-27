@@ -115,7 +115,7 @@ You can retrieve the data for all variations by sending a `GET` request to `/v1/
 None
 
 #### Returns
-An array of all variation objects, or an error object
+An array of all variation objects
 
 ### Retrieve variation
 Retrieve a specific variation through its `id` by sending a `GET` request to `/v1/variations/:id`, with `:id` being the desired variation's `id` field.
@@ -124,7 +124,7 @@ Retrieve a specific variation through its `id` by sending a `GET` request to `/v
 None
 
 #### Returns
-The variation object with specified `id`, or an error object
+The variation object with specified `id`
 
 ### Update variation
 You can update attributes of a specific variation object by sending a `PUT` request to `/v1/variations/:id`, with `:id` being the `id` of a variation.
@@ -133,7 +133,7 @@ You can update attributes of a specific variation object by sending a `PUT` requ
 A variation object containing only the attributes needing change, and their updated values. For example, if you need to change the `date` attribute, you only need to include the `date` field in your request: `{"date": "some new date"}`. However, any updated attributes must follow the [attribute restrictions](#attributes).
 
 #### Returns
-The updated variation object, or an error object
+The updated variation object
 
 ### Delete variation
 You can delete a variation object by sending a `DELETE` request to `/v1/variations/:id`, with `:id` being the `id` of the variation to delete.
@@ -142,7 +142,7 @@ You can delete a variation object by sending a `DELETE` request to `/v1/variatio
 None
 
 #### Returns
-The variation object that was deleted, or an error object
+The variation object that was deleted
 
 ### Add images
 You can add images to a specific variation by sending a `POST` request to `/v1/variations/:id/images` and including the [image objects](#the-variation-'image'-object) in your request body.
@@ -151,13 +151,33 @@ You can add images to a specific variation by sending a `POST` request to `/v1/v
 Either a single image object or an array of image objects in the request body. All attributes are required for each image object.
 
 #### Returns
-The updated images array, or an error object
+The updated images array
 
 ### Retrieve images
+You can retrieve all the images for a specific variation by sending a `GET` request to `/v1/variations/:id/images` with `:id` being the `id` of the specific variation
+
+#### Parameters
+None
+
+#### Returns
+The images array of variation with specified `id`, or an error object if variation `id` cannot be found
 
 ### Add to description
+You can add text to a variation's description by sending a `POST` request to `/v1/variations/:id/description` with the text in the request body.
+
+#### Parameters
+Either a single `string` or an array of `string`s in the request body
+
+#### Returns
+The updated description (array of `string`s)t
 
 ### Retrieve description
+You can retrieve all the text in a specific variation's description by sending a `GET` request to `/v1/variations/:id/description`
 
+#### Parameters
+None
 
+#### Returns
+The description (array of `string`s)
 
+[**Back to top**](#variations-endpoint)

@@ -227,8 +227,6 @@ routes.delete('/:id', (req, res) => {
 routes.post('/:id/images', (req, res) => {
   (async () => {
     try {
-      // TODO: allow user to add multiple images
-
       let newImages = [];
 
       // Check whether request body is an array of images, a single image, or neither
@@ -251,6 +249,7 @@ routes.post('/:id/images', (req, res) => {
           }
         } else if (typeof req.body === "object") {
           // Validate single image
+          // Note: validateAsync throws an error for you
           await variationImage.validateAsync(req.body);
           newImages.push(req.body);
         } else {
@@ -351,9 +350,7 @@ routes.post('/:id/description', (req, res) => {
 
         // Update the description and send response
         docRef.update({description: desc});
-        return res.status(200).send(
-          `Description item(s) for variation id ${req.params.id} successfully added!`
-        );
+        return res.status(200).send(desc);
 
       });
 
