@@ -47,13 +47,7 @@ app.all('*', (req, res, next) => {
   });
 });
 
-// Listen on local server
-let port = 3300;
-const server = app.listen(process.env.PORT || port, () => {
-  console.log(`Server now up and running on port ${port}!`);
-});
-
-module.exports = server;
+module.exports = app;
 
 // Listen on web
 exports.app = functions.https.onRequest(app);
