@@ -145,6 +145,13 @@ None
 The variation object that was deleted, or an error object
 
 ### Add images
+You can add images to a specific variation by sending a `POST` request to `/v1/variations/:id/images` and including the [image objects](#the-variation-'image'-object) in your request body.
+
+#### Parameters
+Either a single image object or an array of image objects in the request body. All attributes are required for each image object.
+
+#### Returns
+The updated images array, or an error object
 
 ### Retrieve images
 

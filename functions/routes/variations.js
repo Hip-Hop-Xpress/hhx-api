@@ -50,6 +50,7 @@ const putSchema = Joi.object({
  * 
  * TODO: add support for query strings eventually
  * TODO: fix DRY for error handling and accessing simple items
+ * TODO: return uniform error responses
  */
 
 /**
@@ -64,7 +65,7 @@ routes.post('/', (req, res) => {
       } catch (e) {
         return res.status(422).send(e.details)
       }
-      
+
       await db.collection('variations').doc(`/${req.body.id}/`)
         .create({
           id: req.body.id,
@@ -226,12 +227,41 @@ routes.delete('/:id', (req, res) => {
 routes.post('/:id/images', (req, res) => {
   (async () => {
     try {
+      // TODO: allow user to add multiple images
+
+      let newImages = [];
+
+      // Check whether request body is an array of images, a single image, or neither
       try {
-        await variationImage.validateAsync(req.body);
+
+        if (Array.isArray(req.body)) {
+          // Validate all image objects before adding
+          for (const image of req.body) {
+            console.log("image", image)
+            const validation = variationImage.validate(image);
+
+            // Throw error if image is invalid
+            if (validation.error !== undefined) {
+              throw validation.error;
+            } else if (validation.errors !== undefined) {
+              throw validation.errors;
+            }
+
+            newImages.push(image);
+          }
+        } else if (typeof req.body === "object") {
+          // Validate single image
+          await variationImage.validateAsync(req.body);
+          newImages.push(req.body);
+        } else {
+          return res.status(422).send('Error: body must be (array of) Variation image object(s)');
+        }
+
       } catch (e) {
+        // Schema validation errors end up here
         return res.status(422).send(e.details);
       }
-
+    
       let images = [];
       const document = db.collection('variations').doc(req.params.id);
       const docRef = document;
@@ -241,11 +271,14 @@ routes.post('/:id/images', (req, res) => {
           return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
         }
 
+        // Fetch original images and add new images
         images = doc.data().images;
-        images.push(req.body);
-        docRef.update({images: images});
+        for (const newImage of newImages) {
+          images.push(newImage);
+        }
 
-        return res.status(200).send(`Image for variation id ${req.params.id} successfully added!`);
+        docRef.update({images: images});
+        return res.status(200).send(images);
 
       });
 
@@ -289,15 +322,15 @@ routes.get('/:id/images', (req, res) => {
 routes.post('/:id/description', (req, res) => {
   (async () => {
     try {
-      let additions = [];
+      let newParagraphs = [];
       
       // Check that the body is either string or array of strings, and
       // add body contents to 'additions' if valid
       if (typeof req.body === 'string' || req.body instanceof String) {
-        additions.push(req.body);
+        newParagraphs.push(req.body);
       } else if (Array.isArray(req.body)) {
         await variationDescription.validateAsync(req.body);
-        additions = req.body;
+        newParagraphs = req.body;
       } else {
         return res.status(422).send('Error: body must be string or array of strings');
       }
@@ -312,7 +345,7 @@ routes.post('/:id/description', (req, res) => {
 
         // Get the current description and add the additions
         let desc = doc.data().description;
-        for (let paragraph of additions) {
+        for (let paragraph of newParagraphs) {
           desc.push(paragraph);
         }
 
