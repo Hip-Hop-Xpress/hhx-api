@@ -76,7 +76,7 @@ A quick overview of all endpoints related to Variations on the Hip Hop Xpress
 There are  four HTTP response codes to keep in mind when using the Variations endpoint:
 
 HTTP Response Code | Description
--|-|-
+-|-
 `200` | Successful request
 `404` | Variation of specified `id` is not found
 `422` | Error, request contains invalid attributes

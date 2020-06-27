@@ -64,9 +64,10 @@ routes.post('/', (req, res) => {
       } catch (e) {
         return res.status(422).send(e.details)
       }
-
+      
       await db.collection('variations').doc(`/${req.body.id}/`)
         .create({
+          id: req.body.id,
           name: req.body.name,
           date: req.body.date,
           description: req.body.description,
