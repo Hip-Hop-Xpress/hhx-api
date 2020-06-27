@@ -73,7 +73,16 @@ A quick overview of all endpoints related to Variations on the Hip Hop Xpress
 ```
 
 ### Usage
-All use cases for the Variations endpoints:
+There are  four HTTP response codes to keep in mind when using the Variations endpoint:
+
+HTTP Response Code | Description
+-|-|-
+`200` | Successful request
+`404` | Variation of specified `id` is not found
+`422` | Error, request contains invalid attributes
+`500` | Something went wrong server-side (contact us if persistent)
+
+All use cases for the Variations endpoints are listed below.
 
 **Collection wide:**
 * [Create variation: `POST /v1/variations`](#create-variation)
@@ -94,22 +103,46 @@ All use cases for the Variations endpoints:
 You can create a variation by sending a `PUT` request to `/v1/variations` with a [variation object](#the-variation-object) (JSON) as the body. All fields are required, and the `id` must be a unique, non-negative integer.
 
 #### Parameters
-A valid [variation object](#the-variation-object) (JSON) with correct attributes.
+A valid [variation object](#the-variation-object) (JSON) with correct attributes
 
-#### Responses
-HTTP Code | Response
--|-
-`200` | success, returns the variation object as added into the database
-`422` | the request body had invalid attributes
-`500` | a server error occurred
+#### Returns
+The variation object as added in the database if successful. If the request body was invalid, details are returned as an array of error objects. Otherwise, an error object returns. 
 
 ### Retrieve all variations
+You can retrieve the data for all variations by sending a `GET` request to `/v1/variations`
+
+#### Parameters
+None
+
+#### Returns
+An array of all variation objects, or an error object
 
 ### Retrieve variation
+Retrieve a specific variation through its `id` by sending a `GET` request to `/v1/variations/:id`, with `:id` being the desired variation's `id` field.
+
+#### Parameters
+None
+
+#### Returns
+The variation object with specified `id`, or an error object
 
 ### Update variation
+You can update attributes of a specific variation object by sending a `PUT` request to `/v1/variations/:id`, with `:id` being the `id` of a variation.
+
+#### Parameters
+A variation object containing only the attributes needing change, and their updated values. For example, if you need to change the `date` attribute, you only need to include the `date` field in your request: `{"date": "some new date"}`. However, any updated attributes must follow the [attribute restrictions](#attributes).
+
+#### Returns
+The updated variation object, or an error object
 
 ### Delete variation
+You can delete a variation object by sending a `DELETE` request to `/v1/variations/:id`, with `:id` being the `id` of the variation to delete.
+
+#### Parameters
+None
+
+#### Returns
+The variation object that was deleted, or an error object
 
 ### Add images
 

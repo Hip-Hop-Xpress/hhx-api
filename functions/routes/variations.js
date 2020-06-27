@@ -160,14 +160,33 @@ routes.put('/:id', (req, res) => {
   (async () => {
     try {
       // Validate request body for correct schema
-      await putSchema.validateAsync(req.body);
+      try {
+        await putSchema.validateAsync(req.body);
+      } catch (e) {
+        return res.status(422).send(e.details);
+      }
 
       const document = db.collection('variations').doc(req.params.id);
-      await document.update(req.body);
-      return res.status(200).send(`Successfully updated variation ${req.params.id}!`);
+      const docRef = document;
+
+      await document.get().then(doc => {
+        if (!doc.exists) {
+          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+        }
+
+        docRef.update(req.body);
+
+        // Spread operator to combine old data with updated data
+        // Shared fields are overwritten by rightmost object (updated data)
+        return res.status(200).send({...doc.data(), ...req.body});
+
+      });
+
+      return null;
+
     } catch (e) {
       console.log(e);
-      return res.status(500).send(e.details);
+      return res.status(500).send(e);
     }
   })();
 });
@@ -179,8 +198,20 @@ routes.delete('/:id', (req, res) => {
   (async () => {
     try {
       const document = db.collection('variations').doc(req.params.id);
-      await document.delete();
-      return res.status(200).send(`Variation id ${req.params.id} no longer exists`);
+      const docRef = document;
+
+      await document.get().then(doc => {
+        if (!doc.exists) {
+          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+        }
+        
+        const deletedVariation = doc.data();
+        docRef.delete();
+        return res.status(200).send(deletedVariation);
+      });
+
+      return null;
+
     } catch (e) {
       console.log(e);
       return res.status(500).send(e);
@@ -194,7 +225,11 @@ routes.delete('/:id', (req, res) => {
 routes.post('/:id/images', (req, res) => {
   (async () => {
     try {
-      await variationImage.validateAsync(req.body);
+      try {
+        await variationImage.validateAsync(req.body);
+      } catch (e) {
+        return res.status(422).send(e.details);
+      }
 
       let images = [];
       const document = db.collection('variations').doc(req.params.id);
