@@ -2,7 +2,7 @@
 "Variations" hold data regarding past variations on the Hip Hop Xpress. You can view them on the Hip Hop Xpress website [here](https://publish.illinois.edu/hiphopxpress/sample-page/).
 
 ## The Variation object
-Each Variation object holds data in JSON format. **All attributes are required in POST requests, but not in PUT requests** (see more [here](#create-variation)).
+Each variation object holds data in JSON format. **All attributes are required in POST requests, but not in PUT requests** (see more [here](#create-variation)).
 ```json
 {
   "id": 0,
@@ -29,14 +29,14 @@ Each Variation object holds data in JSON format. **All attributes are required i
 ### Attributes
 Name | Type | Restrictions | Description
 -|-|-|-
-`id` | `number` | must be unique non-zero integer | unique identifier for Variation
-`name` | `string` | must be non-empty | display name for Variation
-`date` | `string` | must be 4 characters or more | describes the running time of Variation
-`description` | `Array` of `string` | must be non-empty | describes the Variation
-`images` | `Array` of Image `Object`s | must be non-empty, exactly one Image `Object` must have `componentImage` set to `true` | lists all display images for Variation
+`id` | `number` | must be unique non-zero integer | unique identifier for variation
+`name` | `string` | must be non-empty | display name for variation
+`date` | `string` | must be 4 characters or more | describes the running time of variation
+`description` | `Array` of `string` | must be non-empty | describes the variation
+`images` | `Array` of Image `Object`s | must be non-empty, exactly one Image `Object` must have `componentImage` set to `true` | lists all display images for variation
 
 ## The Variation 'Image' object
-Image description for `images` array in the Variation object. Each field is required when [creating new images.](#add-images)
+Image description for `images` array in the variation object. Each field is required when [creating new images.](#add-images)
 ```json
 {
   "url": "https://publish.illinois.edu/.../IPoweredTrailer.jpg",
@@ -47,7 +47,7 @@ Image description for `images` array in the Variation object. Each field is requ
 ### Attributes
 Name | Type | Restrictions | Description
 -|-|-|-
-`url` | `string` | must be a valid URL | points to image of Variation
+`url` | `string` | must be a valid URL | points to image of variation
 `caption` | `string` | none, can be empty | briefly describes the image
 `componentImage` | `boolean` | exactly one image must have `componentImage` set to `true` | describes whether this image is displayed on its component in the mobile app
 
@@ -91,6 +91,17 @@ All use cases for the Variations endpoints:
 * [Retrieve variation's description: `GET /v1/variations/:id/description`](#retrieve-description)
 
 ### Create variation
+You can create a variation by sending a `PUT` request to `/v1/variations` with a [variation object](#the-variation-object) (JSON) as the body. All fields are required, and the `id` must be a unique, non-negative integer.
+
+#### Parameters
+A valid [variation object](#the-variation-object) (JSON) with correct attributes.
+
+#### Responses
+HTTP Code | Response
+-|-
+`200` | success, returns the variation object as added into the database
+`422` | the request body had invalid attributes
+`500` | a server error occurred
 
 ### Retrieve all variations
 

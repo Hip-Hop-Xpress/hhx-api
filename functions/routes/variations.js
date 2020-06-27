@@ -59,7 +59,11 @@ routes.post('/', (req, res) => {
   (async () => {
     try {
       // Validate request body using schema
-      await postSchema.validateAsync(req.body);
+      try {
+        await postSchema.validateAsync(req.body);
+      } catch (e) {
+        return res.status(422).send(e.details)
+      }
 
       await db.collection('variations').doc(`/${req.body.id}/`)
         .create({
@@ -68,7 +72,7 @@ routes.post('/', (req, res) => {
           description: req.body.description,
           images: req.body.images,
         });
-      return res.status(200).send(`Successfully added variation with id ${req.body.id}`);
+      return res.status(200).send(req.body);
     } catch (error) {
       console.log(error);
       return res.status(500).send(error);
