@@ -14,14 +14,28 @@ Code | Description
 
 ## Error types
 These types will be included in the [body](#error-object) of error responses so you can better understand the error that occurred.
+
 Type | Description
 -|-
+api_error | an error popped up on our end - if persistent, contact us!
+invalid_endpoint_error | the requested endpoint doesn't exist - usually due to an incorrect HTTP verb or typo in the endpoint address
+invalid_request_error | the endpoint was reached, but data in the body request was invalid or omitted and is required
+rate_limit_error | too many requests in a short amount of time
 
 ## Error object
-All error responses will contain an error object will look something like this:
+All error responses will contain an error object that looks something like this:
 ```json
 {
-  // error will go here
+  "type": "the specific error type",
+  "code": "the HTTP error code",
+  "message": "a human-readable message explaining the error",
+  "param": "if applicable, the invalid/omitted parameter",
 }
 ```
-
+### Attributes
+Name | Data type | Description
+-|-|-
+`type` | `string` | the specific error type, as defined [here](#error-types)
+`code` | `string` | the [HTTP error response code](#http-code-status-summary)
+`message` | `string` | a human-readable message explaining the error
+`param` | `string` | the invalid/omitted parameter in the request body, if applicable
