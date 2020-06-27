@@ -1,6 +1,14 @@
 # Variations endpoint
 "Variations" hold data regarding past variations on the Hip Hop Xpress. You can view them on the Hip Hop Xpress website [here](https://publish.illinois.edu/hiphopxpress/sample-page/).
 
+### Guide
+* [The Variation object](#the-variation-object)
+  * [Attributes](#attributes)
+* [The Variation 'Image' object](#the-variation-'image'-object)
+* [Endpoints](#endpoints)
+  * [Overview](#overview)
+  * [Usage](#usage)
+
 ## The Variation object
 Each variation object holds data in JSON format. **All attributes are required in POST requests, but not in PUT requests** (see more [here](#create-variation)).
 ```json
