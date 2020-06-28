@@ -12,7 +12,7 @@ const numVariations = 2;
  * Test endpoints
  */
 describe('Run test endpoints', () => {
-  it('sends correct message for GET /alive', async () => {
+  test('sends correct message for GET /alive', async () => {
     const response = await supertest(app).get('/alive');
 
     expect(response.status).toBe(200);
@@ -20,7 +20,7 @@ describe('Run test endpoints', () => {
 
   });
 
-  it('sends correct message for GET /hello-world', async () => {
+  test('sends correct message for GET /hello-world', async () => {
     const response = await supertest(app).get('/hello-world');
 
     expect(response.status).toBe(success);
@@ -35,7 +35,7 @@ describe('Run test endpoints', () => {
  */
 describe('GET endpoint tests for Variations collection', () => {
 
-  it('retrieves all variations for GET /v1/variations', async () => {
+  test('GET /v1/variations - retrieves all variations', async () => {
 
     const response = await supertest(app).get(base);
 
@@ -47,11 +47,9 @@ describe('GET endpoint tests for Variations collection', () => {
 
   });
 
-  it('retrieves specific variations by ID for GET /v1/variations/:id', async () => {
+  test('GET /v1/variations/:id - retrieves variation by ID', async () => {
 
     // Assuming that there is at least one variation
-    
-    // First variation
     const response = await supertest(app).get(base + '/0');
 
     // Verify that the success response returns an object
@@ -70,6 +68,41 @@ describe('GET endpoint tests for Variations collection', () => {
 
     expect(Array.isArray(variation.images)).toBe(true);
     expect(variation.images.length).toBeGreaterThan(0);
+
+  });
+
+  test('GET /v1/variations/:id/images - retrieves images by ID', async () => {
+
+    // Assuming there is at least one variation
+    const response = await supertest(app).get(base + '/0/images');
+
+    // Verify that the success response returns an array
+    expect(response.status).toBe(success);
+    expect(Array.isArray(response.body)).toBe(true);
+
+    // Images should have at least on image object
+    const images = response.body;
+    expect(images.length).toBeGreaterThan(0);
+
+    // Check the contents of image
+    const image = images[0];
+    expect(image.url).not.toBeUndefined();
+    expect(image.caption).not.toBeUndefined();
+    expect(image.componentImage).not.toBeUndefined();
+
+  });
+
+  test('GET /v1/variations/:id/description - retrieves desc by ID', async () => {
+
+    // Assuming there is at least one variation
+    const response = await supertest(app).get(base + '/0/description');
+
+    // Verify success response returns array
+    expect(response.status).toBe(success);
+    expect(Array.isArray(response.body)).toBe(true);
+
+    const description = response.body;
+    expect(description.length).toBeGreaterThan(0);
 
   });
 
