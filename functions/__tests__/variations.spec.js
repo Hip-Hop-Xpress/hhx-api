@@ -28,7 +28,6 @@ describe('Run test endpoints', () => {
 /**
  * Collection-wide endpoints
  */
-// FIXME: not working :(
 describe('Collection-wide variation endpoint tests', () => {
 
   it('retrieves all variations for GET /v1/variations', async () => {
