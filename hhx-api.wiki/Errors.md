@@ -8,7 +8,7 @@ We will also use specific [error types](#error-types) and [responses](#error-obj
 Code | Description
 -|-
 `200` - Ok! | Everything worked!
-`404` - Not found | The resource requested was not found. For example, a requested object with a specific `id` can't be found, or an endpoint address does not exist.
+`404` - Not found | The resource endpoint requested was not found. Usually due to an incorrect HTTP verb for requested endopint, or a typo in the endpoint address
 `422` - Invalid parameters | The request body contains invalid attributes or omits reqiured ones.
 `500` - Internal server error | Something went wrong on our end! This is also the "default" error code - if an unintentional or uncaught error occurs, this will be the error code.
 

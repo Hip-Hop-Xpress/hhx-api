@@ -5,6 +5,7 @@ const app = require('../server');
 
 // Constants
 const success = 200;
+const not_found = 404;
 const base = '/v1/variations';
 const numVariations = 2;
 
@@ -33,7 +34,7 @@ describe('Run test endpoints', () => {
 /**
  * GET endpoints
  */
-describe('GET endpoint tests for Variations collection', () => {
+describe('GET endpoint tests', () => {
 
   test('GET /v1/variations - retrieves all variations', async () => {
 
@@ -104,6 +105,29 @@ describe('GET endpoint tests for Variations collection', () => {
     const description = response.body;
     expect(description.length).toBeGreaterThan(0);
 
+  });
+
+});
+
+/**
+ * GET endpoint tests with errors
+ */
+describe('GET endpoint error tests', () => {
+
+  test('GET /v1/variations/:id - nonexistent id', async () => {
+
+    // Using nonexistent id
+    const response = await supertest(app).get(base + '/999');
+
+    const expected = {
+      type: 'id_not_found_error',
+      code: '422',
+      message: 'The requested variation with id 999 was not found!',
+      param: 'id'
+    };
+
+    expect(response.status).toBe(not_found);
+    expect(response.body).toEqual(expected);
   });
 
 });
