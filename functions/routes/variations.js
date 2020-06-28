@@ -5,6 +5,9 @@ const routes = require('express').Router();
 const admin = require('firebase-admin');
 const db = admin.firestore();
 
+const httpCodes = require('../errors/codes');
+const errorTypes = require('../errors/types');
+
 /**
  * Schematics for Variation data
  */
@@ -134,13 +137,21 @@ routes.get('/:id', (req, res) => {
     try {
       const document = db.collection('variations').doc(req.params.id);
 
-      await document.get().then(
-        doc => {
-          if (!doc.exists) {
-            return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
-          } else {
+      await document.get().then(doc => {
+          if (doc.exists) {
+            // Fetch and send data if variation of :id is found
             let response = doc.data();
-            return res.status(200).send(response);
+            return res.status(httpCodes.OK).send(response);
+          } else {
+            // If ID is not found, send error response
+            const errorResponse = {
+              type: errorTypes.ID_NOT_FOUND_ERR,
+              code: httpCodes.INVALID_PARAMS.toString(),
+              message: `The requested variation with id ${req.params.id} does not exist!`,
+              param: 'id'
+            };
+
+            return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
           }
         }
       );
@@ -150,7 +161,7 @@ routes.get('/:id', (req, res) => {
 
     } catch (e) {
       console.log(e);
-      return res.status(500).send(e);
+      return res.status(httpCodes.SERVER_ERR).send(e);
     }
   })();
 });

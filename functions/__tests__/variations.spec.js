@@ -4,8 +4,8 @@ const supertest = require('supertest');
 const app = require('../server');
 
 // Constants
-const success = 200;
-const not_found = 404;
+const httpCodes = require('../errors/codes');
+const errorTypes = require('../errors/types');
 const base = '/v1/variations';
 const numVariations = 2;
 
@@ -16,7 +16,7 @@ describe('Run test endpoints', () => {
   test('sends correct message for GET /alive', async () => {
     const response = await supertest(app).get('/alive');
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(httpCodes.OK);
     expect(response.text).toEqual('The Hip Hop Xpress API is alive!');
 
   });
@@ -24,7 +24,7 @@ describe('Run test endpoints', () => {
   test('sends correct message for GET /hello-world', async () => {
     const response = await supertest(app).get('/hello-world');
 
-    expect(response.status).toBe(success);
+    expect(response.status).toBe(httpCodes.OK);
     expect(response.text).toEqual('Hello World!');
 
   });
@@ -42,7 +42,7 @@ describe('GET endpoint tests', () => {
 
     // GET /v1/variations should return an array of variation objects
     // with 2 variations
-    expect(response.status).toBe(success);
+    expect(response.status).toBe(httpCodes.OK);
     expect(Array.isArray(response.body)).toBe(true)
     expect(response.body).toHaveLength(numVariations);
 
@@ -54,7 +54,7 @@ describe('GET endpoint tests', () => {
     const response = await supertest(app).get(base + '/0');
 
     // Verify that the success response returns an object
-    expect(response.status).toBe(success);
+    expect(response.status).toBe(httpCodes.OK);
     expect(typeof response.body).toEqual('object');
 
     const variation = response.body;
@@ -78,7 +78,7 @@ describe('GET endpoint tests', () => {
     const response = await supertest(app).get(base + '/0/images');
 
     // Verify that the success response returns an array
-    expect(response.status).toBe(success);
+    expect(response.status).toBe(httpCodes.OK);
     expect(Array.isArray(response.body)).toBe(true);
 
     // Images should have at least on image object
@@ -99,7 +99,7 @@ describe('GET endpoint tests', () => {
     const response = await supertest(app).get(base + '/0/description');
 
     // Verify success response returns array
-    expect(response.status).toBe(success);
+    expect(response.status).toBe(httpCodes.OK);
     expect(Array.isArray(response.body)).toBe(true);
 
     const description = response.body;
@@ -122,11 +122,11 @@ describe('GET endpoint error tests', () => {
     const expected = {
       type: 'id_not_found_error',
       code: '422',
-      message: 'The requested variation with id 999 was not found!',
+      message: 'The requested variation with id 999 does not exist!',
       param: 'id'
     };
 
-    expect(response.status).toBe(not_found);
+    expect(response.status).toBe(httpCodes.INVALID_PARAMS);
     expect(response.body).toEqual(expected);
   });
 
