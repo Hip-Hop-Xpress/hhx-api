@@ -47,7 +47,9 @@ app.all('*', (req, res, next) => {
   });
 });
 
-module.exports = app;
+// FIXME: can't have module.exports and exports.app together :(
 
 // Listen on web
 exports.app = functions.https.onRequest(app);
+
+module.exports = app;
