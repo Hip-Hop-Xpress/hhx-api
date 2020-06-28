@@ -46,4 +46,6 @@ app.all('*', (req, res, next) => {
   });
 });
 
+// Used by jest for running unit tests (see server.js)
+// Used by Firebase Functions in deployment (see index.js)
 module.exports = app;

@@ -1,3 +1,8 @@
+// Exporting listening local server - runs only for tests
+
+// Test the server manually by typing 'npm run server' in command line in 
+// the /functions folder and using the given localhost URL
+
 const app = require('./app');
 
 let port = 3300;
