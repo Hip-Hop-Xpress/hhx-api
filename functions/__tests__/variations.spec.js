@@ -111,23 +111,40 @@ describe('GET endpoint tests', () => {
 
 /**
  * GET endpoint tests with errors
+ * These endpoints should send identical errors
  */
 describe('GET endpoint error tests', () => {
 
+  // Setup expected error
+  let id = 999;
+
+  const expectedError = {
+    type: 'id_not_found_error',
+    code: '422',
+    message: `The requested variation with id ${id} does not exist!`,
+    param: 'id'
+  };
+
   test('GET /v1/variations/:id - nonexistent id', async () => {
-
     // Using nonexistent id
-    const response = await supertest(app).get(base + '/999');
-
-    const expected = {
-      type: 'id_not_found_error',
-      code: '422',
-      message: 'The requested variation with id 999 does not exist!',
-      param: 'id'
-    };
+    const response = await supertest(app).get(base + `/${id}`);
 
     expect(response.status).toBe(httpCodes.INVALID_PARAMS);
-    expect(response.body).toEqual(expected);
+    expect(response.body).toEqual(expectedError);
+  });
+
+  test('GET /v1/variations/:id/images - nonexistent id', async() => {
+    const response = await supertest(app).get(base + `/${id}/images`);
+
+    expect(response.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
+  });
+
+  test('GET /v1/variations/:id/description - nonexistent id', async() => {
+    const response = await supertest(app).get(base + `/${id}/description`);
+
+    expect(response.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
   });
 
 });

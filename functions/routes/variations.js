@@ -52,9 +52,26 @@ const putSchema = Joi.object({
  *   POST, GET               /variations/:id/description
  * 
  * TODO: add support for query strings eventually
- * TODO: fix DRY for error handling and accessing simple items
+ * TODO: DRY for error handling and accessing simple items
  * TODO: return uniform error responses
  */
+
+/**
+ * Sends error response when a nonexistent ID is requested
+ * 
+ * @param {Response} res the error Response to be sent
+ * @param {number} id an invalid ID (doesn't point to variation)
+ */
+const sendNonexistentIdError = (res, id) => {
+  const errorResponse = {
+    type: errorTypes.ID_NOT_FOUND_ERR,
+    code: httpCodes.INVALID_PARAMS.toString(),
+    message: `The requested variation with id ${id} does not exist!`,
+    param: 'id'
+  };
+
+  return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+}
 
 /**
  * POST /variations
@@ -144,14 +161,7 @@ routes.get('/:id', (req, res) => {
             return res.status(httpCodes.OK).send(response);
           } else {
             // If ID is not found, send error response
-            const errorResponse = {
-              type: errorTypes.ID_NOT_FOUND_ERR,
-              code: httpCodes.INVALID_PARAMS.toString(),
-              message: `The requested variation with id ${req.params.id} does not exist!`,
-              param: 'id'
-            };
-
-            return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+            return sendNonexistentIdError(res, req.params.id);
           }
         }
       );
@@ -310,10 +320,10 @@ routes.get('/:id/images', (req, res) => {
       const document = db.collection('variations').doc(req.params.id);
       
       await document.get().then(doc => {
-        if (!doc.exists) {
-          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
-        } else {
+        if (doc.exists) {
           return res.status(200).send(doc.data().images);
+        } else {
+          return sendNonexistentIdError(res, req.params.id);
         }
       });
 
@@ -383,10 +393,10 @@ routes.get('/:id/description', (req, res) => {
       const document = db.collection('variations').doc(req.params.id);
       
       await document.get().then(doc => {
-        if (!doc.exists) {
-          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
-        } else {
+        if (doc.exists) {
           return res.status(200).send(doc.data().description);
+        } else {
+          return sendNonexistentIdError(res, req.params.id);
         }
       });
 
