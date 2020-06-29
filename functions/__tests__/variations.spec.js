@@ -149,6 +149,43 @@ describe('GET endpoint error tests', () => {
 
 });
 
+/**
+ * POST endpoint tests
+ */
+describe('POST endpoint tests', () => {
+
+  // Mock variation to add for POST requests
+  const testVariation = {
+    id: 999,
+    name: 'test variation',
+    date: '2020',
+    images: [
+      {
+        url: 'https://www.google.com',
+        caption: 'this isn\'t a real image',
+        componentImage: false,
+      }
+    ],
+    description: [
+      'a single entry in the description'
+    ]
+  };
+
+  test('POST /v1/variations - creates new variation', async () => {
+    
+    const response = await supertest(app)
+      .post(base)
+      .type('form')
+      .send(testVariation)
+      .set('Accept', /json/);
+
+    expect(response.status).toBe(httpCodes.OK);
+    expect(response.body).toEqual(testVariation);
+
+  }); 
+
+});
+
 // Required to close connection to server once tests are done
 afterAll(done => {
   app.close();
