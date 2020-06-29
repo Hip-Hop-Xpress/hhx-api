@@ -2,7 +2,6 @@
 
 const supertest = require('supertest');
 const app = require('../server');
-const bodyParser = require('body-parser');
 
 // Constants
 const httpCodes = require('../errors/codes');
@@ -123,7 +122,8 @@ describe('GET endpoint error tests', () => {
     type: 'id_not_found_error',
     code: '422',
     message: `The requested variation with id ${id} does not exist!`,
-    param: 'id'
+    param: 'id',
+    original: null
   };
 
   test('GET /v1/variations/:id - nonexistent id', async () => {

@@ -31,6 +31,7 @@ All error responses will contain an error object that looks something like this:
   "code": "HTTP error code",
   "message": "human-readable message explaining the error",
   "param": "if applicable, the invalid/omitted parameter",
+  "original": "if applicable, the original unknown error thrown"
 }
 ```
 ### Attributes
@@ -39,4 +40,5 @@ Name | Data type | Description
 `type` | `string` | the specific error type, as defined [here](#error-types)
 `code` | `string` | the [HTTP error response code](#http-code-status-summary)
 `message` | `string` | a human-readable message explaining the error
-`param` | `string` | the invalid/omitted parameter in the request body, if applicable
+`param` | `string` | the invalid/omitted parameter in the request body, if applicable (null otherwise)
+`original` | `Object` | a server error of unknown origin, if applicable (null otherwise). This is usually accompanied with 500 server errors

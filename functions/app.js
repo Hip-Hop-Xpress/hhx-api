@@ -1,26 +1,28 @@
 // Built initially using this guide:
 // https://medium.com/better-programming/building-an-api-with-firebase-109041721f77
 
-const admin = require('firebase-admin');
 const express = require('express');
 const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
+const admin = require('firebase-admin');
 
-app.use(bodyParser.json());  // included as a solution for testing
-app.use(cors({ origin: true }));
-
-var serviceAccount = require('./permissions.json');
+let serviceAccount = require('./permissions.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://hhx-api-48896.firebaseio.com/"
 });
 
-/**
- * Hip Hop Xpress Endpoint Imports
- */
+app.use(bodyParser.json());  // included as a solution for testing
+app.use(cors({ origin: true }));
+
+// Hip Hop Xpress Endpoint Imports
 const variations = require('./routes/variations');
+
+// Constants
+const { NOT_FOUND } = require('./errors/codes');
+const errorTypes = require('./errors/types');
 
 /**
  * Test endpoints
@@ -43,9 +45,12 @@ app.use('/v1/variations', variations);
 
 // For unhandled routes
 app.all('*', (req, res, next) => {
-  res.status(404).json({
-    status: 'fail',
-    message: `Can't find ${req.originalUrl} on this server!`
+  res.status(NOT_FOUND).json({
+    type: errorTypes.INVALID_ENDPOINT_ERR,
+    code: NOT_FOUND.toString(),
+    message: `The requested URL ${req.originalUrl} was not found!`,
+    id: 'URL',
+    original: null
   });
 });
 

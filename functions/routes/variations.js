@@ -61,16 +61,38 @@ const putSchema = Joi.object({
  * 
  * @param {Response} res the error Response to be sent
  * @param {number} id an invalid ID (doesn't point to variation)
+ * @returns {Response} the response with correct status and body
  */
 const sendNonexistentIdError = (res, id) => {
   const errorResponse = {
     type: errorTypes.ID_NOT_FOUND_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
     message: `The requested variation with id ${id} does not exist!`,
-    param: 'id'
+    param: 'id',
+    original: null
   };
 
   return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+}
+
+/**
+ * Sends and logs an error response upon catching an unknown error
+ * 
+ * @param {Response} res the error Response to be sent
+ * @param {Object} e the unknown error thrown
+ */
+const constructServerError = (res, e) => {
+  console.log(e);
+
+  const errorResponse = {
+    type: errorTypes.API_ERR,
+    code: httpCodes.SERVER_ERR.toString(),
+    message: 'An uncaught error was thrown. See "original" for details',
+    param: null,
+    original: e,
+  };
+
+  return res.status(httpCodes.SERVER_ERR).send(errorResponse);
 }
 
 /**
@@ -95,9 +117,8 @@ routes.post('/', (req, res) => {
           images: req.body.images,
         });
       return res.status(200).send(req.body);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send(error);
+    } catch (e) {
+      return constructServerError(res, e);
     }
   })();
 
@@ -138,9 +159,8 @@ routes.get('/', (req, res) => {
       // Return null for linter's sake
       return null;
 
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send(error);
+    } catch (e) {
+      return constructServerError(res, e);
     }
   })();
 
@@ -170,8 +190,7 @@ routes.get('/:id', (req, res) => {
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(httpCodes.SERVER_ERR).send(e);
+      return constructServerError(res, e);
     }
   })();
 });
@@ -208,8 +227,7 @@ routes.put('/:id', (req, res) => {
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(500).send(e);
+      return constructServerError(res, e);
     }
   })();
 });
@@ -236,8 +254,7 @@ routes.delete('/:id', (req, res) => {
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(500).send(e);
+      return constructServerError(res, e);
     }
   })();
 });
@@ -305,8 +322,7 @@ routes.post('/:id/images', (req, res) => {
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(500).send(e);
+      return constructServerError(res, e);
     }
   })();
 })
@@ -330,8 +346,7 @@ routes.get('/:id/images', (req, res) => {
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(500).send(e);
+      return constructServerError(res, e);
     }
   })();
 });
@@ -378,8 +393,7 @@ routes.post('/:id/description', (req, res) => {
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(500).send(e);
+      return constructServerError(res, e);
     }
   })();
 })
@@ -403,8 +417,7 @@ routes.get('/:id/description', (req, res) => {
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(500).send(e);
+      return constructServerError(res, e);
     }
   })();
 })
