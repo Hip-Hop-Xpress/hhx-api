@@ -236,7 +236,7 @@ describe('POST endpoint tests', () => {
 
   });
 
-  test('POST /v1/variations/:id/description - add multiple images', async () => {
+  test('POST /v1/variations/:id/images - add multiple images', async () => {
 
     // An array of 3 test images
     const imagesToAdd = [
@@ -258,6 +258,49 @@ describe('POST endpoint tests', () => {
     expect(Array.isArray(response.body)).toBe(true);
     expect(response.body).toHaveLength(expectedNewLength);
     expect(response.body).toContainEqual(testImage);
+
+  });
+
+  test('POST /v1/variations/:id/description - add entry', async() => {
+
+    const entry = 'entry to add to description';
+
+    // original entry + new entry
+    const expectedNewLength = 2;
+    
+    const response = await supertest(app)
+      .post(`${base}/${testVariation.id}/description`)
+      .set('Accept', /json/)
+      .send(entry);
+
+    // Response should contain updated description
+    expect(response.status).toBe(httpCodes.OK);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body).toHaveLength(expectedNewLength);
+    expect(response.body).toContainEqual(entry);
+
+  });
+
+  test('POST /v1/variations/:id/description - add multiple entries', async() => {
+
+    const entries = [
+      'multiple entries...',
+      '... added to description...',
+      '... in an array!'
+    ];
+
+    // original entry + 3 new entries
+    const expectedNewLength = 4;
+    
+    const response = await supertest(app)
+      .post(`${base}/${testVariation.id}/description`)
+      .set('Accept', /json/)
+      .send(entries);
+
+    // Response should contain updated description
+    expect(response.status).toBe(httpCodes.OK);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body).toHaveLength(expectedNewLength);
 
   });
 
