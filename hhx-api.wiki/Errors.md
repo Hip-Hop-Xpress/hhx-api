@@ -31,7 +31,7 @@ All error responses will contain an error object that looks something like this:
   "code": "HTTP error code",
   "message": "human-readable message explaining the error",
   "param": "if applicable, the invalid/omitted parameter",
-  "original": "if applicable, the original unknown error thrown"
+  "original": null
 }
 ```
 ### Attributes

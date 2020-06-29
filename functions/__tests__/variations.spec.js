@@ -32,6 +32,13 @@ describe('Run test endpoints', () => {
 });
 
 /**
+ * Variations Endpoints Unit Tests
+ * 
+ * NOTE: all tests look at the production Firestore database
+ * TODO: find a way to run unit tests using Firestore emulator instead of actual database
+ */
+
+/**
  * GET endpoints
  */
 describe('GET endpoint tests', () => {

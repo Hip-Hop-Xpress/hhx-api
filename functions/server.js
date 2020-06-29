@@ -1,7 +1,10 @@
-// Exporting listening local server - runs only for tests
+// Exporting listening local server - runs only for unit tests by jest
 
-// Test the server manually by typing 'npm run serve' in command line in 
-// the /functions folder and using the given localhost URL
+/**
+ * Run unit tests using jest:               npm run test
+ * Run local server (production Firestore): firebase emulators:start
+ * Run local server (emulator Firestore):   npm run serve
+ */
 
 const app = require('./app');
 
