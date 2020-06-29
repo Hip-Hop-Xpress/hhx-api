@@ -165,7 +165,7 @@ describe('GET endpoint error tests', () => {
  */
 describe('POST endpoint tests', () => {
 
-  // Mock variation to add for POST requests
+  // Mock variation/image/description to add for POST requests
   const testVariation = {
     id: 999,
     name: 'test variation',
@@ -184,6 +184,7 @@ describe('POST endpoint tests', () => {
 
   test('POST /v1/variations - creates new variation', async () => {
 
+    // Send the POST request with the test variation and verify contents
     const response = await supertest(app)
       .post(base)
       .set('Accept', /json/)
@@ -192,6 +193,27 @@ describe('POST endpoint tests', () => {
     expect(response.status).toBe(httpCodes.OK);
     expect(response.body).toEqual(testVariation);
 
+  });
+
+  test('POST /v1/variations/:id/images - add image', async () => {
+
+    // Setup mock image
+    const testImage = {
+      url: 'https://www.google.com',
+      caption: 'another test image',
+      componentImage: false
+    };
+
+    const response = await supertest(app)
+      .post(`${base}/${testVariation.id}/images`)
+      .set('Accept', /json/)
+      .send(testImage);
+
+    // Response should contain updated images array
+    expect(response.status).toBe(httpCodes.OK);
+    expect(Array.isArray(response.body)).toEqual(true);
+    expect(response.body).toHaveLength(2);
+    expect(response.body).toContainEqual(testImage);
   });
 
   // Delete the test variation after testing

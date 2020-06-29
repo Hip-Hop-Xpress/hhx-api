@@ -81,7 +81,6 @@ routes.post('/', (req, res) => {
     try {
       // Validate request body using schema
       try {
-        console.log("req.body", req.body);
         await postSchema.validateAsync(req.body);
       } catch (e) {
         return res.status(422).send(e.details)
