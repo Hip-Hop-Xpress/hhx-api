@@ -14,6 +14,7 @@
     "node": "8"
   },
   "dependencies": {
+    "@firebase/testing": "^0.20.5",
     "@hapi/joi": "^17.1.1",
     "body-parser": "^1.19.0",
     "firebase-admin": "^8.10.0",
