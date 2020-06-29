@@ -2,6 +2,7 @@
 
 const supertest = require('supertest');
 const app = require('../server');
+const bodyParser = require('body-parser');
 
 // Constants
 const httpCodes = require('../errors/codes');
@@ -151,6 +152,16 @@ describe('GET endpoint error tests', () => {
 
 /**
  * POST endpoint tests
+ * 
+ * Had issues including data in the request body for POST requests
+ * Solved with this: https://github.com/visionmedia/supertest/issues/168#issuecomment-66533114
+ * tl;dr: having express use body parser (see app.js)
+ * 
+ * This test suite:
+ * - creates a test/mock variation (still put in production database)
+ * - performs POST requests on description and images
+ * - deletes the test variation after all tests run
+ * 
  */
 describe('POST endpoint tests', () => {
 
@@ -172,17 +183,21 @@ describe('POST endpoint tests', () => {
   };
 
   test('POST /v1/variations - creates new variation', async () => {
-    
+
     const response = await supertest(app)
       .post(base)
-      .type('form')
-      .send(testVariation)
-      .set('Accept', /json/);
-
+      .set('Accept', /json/)
+      .send(testVariation);
+      
     expect(response.status).toBe(httpCodes.OK);
     expect(response.body).toEqual(testVariation);
 
-  }); 
+  });
+
+  // Delete the test variation after testing
+  afterAll(async () => {
+    await supertest(app).delete(`${base}/${testVariation.id}`);
+  })
 
 });
 

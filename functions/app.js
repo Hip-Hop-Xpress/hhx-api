@@ -5,6 +5,9 @@ const admin = require('firebase-admin');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.json());  // included as a solution for testing
 app.use(cors({ origin: true }));
 
 var serviceAccount = require('./permissions.json');
