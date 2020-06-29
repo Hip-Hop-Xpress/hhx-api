@@ -189,14 +189,31 @@ describe('POST endpoint tests', () => {
     ]
   };
 
-  test('POST /v1/variations - creates new variation', async () => {
+  const testImage = {
+    url: 'https://www.google.com',
+    caption: 'another test image',
+    componentImage: false
+  };
 
-    // Send the POST request with the test variation and verify contents
-    const response = await supertest(app)
+  // Create test variation before each test
+  beforeEach(async () => {
+    await supertest(app)
       .post(base)
       .set('Accept', /json/)
-      .send(testVariation);
-      
+      .send(testVariation)
+      .expect(httpCodes.OK);
+  })
+
+  // Delete the test variation after testing
+  afterEach(async () => {
+    await supertest(app).delete(`${base}/${testVariation.id}`);
+  });
+
+  test('POST /v1/variations - creates new variation', async () => {
+
+    // Test variation has already been created in beforeEach block
+    // Just check that it exists and is equal
+    const response = await supertest(app).get(`${base}/${testVariation.id}`);
     expect(response.status).toBe(httpCodes.OK);
     expect(response.body).toEqual(testVariation);
 
@@ -204,29 +221,45 @@ describe('POST endpoint tests', () => {
 
   test('POST /v1/variations/:id/images - add image', async () => {
 
-    // Setup mock image
-    const testImage = {
-      url: 'https://www.google.com',
-      caption: 'another test image',
-      componentImage: false
-    };
-
     const response = await supertest(app)
       .post(`${base}/${testVariation.id}/images`)
       .set('Accept', /json/)
       .send(testImage);
 
+    const expectedNewLength = 2;  // original image + test image
+
     // Response should contain updated images array
     expect(response.status).toBe(httpCodes.OK);
-    expect(Array.isArray(response.body)).toEqual(true);
-    expect(response.body).toHaveLength(2);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body).toHaveLength(expectedNewLength);
     expect(response.body).toContainEqual(testImage);
+
   });
 
-  // Delete the test variation after testing
-  afterAll(async () => {
-    await supertest(app).delete(`${base}/${testVariation.id}`);
-  })
+  test('POST /v1/variations/:id/description - add multiple images', async () => {
+
+    // An array of 3 test images
+    const imagesToAdd = [
+      testImage,
+      testImage,
+      testImage
+    ];
+
+    // original image + three new test images
+    const expectedNewLength = 4;
+
+    const response = await supertest(app)
+      .post(`${base}/${testVariation.id}/images`)
+      .set('Accept', /json/)
+      .send(imagesToAdd);
+
+    // Response should contain updated images array
+    expect(response.status).toBe(httpCodes.OK);
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body).toHaveLength(expectedNewLength);
+    expect(response.body).toContainEqual(testImage);
+
+  });
 
 });
 
