@@ -15,6 +15,7 @@ admin.initializeApp({
 });
 
 app.use(bodyParser.json());  // included as a solution for testing
+app.use(bodyParser.text());
 app.use(cors({ origin: true }));
 
 // Hip Hop Xpress Endpoint Imports

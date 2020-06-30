@@ -273,7 +273,6 @@ routes.post('/:id/images', (req, res) => {
         if (Array.isArray(req.body)) {
           // Validate all image objects before adding
           for (const image of req.body) {
-            console.log("image", image)
             const validation = variationImage.validate(image);
 
             // Throw error if image is invalid
@@ -310,6 +309,7 @@ routes.post('/:id/images', (req, res) => {
 
         // Fetch original images and add new images
         images = doc.data().images;
+
         for (const newImage of newImages) {
           images.push(newImage);
         }

@@ -27,6 +27,9 @@ afterAll(async () => {
   functionsTest.cleanup();
 });
 
+/**
+ * Test endpoints
+ */
 describe('Run test endpoints', () => {
   it('/alive', async () => {
     const res = await supertest(api).get('/alive');
@@ -41,163 +44,129 @@ describe('Run test endpoints', () => {
   });
 });
 
-describe('GET endpoints', () => {
-  it('/v1/variations', async () => {
-    const res = await supertest(api).get(base);
-    expect(res.status).toBe(httpCodes.OK);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body).toHaveLength(numVariations);
-  });
-});
-
-
-/**
- * Test endpoints
- */
-// describe('Run test endpoints', () => {
-//   test('sends correct message for GET /alive', async () => {
-//     const response = await supertest(app).get('/alive');
-
-//     expect(response.status).toBe(httpCodes.OK);
-//     expect(response.text).toEqual('The Hip Hop Xpress API is alive!');
-
-//   });
-
-//   test('sends correct message for GET /hello-world', async () => {
-//     const response = await supertest(app).get('/hello-world');
-
-//     expect(response.status).toBe(httpCodes.OK);
-//     expect(response.text).toEqual('Hello World!');
-
-//   });
-
-// });
 
 /**
  * Variations Endpoints Unit Tests
  * 
  * NOTE: all tests look at the production Firestore database
  * TODO: find a way to run unit tests using Firestore emulator instead of actual database
+ *       I've tried doing this but it's hard and may take a while. Will try with another collection
  */
 
-/**
- * GET endpoints
- */
-// describe('GET endpoint tests', () => {
+// GET Endpoints
+describe('GET endpoints', () => {
 
-//   test('GET /v1/variations - retrieves all variations', async () => {
+  it('GET /v1/variations', async () => {
 
-//     const response = await supertest(app).get(base);
+    const res = await supertest(api).get(base);
 
-//     // GET /v1/variations should return an array of variation objects
-//     // with 2 variations
-//     expect(response.status).toBe(httpCodes.OK);
-//     expect(Array.isArray(response.body)).toBe(true)
-//     expect(response.body).toHaveLength(numVariations);
+    expect(res.status).toBe(httpCodes.OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toHaveLength(numVariations);
 
-//   });
+  });
 
-//   test('GET /v1/variations/:id - retrieves variation by ID', async () => {
+  it('GET /v1/variations/:id', async () => {
 
-//     // Assuming that there is at least one variation
-//     const response = await supertest(app).get(base + '/0');
+    // Assuming that there is at least one variation
+    const res = await supertest(api).get(base + '/0');
 
-//     // Verify that the success response returns an object
-//     expect(response.status).toBe(httpCodes.OK);
-//     expect(typeof response.body).toEqual('object');
+    // Verify that the success response returns an object
+    expect(res.status).toBe(httpCodes.OK);
+    expect(typeof res.body).toEqual('object');
 
-//     const variation = response.body;
+    const variation = res.body;
 
-//     // Verify the contents of the variation object
-//     expect(variation.id).toEqual(0);
-//     expect(variation.date).not.toBeUndefined();
+    // Verify the contents of the variation object
+    expect(variation.id).toEqual(0);
+    expect(variation.date).not.toBeUndefined();
 
-//     // Check that the description and images arrays both have entries
-//     expect(Array.isArray(variation.description)).toBe(true);
-//     expect(variation.description.length).toBeGreaterThan(0);
+    // Check that the description and images arrays both have entries
+    expect(Array.isArray(variation.description)).toBe(true);
+    expect(variation.description.length).toBeGreaterThan(0);
 
-//     expect(Array.isArray(variation.images)).toBe(true);
-//     expect(variation.images.length).toBeGreaterThan(0);
+    expect(Array.isArray(variation.images)).toBe(true);
+    expect(variation.images.length).toBeGreaterThan(0);
 
-//   });
+  });
 
-//   test('GET /v1/variations/:id/images - retrieves images by ID', async () => {
+  it('GET /v1/variations/:id/images', async () => {
 
-//     // Assuming there is at least one variation
-//     const response = await supertest(app).get(base + '/0/images');
+    // Assuming there is at least one variation
+    const res = await supertest(api).get(base + '/0/images');
 
-//     // Verify that the success response returns an array
-//     expect(response.status).toBe(httpCodes.OK);
-//     expect(Array.isArray(response.body)).toBe(true);
+    // Verify that the success response returns an array
+    expect(res.status).toBe(httpCodes.OK);
+    expect(Array.isArray(res.body)).toBe(true);
 
-//     // Images should have at least on image object
-//     const images = response.body;
-//     expect(images.length).toBeGreaterThan(0);
+    // Images should have at least on image object
+    const images = res.body;
+    expect(images.length).toBeGreaterThan(0);
 
-//     // Check the contents of image
-//     const image = images[0];
-//     expect(image.url).not.toBeUndefined();
-//     expect(image.caption).not.toBeUndefined();
-//     expect(image.componentImage).not.toBeUndefined();
+    // Check the contents of image
+    const image = images[0];
+    expect(image.url).not.toBeUndefined();
+    expect(image.caption).not.toBeUndefined();
+    expect(image.componentImage).not.toBeUndefined();
 
-//   });
+  });
 
-//   test('GET /v1/variations/:id/description - retrieves desc by ID', async () => {
+  it('GET /v1/variations/:id/description', async () => {
 
-//     // Assuming there is at least one variation
-//     const response = await supertest(app).get(base + '/0/description');
+    // Assuming there is at least one variation
+    const res = await supertest(api).get(base + '/0/description');
 
-//     // Verify success response returns array
-//     expect(response.status).toBe(httpCodes.OK);
-//     expect(Array.isArray(response.body)).toBe(true);
+    // Verify success response returns array
+    expect(res.status).toBe(httpCodes.OK);
+    expect(Array.isArray(res.body)).toBe(true);
 
-//     const description = response.body;
-//     expect(description.length).toBeGreaterThan(0);
+    const description = res.body;
+    expect(description.length).toBeGreaterThan(0);
 
-//   });
+  });
 
-// });
+});
 
 /**
  * GET endpoint tests with errors
  * These endpoints should send identical errors
  */
-// describe('GET endpoint error tests', () => {
+describe('GET endpoint errors', () => {
 
-//   // Setup expected error
-//   let id = 999;
+  // Setup expected error
+  let id = 999;
 
-//   const expectedError = {
-//     type: 'id_not_found_error',
-//     code: '422',
-//     message: `The requested variation with id ${id} does not exist!`,
-//     param: 'id',
-//     original: null
-//   };
+  const expectedError = {
+    type: 'id_not_found_error',
+    code: '422',
+    message: `The requested variation with id ${id} does not exist!`,
+    param: 'id',
+    original: null
+  };
 
-//   test('GET /v1/variations/:id - nonexistent id', async () => {
-//     // Using nonexistent id
-//     const response = await supertest(app).get(base + `/${id}`);
+  it('GET /v1/variations/:id - nonexistent id', async () => {
+    // Using nonexistent id
+    const response = await supertest(api).get(base + `/${id}`);
 
-//     expect(response.status).toBe(httpCodes.INVALID_PARAMS);
-//     expect(response.body).toEqual(expectedError);
-//   });
+    expect(response.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
+  });
 
-//   test('GET /v1/variations/:id/images - nonexistent id', async() => {
-//     const response = await supertest(app).get(base + `/${id}/images`);
+  it('GET /v1/variations/:id/images - nonexistent id', async() => {
+    const response = await supertest(api).get(base + `/${id}/images`);
 
-//     expect(response.status).toBe(httpCodes.INVALID_PARAMS);
-//     expect(response.body).toEqual(expectedError);
-//   });
+    expect(response.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
+  });
 
-//   test('GET /v1/variations/:id/description - nonexistent id', async() => {
-//     const response = await supertest(app).get(base + `/${id}/description`);
+  it('GET /v1/variations/:id/description - nonexistent id', async() => {
+    const response = await supertest(api).get(base + `/${id}/description`);
 
-//     expect(response.status).toBe(httpCodes.INVALID_PARAMS);
-//     expect(response.body).toEqual(expectedError);
-//   });
+    expect(response.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
+  });
 
-// });
+});
 
 /**
  * POST endpoint tests
@@ -212,144 +181,132 @@ describe('GET endpoints', () => {
  * - deletes the test variation after all tests run
  * 
  */
-// describe('POST endpoint tests', () => {
+describe('POST endpoint tests', () => {
 
-//   // Mock variation/image/description to add for POST requests
-//   const testVariation = {
-//     id: 999,
-//     name: 'test variation',
-//     date: '2020',
-//     images: [
-//       {
-//         url: 'https://www.google.com',
-//         caption: 'this isn\'t a real image',
-//         componentImage: false,
-//       }
-//     ],
-//     description: [
-//       'a single entry in the description'
-//     ]
-//   };
+  // Mock variation/image/description to add for POST requests
+  const var1 = {
+    id: 999,
+    name: 'test variation',
+    date: '2020',
+    images: [
+      {
+        url: 'https://www.google.com',
+        caption: 'this isn\'t a real image',
+        componentImage: false,
+      }
+    ],
+    description: [
+      'a single entry in the description'
+    ]
+  };
 
-//   const testImage = {
-//     url: 'https://www.google.com',
-//     caption: 'another test image',
-//     componentImage: false
-//   };
+  // Construct another test variation with different ID
+  const var2 = {
+    ...var1,
+    id: 1000
+  };
 
-//   // Create test variation before each test
-//   beforeEach(async () => {
-//     await supertest(app)
-//       .post(base)
-//       .set('Accept', /json/)
-//       .send(testVariation)
-//       .expect(httpCodes.OK);
-//   })
+  const testImage = {
+    url: 'https://www.google.com',
+    caption: 'another test image',
+    componentImage: false
+  };
 
-//   // Delete the test variation after testing
-//   afterEach(async () => {
-//     await supertest(app).delete(`${base}/${testVariation.id}`);
-//   });
+  // Create test variations before running unit tests
+  beforeAll(async () => {
+    await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(var1)
+      .expect(httpCodes.OK);
 
-//   test('POST /v1/variations - creates new variation', async () => {
+    await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(var2)
+      .expect(httpCodes.OK);
+  });
 
-//     // Test variation has already been created in beforeEach block
-//     // Just check that it exists and is equal
-//     const response = await supertest(app).get(`${base}/${testVariation.id}`);
-//     expect(response.status).toBe(httpCodes.OK);
-//     expect(response.body).toEqual(testVariation);
+  // Delete the test variation after tests
+  afterAll(async () => {
+    await supertest(api).delete(`${base}/${var1.id}`);
+    await supertest(api).delete(`${base}/${var2.id}`);
+  });
 
-//   });
+  it('POST /v1/variations - creates new variation', async () => {
 
-//   test('POST /v1/variations/:id/images - add image', async () => {
+    // Test variation has already been created in beforeEach block
+    // Just check that it exists and is equal
+    const response = await supertest(api).get(`${base}/${var1.id}`);
+    expect(response.status).toBe(httpCodes.OK);
+    expect(response.body).toEqual(var1);
 
-//     const response = await supertest(app)
-//       .post(`${base}/${testVariation.id}/images`)
-//       .set('Accept', /json/)
-//       .send(testImage);
+  });
 
-//     const expectedNewLength = 2;  // original image + test image
-
-//     // Response should contain updated images array
-//     expect(response.status).toBe(httpCodes.OK);
-//     expect(Array.isArray(response.body)).toBe(true);
-//     expect(response.body).toHaveLength(expectedNewLength);
-//     expect(response.body).toContainEqual(testImage);
-
-//   });
-
-//   test('POST /v1/variations/:id/images - add multiple images', async () => {
-
-//     // An array of 3 test images
-//     const imagesToAdd = [
-//       testImage,
-//       testImage,
-//       testImage
-//     ];
-
-//     // original image + three new test images
-//     const expectedNewLength = 4;
-
-//     const response = await supertest(app)
-//       .post(`${base}/${testVariation.id}/images`)
-//       .set('Accept', /json/)
-//       .send(imagesToAdd);
-
-//     // Response should contain updated images array
-//     expect(response.status).toBe(httpCodes.OK);
-//     expect(Array.isArray(response.body)).toBe(true);
-//     expect(response.body).toHaveLength(expectedNewLength);
-//     expect(response.body).toContainEqual(testImage);
-
-//   });
-
-//   test('POST /v1/variations/:id/description - add entry', async() => {
-
-//     const entry = 'entry to add to description';
-
-//     // original entry + new entry
-//     const expectedNewLength = 2;
+  it('POST /v1/variations/:id/images', async () => {
     
-//     const response = await supertest(app)
-//       .post(`${base}/${testVariation.id}/description`)
-//       .set('Accept', /json/)
-//       .send(entry);
+    let expectedNewLength = 2;
 
-//     // Response should contain updated description
-//     expect(response.status).toBe(httpCodes.OK);
-//     expect(Array.isArray(response.body)).toBe(true);
-//     expect(response.body).toHaveLength(expectedNewLength);
-//     expect(response.body).toContainEqual(entry);
+    const firstRes = await supertest(api)
+      .post(`${base}/${var1.id}/images`)
+      .set('Accept', /json/)
+      .send(testImage);
 
-//   });
+    expect(firstRes.status).toBe(httpCodes.OK);
+    expect(Array.isArray(firstRes.body)).toBe(true);
+    expect(firstRes.body).toHaveLength(expectedNewLength);
 
-//   test('POST /v1/variations/:id/description - add multiple entries', async() => {
+    let images = [
+      testImage,
+      testImage,
+      testImage
+    ];
 
-//     const entries = [
-//       'multiple entries...',
-//       '... added to description...',
-//       '... in an array!'
-//     ];
+    // Make the new test images unique
+    let i = 1;
+    let newImages = images.map(img => (
+      {
+        url: img.url,
+        componentImage: false,
+        caption: (i++).toString()
+      }
+    ));
 
-//     // original entry + 3 new entries
-//     const expectedNewLength = 4;
+    expectedNewLength = 4;
+
+    const secondRes = await supertest(api)
+      .post(`${base}/${var2.id}/images`)
+      .set('Accept', /json/)
+      .send(newImages);
     
-//     const response = await supertest(app)
-//       .post(`${base}/${testVariation.id}/description`)
-//       .set('Accept', /json/)
-//       .send(entries);
+      expect(secondRes.status).toBe(httpCodes.OK);
+      expect(Array.isArray(secondRes.body)).toBe(true);
+      expect(secondRes.body).toHaveLength(expectedNewLength);
 
-//     // Response should contain updated description
-//     expect(response.status).toBe(httpCodes.OK);
-//     expect(Array.isArray(response.body)).toBe(true);
-//     expect(response.body).toHaveLength(expectedNewLength);
+  });
 
-//   });
+  it('POST /v1/variations/:id/description', async() => {
 
-// });
+    const endpoint = `${base}/${var1.id}/description`;
+    const newEntries = [
+      'multiple entries...',
+      '... added to description...',
+      '... in an array!'
+    ];
 
-// Required to close connection to server once tests are done
-// afterAll(done => {
-//   app.close();
-//   done();
-// });
+    // 1 original entry + 3 new entries
+    const expectedNewLength = 4;
+    
+    const res = await supertest(api)
+      .post(endpoint)
+      .set('Accept', /json/)
+      .send(newEntries);
+
+    // Response should contain updated description
+    expect(res.status).toBe(httpCodes.OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toHaveLength(expectedNewLength);
+
+  });
+
+});
