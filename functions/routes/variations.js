@@ -105,7 +105,19 @@ routes.post('/', (req, res) => {
       try {
         await postSchema.validateAsync(req.body);
       } catch (e) {
-        return res.status(422).send(e.details)
+        // Cherry pick information from Joi schema validation error
+        const schemaError = e.details[0];
+
+        const errorResponse = {
+          type: errorTypes.INVALID_REQUEST_ERR,
+          code: httpCodes.INVALID_PARAMS.toString(),
+          message: schemaError.message,
+          param: schemaError.context.key,
+          original: null,
+        };
+        console.log("errorResponse", errorResponse)
+        
+        return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
       }
 
       await db.collection('variations').doc(`/${req.body.id}/`)
@@ -116,6 +128,7 @@ routes.post('/', (req, res) => {
           description: req.body.description,
           images: req.body.images,
         });
+
       return res.status(200).send(req.body);
     } catch (e) {
       return constructServerError(res, e);

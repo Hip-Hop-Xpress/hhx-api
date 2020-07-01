@@ -53,6 +53,23 @@ describe('Run test endpoints', () => {
  *       I've tried doing this but it's hard and may take a while. Will try with another collection
  */
 
+// A test variation object with technically 'correct' schema
+const testVariation = {
+  id: 999,
+  name: 'test variation',
+  date: '2020',
+  images: [
+    {
+      url: 'https://www.google.com',
+      caption: 'this isn\'t a real image',
+      componentImage: false,
+    }
+  ],
+  description: [
+    'a single entry in the description'
+  ]
+};
+
 // GET Endpoints
 describe('GET endpoints', () => {
 
@@ -181,28 +198,14 @@ describe('GET endpoint errors', () => {
  * - deletes the test variation after all tests run
  * 
  */
-describe('POST endpoint tests', () => {
+describe('POST endpoint tests (tests /DELETE too)', () => {
 
   // Mock variation/image/description to add for POST requests
-  const var1 = {
-    id: 999,
-    name: 'test variation',
-    date: '2020',
-    images: [
-      {
-        url: 'https://www.google.com',
-        caption: 'this isn\'t a real image',
-        componentImage: false,
-      }
-    ],
-    description: [
-      'a single entry in the description'
-    ]
-  };
+  const testVariation1 = testVariation;
 
   // Construct another test variation with different ID
-  const var2 = {
-    ...var1,
+  const testVariation2 = {
+    ...testVariation1,
     id: 1000
   };
 
@@ -217,29 +220,29 @@ describe('POST endpoint tests', () => {
     await supertest(api)
       .post(base)
       .set('Accept', /json/)
-      .send(var1)
+      .send(testVariation1)
       .expect(httpCodes.OK);
 
     await supertest(api)
       .post(base)
       .set('Accept', /json/)
-      .send(var2)
+      .send(testVariation2)
       .expect(httpCodes.OK);
   });
 
   // Delete the test variation after tests
   afterAll(async () => {
-    await supertest(api).delete(`${base}/${var1.id}`);
-    await supertest(api).delete(`${base}/${var2.id}`);
+    await supertest(api).delete(`${base}/${testVariation1.id}`);
+    await supertest(api).delete(`${base}/${testVariation2.id}`);
   });
 
   it('POST /v1/variations - creates new variation', async () => {
 
     // Test variation has already been created in beforeEach block
     // Just check that it exists and is equal
-    const response = await supertest(api).get(`${base}/${var1.id}`);
+    const response = await supertest(api).get(`${base}/${testVariation1.id}`);
     expect(response.status).toBe(httpCodes.OK);
-    expect(response.body).toEqual(var1);
+    expect(response.body).toEqual(testVariation1);
 
   });
 
@@ -248,7 +251,7 @@ describe('POST endpoint tests', () => {
     let expectedNewLength = 2;
 
     const firstRes = await supertest(api)
-      .post(`${base}/${var1.id}/images`)
+      .post(`${base}/${testVariation1.id}/images`)
       .set('Accept', /json/)
       .send(testImage);
 
@@ -275,7 +278,7 @@ describe('POST endpoint tests', () => {
     expectedNewLength = 4;
 
     const secondRes = await supertest(api)
-      .post(`${base}/${var2.id}/images`)
+      .post(`${base}/${testVariation2.id}/images`)
       .set('Accept', /json/)
       .send(newImages);
     
@@ -287,7 +290,7 @@ describe('POST endpoint tests', () => {
 
   it('POST /v1/variations/:id/description', async() => {
 
-    const endpoint = `${base}/${var1.id}/description`;
+    const endpoint = `${base}/${testVariation1.id}/description`;
     const newEntries = [
       'multiple entries...',
       '... added to description...',
@@ -306,6 +309,87 @@ describe('POST endpoint tests', () => {
     expect(res.status).toBe(httpCodes.OK);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body).toHaveLength(expectedNewLength);
+
+  });
+
+});
+
+describe('POST endpoint errors (schema validation)', () => {
+  
+  it('POST /v1/variations - negative id', async () => {
+
+    const negativeId = {
+      ...testVariation,
+      id: -1
+    };
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(negativeId);
+
+    const expectedError = {
+      type: errorTypes.INVALID_REQUEST_ERR,
+      code: httpCodes.INVALID_PARAMS.toString(),
+      message: '"id" must be larger than or equal to 0',
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST /v1/variations - non integer id', async () => {
+
+    const nonIntegerId = {
+      ...testVariation,
+      id: 0.5
+    };
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(nonIntegerId);
+    
+    const expectedError = {
+      type: errorTypes.INVALID_REQUEST_ERR,
+      code: httpCodes.INVALID_PARAMS.toString(),
+      message: '"id" must be an integer',
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST /v1/variations - empty name', async () => {
+
+    // Using unique ID for each test
+    const emptyName = {
+      ...testVariation,
+      id: 600,
+      name: ''
+    };
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(emptyName);
+    
+    const expectedError = {
+      type: errorTypes.INVALID_REQUEST_ERR,
+      code: httpCodes.INVALID_PARAMS.toString(),
+      message: '"name" is not allowed to be empty',
+      param: 'name',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
 
   });
 
