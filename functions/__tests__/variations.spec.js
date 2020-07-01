@@ -18,10 +18,12 @@ const numVariations = 2;
 let adminInitStub;
 const functionsTest = test();
 
+// Initialize the api before every test
 beforeAll(async () => {
   adminInitStub = sinon.stub(admin, 'initializeApp');
 });
 
+// Clean up the api after every test
 afterAll(async () => {
   adminInitStub.restore();
   functionsTest.cleanup();
@@ -29,6 +31,7 @@ afterAll(async () => {
 
 /**
  * Test endpoints
+ * TODO: move these to a different file
  */
 describe('Run test endpoints', () => {
   it('/alive', async () => {
@@ -54,6 +57,7 @@ describe('Run test endpoints', () => {
  */
 
 // A test variation object with technically 'correct' schema
+// Used to test POST endpoints and errors
 const testVariation = {
   id: 999,
   name: 'test variation',
@@ -68,6 +72,14 @@ const testVariation = {
   description: [
     'a single entry in the description'
   ]
+};
+
+// A test image object with 'correct' schema
+// Used to test POST endpoints and errors
+const testImage = {
+  url: 'https://www.facebook.com',
+  caption: 'this is just a test image',
+  componentImage: true,
 };
 
 // GET Endpoints
@@ -314,7 +326,15 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
 
 });
 
-describe('POST /v1/variations schema validation errors', () => {
+/**
+ * POST errors tests for /v1/variations ONLY
+ * 
+ * Sends a bunch of variation objects with incorrect schema
+ * to test error responses/handling
+ * 
+ * Image schema errors are handled in another test section
+ */
+describe('POST /v1/variations schema errors', () => {
   
   it('tests negative id', async () => {
 
@@ -420,7 +440,7 @@ describe('POST /v1/variations schema validation errors', () => {
 
   });
 
-  it('POST /v1/variations - empty description', async () => {
+  it('empty description', async () => {
 
     // Using unique ID for each test
     const emptyDescription = {
@@ -439,6 +459,159 @@ describe('POST /v1/variations schema validation errors', () => {
       code: httpCodes.INVALID_PARAMS.toString(),
       message: '"description" does not contain 1 required value(s)',
       param: 'description',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('empty images', async () => {
+    
+    // Using unique ID for each test
+    const emptyImages = {
+      ...testVariation,
+      id: 603,
+      images: []
+    };
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(emptyImages);
+    
+    const expectedError = {
+      type: errorTypes.INVALID_REQUEST_ERR,
+      code: httpCodes.INVALID_PARAMS.toString(),
+      message: '"images" must contain at least 1 items',
+      param: 'images',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+});
+
+/**
+ * POST error tests for /v1/variations + /:id/images
+ * 
+ * Used to test image object schema validation
+ * Separated test section since images are their own object with separate schema
+ */
+describe('POST /v1/variations + /:id/images schema errors', () => {
+
+  it('POST /v1/variations - tests invalid URL', async() => {
+
+    // Using unique ID for each test
+    const invalidUrl = {
+      ...testVariation,
+      id: 604,
+      images: [
+        {
+          ...testImage,
+          url: 'not a valid url lol'
+        }
+      ]
+    };
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(invalidUrl);
+    
+    const expectedError = {
+      type: errorTypes.INVALID_REQUEST_ERR,
+      code: httpCodes.INVALID_PARAMS.toString(),
+      message: '"images[0].url" must be a valid uri',
+      param: 'url',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST /v1/variations - caption undefined', async() => {
+
+    // Using unique ID for each test
+    const captionUndefined = {
+      ...testVariation,
+      id: 605,
+      images: [
+        {
+          ...testImage,
+          caption: undefined
+        }
+      ]
+    };
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(captionUndefined);
+    
+    const expectedError = {
+      type: errorTypes.INVALID_REQUEST_ERR,
+      code: httpCodes.INVALID_PARAMS.toString(),
+      message: '"images[0].caption" is required',
+      param: 'caption',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST /v1/variations/:id/images - empty url', async() => {
+
+    // id shouldn't matter for error testing
+    const id = 606;
+
+    const emptyUrl = {
+      ...testImage,
+      url: undefined
+    };
+
+    const res = await supertest(api)
+      .post(`${base}/${id}/images`)
+      .set('Accept', /json/)
+      .send(emptyUrl);
+    
+    const expectedError = {
+      type: errorTypes.INVALID_REQUEST_ERR,
+      code: httpCodes.INVALID_PARAMS.toString(),
+      message: '"url" is required',
+      param: 'url',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST /v1/variations/:id/images - nonexistent id', async() => {
+
+    // this id won't exist
+    const id = 607;
+
+    // Valid image, nonexistent id
+    const res = await supertest(api)
+      .post(`${base}/${id}/images`)
+      .set('Accept', /json/)
+      .send(testImage);
+    
+    const expectedError = {
+      type: 'id_not_found_error',
+      code: '422',
+      message: `The requested variation with id ${id} does not exist!`,
+      param: 'id',
       original: null
     };
 

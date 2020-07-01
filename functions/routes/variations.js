@@ -76,6 +76,26 @@ const sendNonexistentIdError = (res, id) => {
 }
 
 /**
+ * 
+ * @param {Response} res the error Response to be sent
+ * @param {Object} e a Joi schema validation error
+ */
+const sendSchemaValidationError = (res, e) => {
+  // Cherry pick information from Joi schema validation error
+  const schemaError = e.details[0];
+
+  const errorResponse = {
+    type: errorTypes.INVALID_REQUEST_ERR,
+    code: httpCodes.INVALID_PARAMS.toString(),
+    message: schemaError.message,
+    param: schemaError.context.key,
+    original: null,
+  };
+
+  return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+}
+
+/**
  * Sends and logs an error response upon catching an unknown error
  * 
  * @param {Response} res the error Response to be sent
@@ -105,18 +125,7 @@ routes.post('/', (req, res) => {
       try {
         await postSchema.validateAsync(req.body);
       } catch (e) {
-        // Cherry pick information from Joi schema validation error
-        const schemaError = e.details[0];
-
-        const errorResponse = {
-          type: errorTypes.INVALID_REQUEST_ERR,
-          code: httpCodes.INVALID_PARAMS.toString(),
-          message: schemaError.message,
-          param: schemaError.context.key,
-          original: null,
-        };
-        
-        return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+        return sendSchemaValidationError(res, e);
       }
 
       await db.collection('variations').doc(`/${req.body.id}/`)
@@ -302,21 +311,31 @@ routes.post('/:id/images', (req, res) => {
           await variationImage.validateAsync(req.body);
           newImages.push(req.body);
         } else {
-          return res.status(422).send('Error: body must be (array of) Variation image object(s)');
+          // Send error if request body is incorrect type
+          const errorResponse = {
+            type: errorTypes.INVALID_REQUEST_ERR,
+            code: httpCodes.INVALID_PARAMS,
+            message: 'Request body must be (array of) Variation image object(s)',
+            param: undefined,
+            original: undefined
+          };
+
+          return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
         }
 
       } catch (e) {
         // Schema validation errors end up here
-        return res.status(422).send(e.details);
+        return sendSchemaValidationError(res, e);
       }
-    
+      
+      // Once all images have been validated, add them to the variation with id
       let images = [];
       const document = db.collection('variations').doc(req.params.id);
       const docRef = document;
 
       await document.get().then(doc => {
         if (!doc.exists) {
-          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+          return sendNonexistentIdError(res, req.params.id);
         }
 
         // Fetch original images and add new images
