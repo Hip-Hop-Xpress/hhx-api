@@ -314,9 +314,9 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
 
 });
 
-describe('POST endpoint errors (schema validation)', () => {
+describe('POST /v1/variations schema validation errors', () => {
   
-  it('POST /v1/variations - negative id', async () => {
+  it('tests negative id', async () => {
 
     const negativeId = {
       ...testVariation,
@@ -341,7 +341,7 @@ describe('POST endpoint errors (schema validation)', () => {
 
   });
 
-  it('POST /v1/variations - non integer id', async () => {
+  it('tests non integer id', async () => {
 
     const nonIntegerId = {
       ...testVariation,
@@ -366,7 +366,7 @@ describe('POST endpoint errors (schema validation)', () => {
 
   });
 
-  it('POST /v1/variations - empty name', async () => {
+  it('tests empty name', async () => {
 
     // Using unique ID for each test
     const emptyName = {
@@ -385,6 +385,60 @@ describe('POST endpoint errors (schema validation)', () => {
       code: httpCodes.INVALID_PARAMS.toString(),
       message: '"name" is not allowed to be empty',
       param: 'name',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests short date', async () => {
+
+    // Using unique ID for each test
+    const shortDate = {
+      ...testVariation,
+      id: 601,
+      date: '200'
+    };
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(shortDate);
+    
+    const expectedError = {
+      type: errorTypes.INVALID_REQUEST_ERR,
+      code: httpCodes.INVALID_PARAMS.toString(),
+      message: '"date" length must be at least 4 characters long',
+      param: 'date',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST /v1/variations - empty description', async () => {
+
+    // Using unique ID for each test
+    const emptyDescription = {
+      ...testVariation,
+      id: 602,
+      description: []
+    };
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(emptyDescription);
+    
+    const expectedError = {
+      type: errorTypes.INVALID_REQUEST_ERR,
+      code: httpCodes.INVALID_PARAMS.toString(),
+      message: '"description" does not contain 1 required value(s)',
+      param: 'description',
       original: null
     };
 

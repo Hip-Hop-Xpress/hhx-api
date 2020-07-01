@@ -82,7 +82,7 @@ const sendNonexistentIdError = (res, id) => {
  * @param {Object} e the unknown error thrown
  */
 const constructServerError = (res, e) => {
-  console.log(e);
+  console.log(e);  // is meant to be here, NOT for testing
 
   const errorResponse = {
     type: errorTypes.API_ERR,
@@ -115,7 +115,6 @@ routes.post('/', (req, res) => {
           param: schemaError.context.key,
           original: null,
         };
-        console.log("errorResponse", errorResponse)
         
         return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
       }
