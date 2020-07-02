@@ -5,6 +5,9 @@ const routes = require('express').Router();
 const admin = require('firebase-admin');
 const db = admin.firestore();
 
+const httpCodes = require('../errors/codes');
+const errorTypes = require('../errors/types');
+
 /**
  * Schematics for Variation data
  */
@@ -49,9 +52,90 @@ const putSchema = Joi.object({
  *   POST, GET               /variations/:id/description
  * 
  * TODO: add support for query strings eventually
- * TODO: fix DRY for error handling and accessing simple items
- * TODO: return uniform error responses
+ * TODO: move these error constructing functions to ../errors to be used by all routes
  */
+
+/**
+ * Sends error response when a nonexistent ID is requested
+ * 
+ * @param {Response} res the error Response to be sent
+ * @param {number} id an invalid ID (doesn't point to variation)
+ * @returns {Response} the response with correct status and body
+ */
+const sendNonexistentIdError = (res, id) => {
+  const errorResponse = {
+    type: errorTypes.ID_NOT_FOUND_ERR,
+    code: httpCodes.INVALID_PARAMS.toString(),
+    message: `The requested variation with id ${id} does not exist!`,
+    param: 'id',
+    original: null
+  };
+
+  return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+}
+
+/**
+ * Sends error notifying user of invalid request according to schema
+ * Param 'e' must be a Joi schema validation error
+ * 
+ * @param {Response} res the error Response to be sent
+ * @param {Object} e a Joi schema validation error
+ * @returns {Response} the response with correct status and body
+ */
+const sendSchemaValidationError = (res, e) => {
+  // Cherry pick information from Joi schema validation error
+  const schemaError = e.details[0];
+
+  const errorResponse = {
+    type: errorTypes.INVALID_REQUEST_ERR,
+    code: httpCodes.INVALID_PARAMS.toString(),
+    message: schemaError.message,
+    param: schemaError.context.key,
+    original: null,
+  };
+
+  return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+}
+
+/**
+ * Sends an invalid params/request error with given message
+ * 
+ * @param {Response} res the error Response to be sent
+ * @param {String} message error message about correct type to include
+ * @returns {Response} the response with correct status and body
+ */
+const sendIncorrectTypeError = (res, message) => {
+  const errorResponse = {
+    type: errorTypes.INVALID_REQUEST_ERR,
+    code: httpCodes.INVALID_PARAMS.toString(),
+    message: message,
+    param: null,
+    original: null
+  };
+
+  return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+}
+
+/**
+ * Sends and logs an error response upon catching an unknown error
+ * 
+ * @param {Response} res the error Response to be sent
+ * @param {Object} e the unknown error thrown
+ * @returns {Response} the response with correct status and body
+ */
+const constructServerError = (res, e) => {
+  console.log(e);  // is meant to be here, NOT for testing
+
+  const errorResponse = {
+    type: errorTypes.API_ERR,
+    code: httpCodes.SERVER_ERR.toString(),
+    message: 'An uncaught error was thrown. See "original" for details',
+    param: null,
+    original: e,
+  };
+
+  return res.status(httpCodes.SERVER_ERR).send(errorResponse);
+}
 
 /**
  * POST /variations
@@ -63,7 +147,7 @@ routes.post('/', (req, res) => {
       try {
         await postSchema.validateAsync(req.body);
       } catch (e) {
-        return res.status(422).send(e.details)
+        return sendSchemaValidationError(res, e);
       }
 
       await db.collection('variations').doc(`/${req.body.id}/`)
@@ -74,10 +158,10 @@ routes.post('/', (req, res) => {
           description: req.body.description,
           images: req.body.images,
         });
-      return res.status(200).send(req.body);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send(error);
+
+      return res.status(httpCodes.OK).send(req.body);
+    } catch (e) {
+      return constructServerError(res, e);
     }
   })();
 
@@ -112,15 +196,14 @@ routes.get('/', (req, res) => {
         }
 
         // Send the response once every doc has been put in
-        return res.status(200).send(response);
+        return res.status(httpCodes.OK).send(response);
       });
 
       // Return null for linter's sake
       return null;
 
-    } catch (error) {
-      console.log(error);
-      return res.status(500).send(error);
+    } catch (e) {
+      return constructServerError(res, e);
     }
   })();
 
@@ -134,13 +217,14 @@ routes.get('/:id', (req, res) => {
     try {
       const document = db.collection('variations').doc(req.params.id);
 
-      await document.get().then(
-        doc => {
-          if (!doc.exists) {
-            return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
-          } else {
+      await document.get().then(doc => {
+          if (doc.exists) {
+            // Fetch and send data if variation of :id is found
             let response = doc.data();
-            return res.status(200).send(response);
+            return res.status(httpCodes.OK).send(response);
+          } else {
+            // If ID is not found, send error response
+            return sendNonexistentIdError(res, req.params.id);
           }
         }
       );
@@ -149,8 +233,7 @@ routes.get('/:id', (req, res) => {
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(500).send(e);
+      return constructServerError(res, e);
     }
   })();
 });
@@ -165,7 +248,7 @@ routes.put('/:id', (req, res) => {
       try {
         await putSchema.validateAsync(req.body);
       } catch (e) {
-        return res.status(422).send(e.details);
+        return sendSchemaValidationError(res, e);
       }
 
       const document = db.collection('variations').doc(req.params.id);
@@ -173,22 +256,21 @@ routes.put('/:id', (req, res) => {
 
       await document.get().then(doc => {
         if (!doc.exists) {
-          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+          return sendNonexistentIdError(res, req.params.id);
         }
 
         docRef.update(req.body);
 
         // Spread operator to combine old data with updated data
         // Shared fields are overwritten by rightmost object (updated data)
-        return res.status(200).send({...doc.data(), ...req.body});
+        return res.status(httpCodes.OK).send({...doc.data(), ...req.body});
 
       });
 
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(500).send(e);
+      return constructServerError(res, e);
     }
   })();
 });
@@ -209,14 +291,13 @@ routes.delete('/:id', (req, res) => {
         
         const deletedVariation = doc.data();
         docRef.delete();
-        return res.status(200).send(deletedVariation);
+        return res.status(httpCodes.OK).send(deletedVariation);
       });
 
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(500).send(e);
+      return constructServerError(res, e);
     }
   })();
 });
@@ -235,7 +316,6 @@ routes.post('/:id/images', (req, res) => {
         if (Array.isArray(req.body)) {
           // Validate all image objects before adding
           for (const image of req.body) {
-            console.log("image", image)
             const validation = variationImage.validate(image);
 
             // Throw error if image is invalid
@@ -253,39 +333,44 @@ routes.post('/:id/images', (req, res) => {
           await variationImage.validateAsync(req.body);
           newImages.push(req.body);
         } else {
-          return res.status(422).send('Error: body must be (array of) Variation image object(s)');
+          // Send error if request body is incorrect type
+          return sendIncorrectTypeError(
+            res, 
+            'Request body must be (array of) Variation image object(s)'
+          );
         }
 
       } catch (e) {
         // Schema validation errors end up here
-        return res.status(422).send(e.details);
+        return sendSchemaValidationError(res, e);
       }
-    
+      
+      // Once all images have been validated, add them to the variation with id
       let images = [];
       const document = db.collection('variations').doc(req.params.id);
       const docRef = document;
 
       await document.get().then(doc => {
         if (!doc.exists) {
-          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+          return sendNonexistentIdError(res, req.params.id);
         }
 
         // Fetch original images and add new images
         images = doc.data().images;
+
         for (const newImage of newImages) {
           images.push(newImage);
         }
 
         docRef.update({images: images});
-        return res.status(200).send(images);
+        return res.status(httpCodes.OK).send(images);
 
       });
 
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(500).send(e);
+      return constructServerError(res, e);
     }
   })();
 })
@@ -299,18 +384,17 @@ routes.get('/:id/images', (req, res) => {
       const document = db.collection('variations').doc(req.params.id);
       
       await document.get().then(doc => {
-        if (!doc.exists) {
-          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+        if (doc.exists) {
+          return res.status(httpCodes.OK).send(doc.data().images);
         } else {
-          return res.status(200).send(doc.data().images);
+          return sendNonexistentIdError(res, req.params.id);
         }
       });
 
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(500).send(e);
+      return constructServerError(res, e);
     }
   })();
 });
@@ -331,7 +415,7 @@ routes.post('/:id/description', (req, res) => {
         await variationDescription.validateAsync(req.body);
         newParagraphs = req.body;
       } else {
-        return res.status(422).send('Error: body must be string or array of strings');
+        return sendIncorrectTypeError(res, 'Body must be string or array of strings');
       }
 
       const document = db.collection('variations').doc(req.params.id);
@@ -339,7 +423,7 @@ routes.post('/:id/description', (req, res) => {
 
       await document.get().then(doc => {
         if (!doc.exists) {
-          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+          return sendNonexistentIdError(res, req.params.id);
         }
 
         // Get the current description and add the additions
@@ -350,15 +434,14 @@ routes.post('/:id/description', (req, res) => {
 
         // Update the description and send response
         docRef.update({description: desc});
-        return res.status(200).send(desc);
+        return res.status(httpCodes.OK).send(desc);
 
       });
 
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(500).send(e);
+      return constructServerError(res, e);
     }
   })();
 })
@@ -372,18 +455,17 @@ routes.get('/:id/description', (req, res) => {
       const document = db.collection('variations').doc(req.params.id);
       
       await document.get().then(doc => {
-        if (!doc.exists) {
-          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+        if (doc.exists) {
+          return res.status(httpCodes.OK).send(doc.data().description);
         } else {
-          return res.status(200).send(doc.data().description);
+          return sendNonexistentIdError(res, req.params.id);
         }
       });
 
       return null;
 
     } catch (e) {
-      console.log(e);
-      return res.status(500).send(e);
+      return constructServerError(res, e);
     }
   })();
 })
