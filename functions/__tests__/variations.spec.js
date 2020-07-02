@@ -620,4 +620,37 @@ describe('POST /v1/variations + /:id/images schema errors', () => {
 
   });
 
+  it('POST /v1/variations/:id/images - invalid image in array', async () => {
+
+    // array of size 4 where array[2] is invalid
+    const imagesArray = [
+      testImage,
+      testImage,
+      {
+        ...testImage,
+        componentImage: undefined
+      },
+      testImage
+    ];
+
+    const id = 608;
+
+    const res = await supertest(api)
+      .post(`${base}/${id}/images`)
+      .set('Accept', /json/)
+      .send(imagesArray);
+
+    const expectedError = {
+      type: errorTypes.INVALID_REQUEST_ERR,
+      code: httpCodes.INVALID_PARAMS.toString(),
+      message: '"componentImage" is required',
+      param: 'componentImage',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
 });
