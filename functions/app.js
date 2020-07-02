@@ -22,7 +22,7 @@ app.use(cors({ origin: true }));
 const variations = require('./routes/variations');
 
 // Constants
-const { NOT_FOUND } = require('./errors/codes');
+const { URL_NOT_FOUND: NOT_FOUND } = require('./errors/codes');
 const errorTypes = require('./errors/types');
 
 /**

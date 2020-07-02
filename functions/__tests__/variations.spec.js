@@ -53,7 +53,9 @@ describe('Run test endpoints', () => {
  * 
  * NOTE: all tests look at the production Firestore database
  * TODO: find a way to run unit tests using Firestore emulator instead of actual database
- *       I've tried doing this but it's hard and may take a while. Will try with another collection
+ *       I've tried doing this but it's hard and may take a while. Will try with another collectio
+ * TODO: add more comprehensive error testing (mainly for schema validation)
+ * TODO: DRY for some of the test structuring
  */
 
 // A test variation object with technically 'correct' schema

@@ -52,8 +52,7 @@ const putSchema = Joi.object({
  *   POST, GET               /variations/:id/description
  * 
  * TODO: add support for query strings eventually
- * TODO: DRY for error handling and accessing simple items
- * TODO: return uniform error responses
+ * TODO: move these error constructing functions to ../errors to be used by all routes
  */
 
 /**

@@ -23,10 +23,15 @@ All endpoints in Version 1 of the API will be prefaced with `/v1`.
 You can also view the [error documentation](Errors) for planning on handling errors.
 
 ### Version 1 endpoints:
+A quick explanation of the table:
+* *Implemented* = Initial draft of endpoint has been written and likely deployed for testing
+* *Tested* = Test suite written and passed
+* *Connected to App* = App uses endpoint for fetching data
+
 Endpoint | Implemented | Tested | Connected to App
 -|-|-|-
 Historical artists | :x: | :x: | :x:
-[Variations](variations) | :heavy_check_mark: | :x: | :heavy_check_mark:
+[Variations](variations) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 Courses | :x: | :x: | :x:
 Projects | :x: | :x: | :x:
 Featured artists | :x: | :x: | :x:
