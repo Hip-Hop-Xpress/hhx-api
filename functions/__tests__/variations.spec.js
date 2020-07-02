@@ -711,3 +711,26 @@ describe('POST /v1/variations/:id/description errors', () => {
   });
 
 });
+
+describe('PUT /v1/variations/:id', () => {
+
+  // Setting up an initial variation which will have its values
+  // updated to be the updated variation
+  const initialVariation = testVariation;
+
+  const updatedVariation = {
+    id: 500,
+    name: 'the updated variation',
+    date: '2021',
+    description: [
+      'this is the description...',
+      '... of the updated variation'
+    ],
+    images: [
+      testImage,
+      testImage,
+      testImage
+    ]
+  };
+
+});
