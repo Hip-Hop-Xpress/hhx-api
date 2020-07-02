@@ -712,14 +712,22 @@ describe('POST /v1/variations/:id/description errors', () => {
 
 });
 
-describe('PUT /v1/variations/:id', () => {
+/**
+ * PUT tests for variations
+ */
+describe('PUT /v1/variations/:id updates variation', () => {
+
+  const id = 500;
 
   // Setting up an initial variation which will have its values
   // updated to be the updated variation
-  const initialVariation = testVariation;
+  const initialVariation = {
+    ...testVariation,
+    id: id
+  };
 
   const updatedVariation = {
-    id: 500,
+    id: id,
     name: 'the updated variation',
     date: '2021',
     description: [
@@ -732,5 +740,83 @@ describe('PUT /v1/variations/:id', () => {
       testImage
     ]
   };
+
+  // PUT and DELETE operations all use this endpoint
+  const endpoint = `${base}/${initialVariation.id}`
+
+  // POST the variation before testing PUT operations
+  beforeAll(async () => {
+
+    await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(initialVariation)
+      .expect(httpCodes.OK);
+
+  });
+
+  // DELETE the variation after testing
+  afterAll(async () => {
+    await supertest(api).delete(endpoint);
+  });
+
+  it('updates variation', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send(updatedVariation);
+
+    expect(res.status).toBe(httpCodes.OK);
+    expect(res.body).toEqual(updatedVariation);
+
+  });
+
+});
+
+describe('PUT /v1/variations/:id errors', () => {
+
+  const invalidId = 501;
+  const endpoint = `${base}/${invalidId}`;
+
+  it('tests for nonexistent id', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({name: 'valid test name'});
+
+    const expectedError = {
+      type: errorTypes.ID_NOT_FOUND_ERR,
+      code: httpCodes.INVALID_PARAMS.toString(),
+      message: `The requested variation with id ${invalidId} does not exist!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for empty name', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({name: ''});
+
+    const expectedError = {
+      type: errorTypes.INVALID_REQUEST_ERR,
+      code: httpCodes.INVALID_PARAMS.toString(),
+      message: '"name" is not allowed to be empty',
+      param: 'name',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
 
 });
