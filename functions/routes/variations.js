@@ -76,9 +76,12 @@ const sendNonexistentIdError = (res, id) => {
 }
 
 /**
+ * Sends error notifying user of invalid request according to schema
+ * Param 'e' must be a Joi schema validation error
  * 
  * @param {Response} res the error Response to be sent
  * @param {Object} e a Joi schema validation error
+ * @returns {Response} the response with correct status and body
  */
 const sendSchemaValidationError = (res, e) => {
   // Cherry pick information from Joi schema validation error
@@ -96,10 +99,30 @@ const sendSchemaValidationError = (res, e) => {
 }
 
 /**
+ * Sends an invalid params/request error with given message
+ * 
+ * @param {Response} res the error Response to be sent
+ * @param {String} message error message about correct type to include
+ * @returns {Response} the response with correct status and body
+ */
+const sendIncorrectTypeError = (res, message) => {
+  const errorResponse = {
+    type: errorTypes.INVALID_REQUEST_ERR,
+    code: httpCodes.INVALID_PARAMS.toString(),
+    message: message,
+    param: null,
+    original: null
+  };
+
+  return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+}
+
+/**
  * Sends and logs an error response upon catching an unknown error
  * 
  * @param {Response} res the error Response to be sent
  * @param {Object} e the unknown error thrown
+ * @returns {Response} the response with correct status and body
  */
 const constructServerError = (res, e) => {
   console.log(e);  // is meant to be here, NOT for testing
@@ -226,7 +249,7 @@ routes.put('/:id', (req, res) => {
       try {
         await putSchema.validateAsync(req.body);
       } catch (e) {
-        return res.status(422).send(e.details);
+        return sendSchemaValidationError(res, e);
       }
 
       const document = db.collection('variations').doc(req.params.id);
@@ -234,7 +257,7 @@ routes.put('/:id', (req, res) => {
 
       await document.get().then(doc => {
         if (!doc.exists) {
-          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+          return sendNonexistentIdError(res, req.params.id);
         }
 
         docRef.update(req.body);
@@ -312,15 +335,10 @@ routes.post('/:id/images', (req, res) => {
           newImages.push(req.body);
         } else {
           // Send error if request body is incorrect type
-          const errorResponse = {
-            type: errorTypes.INVALID_REQUEST_ERR,
-            code: httpCodes.INVALID_PARAMS,
-            message: 'Request body must be (array of) Variation image object(s)',
-            param: undefined,
-            original: undefined
-          };
-
-          return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+          return sendIncorrectTypeError(
+            res, 
+            'Request body must be (array of) Variation image object(s)'
+          );
         }
 
       } catch (e) {
@@ -398,7 +416,7 @@ routes.post('/:id/description', (req, res) => {
         await variationDescription.validateAsync(req.body);
         newParagraphs = req.body;
       } else {
-        return res.status(422).send('Error: body must be string or array of strings');
+        return sendIncorrectTypeError(res, 'Body must be string or array of strings');
       }
 
       const document = db.collection('variations').doc(req.params.id);
@@ -406,7 +424,7 @@ routes.post('/:id/description', (req, res) => {
 
       await document.get().then(doc => {
         if (!doc.exists) {
-          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+          return sendNonexistentIdError(res, req.params.id);
         }
 
         // Get the current description and add the additions

@@ -654,3 +654,60 @@ describe('POST /v1/variations + /:id/images schema errors', () => {
   });
 
 });
+
+/**
+ * POST errors for description
+ */
+describe('POST /v1/variations/:id/description errors', () => {
+
+  it('nonexistent id', async () => {
+    // this id won't exist
+    const id = 609;
+    const description = [
+      'test',
+      'test'
+    ];
+
+    // Valid description, nonexistent id
+    const res = await supertest(api)
+      .post(`${base}/${id}/description`)
+      .set('Accept', /json/)
+      .send(description);
+
+    const expectedError = {
+      type: 'id_not_found_error',
+      code: '422',
+      message: `The requested variation with id ${id} does not exist!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('incorrect type', async () => {
+    
+    const id = 610;
+
+    // Send nothing, will get caught by type checking
+    const res = await supertest(api)
+      .post(`${base}/${id}/description`)
+      .set('Accept', /json/)
+      .send();
+
+    const expectedError = {
+      type: errorTypes.INVALID_REQUEST_ERR,
+      code: httpCodes.INVALID_PARAMS.toString(),
+      message: 'Body must be string or array of strings',
+      param: null,
+      original: null
+    };
+
+    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+});
