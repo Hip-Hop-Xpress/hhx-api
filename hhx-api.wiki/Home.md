@@ -1,8 +1,6 @@
 # The Hip Hop Xpress API 🎧 
 Welcome! 👋 
 
-In the future, this wiki will be replacing the mess that is the [`README.md`](https://github.com/Hip-Hop-Xpress/hhx-api/blob/master/README.md) documentation. Right now, the wiki will be updated as features get implemented - the README will act as a guide and the Wiki will be more of a progress tracker.
-
 The goal for the wiki is to have all information needed for using the API, including endpoints, structure of body requests/results, error codes, etc.
 
 ## Introduction
@@ -26,4 +24,4 @@ GET /hello-world  // Hello World!
 GET /alive        // The Hip Hop Xpress API is alive!
 ```
 
-[Click here to view all the endpoints!](Endpoints)
+[View all the endpoints and the development progress!](Endpoints)

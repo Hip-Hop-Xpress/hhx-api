@@ -16,18 +16,20 @@ GET /alive        // The Hip Hop Xpress API is alive!
 ```
 
 ## Version 1
-Endpoints here are implemented primarily for the mobile app, but can be used elsewhere. As development continues, more documentation will be added for reference.
+Endpoints here are implemented primarily for the mobile app, but can be used elsewhere. As development continues, more documentation will be added for reference and you'll be able to see the progress here.
 
 All endpoints in Version 1 of the API will be prefaced with `/v1`.
 
 You can also view the [error documentation](Errors) for planning on handling errors.
 
-**Version 1 endpoints:**
-* Historical artists
-* [Variations](variations)
-* Courses
-* Projects
-* Featured artists
-* Updates
-* Location
-* Social Media
+### Version 1 endpoints:
+Endpoint | Implemented | Tested | Connected to App
+-|-|-|-
+Historical artists | :x: | :x: | :x:
+[Variations](variations) | :heavy_check_mark: | :x: | :heavy_check_mark:
+Courses | :x: | :x: | :x:
+Projects | :x: | :x: | :x:
+Featured artists | :x: | :x: | :x:
+Updates | :x: | :x: | :x:
+Location | :x: | :x: | :x:
+Social Media | :x: | :x: | :x:
