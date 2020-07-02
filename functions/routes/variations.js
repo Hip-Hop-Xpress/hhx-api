@@ -160,7 +160,7 @@ routes.post('/', (req, res) => {
           images: req.body.images,
         });
 
-      return res.status(200).send(req.body);
+      return res.status(httpCodes.OK).send(req.body);
     } catch (e) {
       return constructServerError(res, e);
     }
@@ -197,7 +197,7 @@ routes.get('/', (req, res) => {
         }
 
         // Send the response once every doc has been put in
-        return res.status(200).send(response);
+        return res.status(httpCodes.OK).send(response);
       });
 
       // Return null for linter's sake
@@ -264,7 +264,7 @@ routes.put('/:id', (req, res) => {
 
         // Spread operator to combine old data with updated data
         // Shared fields are overwritten by rightmost object (updated data)
-        return res.status(200).send({...doc.data(), ...req.body});
+        return res.status(httpCodes.OK).send({...doc.data(), ...req.body});
 
       });
 
@@ -292,7 +292,7 @@ routes.delete('/:id', (req, res) => {
         
         const deletedVariation = doc.data();
         docRef.delete();
-        return res.status(200).send(deletedVariation);
+        return res.status(httpCodes.OK).send(deletedVariation);
       });
 
       return null;
@@ -364,7 +364,7 @@ routes.post('/:id/images', (req, res) => {
         }
 
         docRef.update({images: images});
-        return res.status(200).send(images);
+        return res.status(httpCodes.OK).send(images);
 
       });
 
@@ -386,7 +386,7 @@ routes.get('/:id/images', (req, res) => {
       
       await document.get().then(doc => {
         if (doc.exists) {
-          return res.status(200).send(doc.data().images);
+          return res.status(httpCodes.OK).send(doc.data().images);
         } else {
           return sendNonexistentIdError(res, req.params.id);
         }
@@ -435,7 +435,7 @@ routes.post('/:id/description', (req, res) => {
 
         // Update the description and send response
         docRef.update({description: desc});
-        return res.status(200).send(desc);
+        return res.status(httpCodes.OK).send(desc);
 
       });
 
@@ -457,7 +457,7 @@ routes.get('/:id/description', (req, res) => {
       
       await document.get().then(doc => {
         if (doc.exists) {
-          return res.status(200).send(doc.data().description);
+          return res.status(httpCodes.OK).send(doc.data().description);
         } else {
           return sendNonexistentIdError(res, req.params.id);
         }
