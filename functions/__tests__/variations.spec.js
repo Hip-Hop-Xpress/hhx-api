@@ -30,25 +30,6 @@ afterAll(async () => {
 });
 
 /**
- * Test endpoints
- * TODO: move these to a different file
- */
-describe('Run test endpoints', () => {
-  it('/alive', async () => {
-    const res = await supertest(api).get('/alive');
-    expect(res.status).toBe(httpCodes.OK);
-    expect(res.text).toEqual('The Hip Hop Xpress API is alive!');
-  });
-
-  it('/hello-world', async () => {
-    const res = await supertest(api).get('/hello-world');
-    expect(res.status).toBe(httpCodes.OK);
-    expect(res.text).toEqual('Hello World!');
-  });
-});
-
-
-/**
  * Variations Endpoints Unit Tests
  * 
  * NOTE: all tests look at the production Firestore database
