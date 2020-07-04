@@ -1,5 +1,5 @@
 # Hip Hop Xpress API :headphones:
-The Hip Hop Xpress API will serve as a connection point between all facets of the Hip Hop Xpress, including its administration, participants, members/students, and all applications.
+The Hip Hop Xpress API will allow simple, efficient data transfer between all facets of the Hip Hop Xpress, including its administration, participants, members/students, and all applications.
 
 ## Table of Contents
 * [Hip Hop Xpress API](#hip-hop-xpress-api-headphones)
@@ -8,9 +8,9 @@ The Hip Hop Xpress API will serve as a connection point between all facets of th
 * [Endpoints](#endpoints-electric_plug)
 
 ## Current Progress :hammer:
-The current development version of the API is up and running. You can view the in-progress documentation on the [Wiki](https://github.com/Hip-Hop-Xpress/hhx-api/wiki).
+The current development version of the API is up and running. You can view the in-progress documentation and even use the development version by going to the [Wiki](https://github.com/Hip-Hop-Xpress/hhx-api/wiki).
 
-The API will continue to be developed over the course of the year.
+This is a work-in-progress project that is being continually developed and updated.
 
 ## Collections :books:
 
