@@ -1,5 +1,13 @@
 // Test file for test endpoints
 
+/**
+ * Testing console commands
+ * 
+ * Run unit tests using jest:               npm run test
+ * Run local server (production Firestore): firebase emulators:start
+ * Run local server (emulator Firestore):   npm run serve
+ */
+
 const supertest = require('supertest');
 const admin = require('firebase-admin');
 const test = require('firebase-functions-test');
