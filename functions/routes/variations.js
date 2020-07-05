@@ -14,6 +14,8 @@ const sendSchemaValidationError = helpers.sendSchemaValidationError;
 const sendIncorrectTypeError = helpers.sendIncorrectTypeError;
 const constructServerError = helpers.constructServerError;
 
+const collection = 'variations';
+
 /**
  * Schematics for Variation data
  */
@@ -74,7 +76,7 @@ routes.post('/', (req, res) => {
         return sendSchemaValidationError(res, e);
       }
 
-      await db.collection('variations').doc(`/${req.body.id}/`)
+      await db.collection(collection).doc(`/${req.body.id}/`)
         .create({
           id: req.body.id,
           name: req.body.name,
@@ -98,7 +100,7 @@ routes.get('/', (req, res) => {
   (async () => {
     try {
       // Query the collection and setup response
-      let query = db.collection('variations');
+      let query = db.collection(collection);
       let response = [];
 
       // Get all documents from collection
@@ -139,7 +141,7 @@ routes.get('/', (req, res) => {
 routes.get('/:id', (req, res) => {
   (async () => {
     try {
-      const document = db.collection('variations').doc(req.params.id);
+      const document = db.collection(collection).doc(req.params.id);
 
       await document.get().then(doc => {
           if (doc.exists) {
@@ -175,7 +177,7 @@ routes.put('/:id', (req, res) => {
         return sendSchemaValidationError(res, e);
       }
 
-      const document = db.collection('variations').doc(req.params.id);
+      const document = db.collection(collection).doc(req.params.id);
       const docRef = document;
 
       await document.get().then(doc => {
@@ -205,7 +207,7 @@ routes.put('/:id', (req, res) => {
 routes.delete('/:id', (req, res) => {
   (async () => {
     try {
-      const document = db.collection('variations').doc(req.params.id);
+      const document = db.collection(collection).doc(req.params.id);
       const docRef = document;
 
       await document.get().then(doc => {
@@ -271,7 +273,7 @@ routes.post('/:id/images', (req, res) => {
       
       // Once all images have been validated, add them to the variation with id
       let images = [];
-      const document = db.collection('variations').doc(req.params.id);
+      const document = db.collection(collection).doc(req.params.id);
       const docRef = document;
 
       await document.get().then(doc => {
@@ -305,7 +307,7 @@ routes.post('/:id/images', (req, res) => {
 routes.get('/:id/images', (req, res) => {
   (async () => {
     try {
-      const document = db.collection('variations').doc(req.params.id);
+      const document = db.collection(collection).doc(req.params.id);
       
       await document.get().then(doc => {
         if (doc.exists) {
@@ -342,7 +344,7 @@ routes.post('/:id/description', (req, res) => {
         return sendIncorrectTypeError(res, 'Body must be string or array of strings');
       }
 
-      const document = db.collection('variations').doc(req.params.id);
+      const document = db.collection(collection).doc(req.params.id);
       const docRef = document;
 
       await document.get().then(doc => {
@@ -376,7 +378,7 @@ routes.post('/:id/description', (req, res) => {
 routes.get('/:id/description', (req, res) => {
   (async () => {
     try {
-      const document = db.collection('variations').doc(req.params.id);
+      const document = db.collection(collection).doc(req.params.id);
       
       await document.get().then(doc => {
         if (doc.exists) {
