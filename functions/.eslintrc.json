@@ -1,7 +1,8 @@
 {
   "parserOptions": {
     // Required for certain syntax usages
-    "ecmaVersion": 2018
+    "ecmaVersion": 2018,
+    "sourceType": "module"
   },
   "plugins": [
     "promise"
