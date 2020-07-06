@@ -151,4 +151,39 @@ routes.get('/:id', (req, res) => {
   })();
 });
 
+/**
+ * PUT /projects/:id
+ */
+routes.put('/:id', (req, res) => {
+  (async () => {
+
+    // Validate request body for correct schema
+    try {
+      await putSchema.validateAsync(req.body);
+    } catch (e) {
+      return sendSchemaValidationError(res, e);
+    }
+
+    const document = db.collection(collection).doc(req.params.id);
+    const docRef = document;
+
+    await document.get().then(doc => {
+      if (!doc.exists) {
+        return sendNonexistentIdError(res, req.params.id, 'project');
+      }
+
+      docRef.update(req.body);
+
+      // Spread operator to combine old data with updated data
+      // Shared fields are overwritten by rightmost object (updated data)
+      return res.status(OK).send({...doc.data(), ...req.body});
+
+    });
+
+    // linting purposes
+    return null;
+
+  })();
+});
+
 module.exports = routes;

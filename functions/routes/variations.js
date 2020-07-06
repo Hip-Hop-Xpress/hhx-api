@@ -123,9 +123,6 @@ routes.get('/', (req, res) => {
       return res.status(OK).send(response);
     });
 
-    // Return null for linter's sake
-    return null;
-
   })();
 });
 
