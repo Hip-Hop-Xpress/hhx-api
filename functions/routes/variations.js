@@ -144,7 +144,7 @@ routes.get('/:id', (req, res) => {
           return res.status(OK).send(response);
         } else {
           // If ID is not found, send error response
-          return sendNonexistentIdError(res, req.params.id);
+          return sendNonexistentIdError(res, req.params.id, 'variation');
         }
       }
     );
@@ -170,7 +170,7 @@ routes.put('/:id', (req, res) => {
 
     await document.get().then(doc => {
       if (!doc.exists) {
-        return sendNonexistentIdError(res, req.params.id);
+        return sendNonexistentIdError(res, req.params.id, 'variation');
       }
 
       docRef.update(req.body);
@@ -261,7 +261,7 @@ routes.post('/:id/images', (req, res) => {
 
     await document.get().then(doc => {
       if (!doc.exists) {
-        return sendNonexistentIdError(res, req.params.id);
+        return sendNonexistentIdError(res, req.params.id, 'variation');
       }
 
       // Fetch original images and add new images
@@ -294,7 +294,7 @@ routes.get('/:id/images', (req, res) => {
       if (doc.exists) {
         return res.status(OK).send(doc.data().images);
       } else {
-        return sendNonexistentIdError(res, req.params.id);
+        return sendNonexistentIdError(res, req.params.id, 'variation');
       }
     });
 
@@ -325,7 +325,7 @@ routes.post('/:id/description', (req, res) => {
 
     await document.get().then(doc => {
       if (!doc.exists) {
-        return sendNonexistentIdError(res, req.params.id);
+        return sendNonexistentIdError(res, req.params.id, 'variation');
       }
 
       // Get the current description and add the additions
@@ -358,7 +358,7 @@ routes.get('/:id/description', (req, res) => {
       if (doc.exists) {
         return res.status(OK).send(doc.data().description);
       } else {
-        return sendNonexistentIdError(res, req.params.id);
+        return sendNonexistentIdError(res, req.params.id, 'variation');
       }
     });
 

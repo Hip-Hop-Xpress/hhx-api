@@ -9,13 +9,14 @@ const httpCodes = require('./codes');
  * 
  * @param {Response} res the error Response to be sent
  * @param {number} id an invalid ID (doesn't point to variation)
+ * @param {String} docName name of document in collection 
  * @returns {Response} the response with correct status and body
  */
-const sendNonexistentIdError = (res, id) => {
+const sendNonexistentIdError = (res, id, docName) => {
   const errorResponse = {
     type: errorTypes.ID_NOT_FOUND_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
-    message: `The requested variation with id ${id} does not exist!`,
+    message: `The requested ${docName} with id ${id} does not exist!`,
     param: 'id',
     original: null
   };

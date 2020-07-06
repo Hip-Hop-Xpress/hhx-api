@@ -128,4 +128,27 @@ routes.get('/', (req, res) => {
   })();
 });
 
+/**
+ * GET /projects/:id
+ */
+routes.get('/:id', (req, res) => {
+  (async () => {
+
+    const document = db.collection(collection).doc(req.params.id);
+
+    await document.get().then(doc => {
+        if (doc.exists) {
+          // Fetch and send data if variation of :id is found
+          let response = doc.data();
+          return res.status(OK).send(response);
+        } else {
+          // If ID is not found, send error response
+          return sendNonexistentIdError(res, req.params.id, 'project');
+        }
+      }
+    );
+    
+  })();
+});
+
 module.exports = routes;
