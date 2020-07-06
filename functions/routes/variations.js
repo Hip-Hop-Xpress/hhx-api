@@ -69,29 +69,26 @@ const putSchema = Joi.object({
  */
 routes.post('/', (req, res) => {
   (async () => {
+
+    // Validate request body using schema
     try {
-      // Validate request body using schema
-      try {
-        await postSchema.validateAsync(req.body);
-      } catch (e) {
-        return sendSchemaValidationError(res, e);
-      }
-
-      await db.collection(collection).doc(`/${req.body.id}/`)
-        .create({
-          id: req.body.id,
-          name: req.body.name,
-          date: req.body.date,
-          description: req.body.description,
-          images: req.body.images,
-        });
-
-      return res.status(httpCodes.OK).send(req.body);
+      await postSchema.validateAsync(req.body);
     } catch (e) {
-      return constructServerError(res, e);
+      return sendSchemaValidationError(res, e);
     }
-  })();
 
+    await db.collection(collection).doc(`/${req.body.id}/`)
+      .create({
+        id: req.body.id,
+        name: req.body.name,
+        date: req.body.date,
+        description: req.body.description,
+        images: req.body.images,
+      });
+
+    return res.status(httpCodes.OK).send(req.body);
+
+  })();
 });
 
 /**
@@ -99,41 +96,37 @@ routes.post('/', (req, res) => {
  */
 routes.get('/', (req, res) => {
   (async () => {
-    try {
-      // Query the collection and setup response
-      let query = db.collection(collection);
-      let response = [];
 
-      // Get all documents from collection
-      await query.get().then(snapshot => {
-        let docs = snapshot.docs;
+    // Query the collection and setup response
+    let query = db.collection(collection);
+    let response = [];
 
-        for (let variation of docs) {
-          // Insert all data from server doc to response doc
-          const selectedItem = {
-            id: variation.id,
-            name: variation.data().name,
-            date: variation.data().date,
-            description: variation.data().description,
-            images: variation.data().images,
-          };
+    // Get all documents from collection
+    await query.get().then(snapshot => {
+      let docs = snapshot.docs;
 
-          // Put the response doc into the response list
-          response.push(selectedItem);
-        }
+      for (let variation of docs) {
+        // Insert all data from server doc to response doc
+        const selectedItem = {
+          id: variation.id,
+          name: variation.data().name,
+          date: variation.data().date,
+          description: variation.data().description,
+          images: variation.data().images,
+        };
 
-        // Send the response once every doc has been put in
-        return res.status(httpCodes.OK).send(response);
-      });
+        // Put the response doc into the response list
+        response.push(selectedItem);
+      }
 
-      // Return null for linter's sake
-      return null;
+      // Send the response once every doc has been put in
+      return res.status(httpCodes.OK).send(response);
+    });
 
-    } catch (e) {
-      return constructServerError(res, e);
-    }
+    // Return null for linter's sake
+    return null;
+
   })();
-
 });
 
 /**
@@ -141,27 +134,21 @@ routes.get('/', (req, res) => {
  */
 routes.get('/:id', (req, res) => {
   (async () => {
-    try {
-      const document = db.collection(collection).doc(req.params.id);
 
-      await document.get().then(doc => {
-          if (doc.exists) {
-            // Fetch and send data if variation of :id is found
-            let response = doc.data();
-            return res.status(httpCodes.OK).send(response);
-          } else {
-            // If ID is not found, send error response
-            return sendNonexistentIdError(res, req.params.id);
-          }
+    const document = db.collection(collection).doc(req.params.id);
+
+    await document.get().then(doc => {
+        if (doc.exists) {
+          // Fetch and send data if variation of :id is found
+          let response = doc.data();
+          return res.status(httpCodes.OK).send(response);
+        } else {
+          // If ID is not found, send error response
+          return sendNonexistentIdError(res, req.params.id);
         }
-      );
-      
-      // for linting purposes
-      return null;
-
-    } catch (e) {
-      return constructServerError(res, e);
-    }
+      }
+    );
+    
   })();
 });
 
@@ -170,35 +157,33 @@ routes.get('/:id', (req, res) => {
  */
 routes.put('/:id', (req, res) => {
   (async () => {
+
+    // Validate request body for correct schema
     try {
-      // Validate request body for correct schema
-      try {
-        await putSchema.validateAsync(req.body);
-      } catch (e) {
-        return sendSchemaValidationError(res, e);
+      await putSchema.validateAsync(req.body);
+    } catch (e) {
+      return sendSchemaValidationError(res, e);
+    }
+
+    const document = db.collection(collection).doc(req.params.id);
+    const docRef = document;
+
+    await document.get().then(doc => {
+      if (!doc.exists) {
+        return sendNonexistentIdError(res, req.params.id);
       }
 
-      const document = db.collection(collection).doc(req.params.id);
-      const docRef = document;
+      docRef.update(req.body);
 
-      await document.get().then(doc => {
-        if (!doc.exists) {
-          return sendNonexistentIdError(res, req.params.id);
-        }
+      // Spread operator to combine old data with updated data
+      // Shared fields are overwritten by rightmost object (updated data)
+      return res.status(httpCodes.OK).send({...doc.data(), ...req.body});
 
-        docRef.update(req.body);
+    });
 
-        // Spread operator to combine old data with updated data
-        // Shared fields are overwritten by rightmost object (updated data)
-        return res.status(httpCodes.OK).send({...doc.data(), ...req.body});
+    // linting purposes
+    return null;
 
-      });
-
-      return null;
-
-    } catch (e) {
-      return constructServerError(res, e);
-    }
   })();
 });
 
@@ -207,7 +192,7 @@ routes.put('/:id', (req, res) => {
  */
 routes.delete('/:id', (req, res) => {
   (async () => {
-    try {
+  
       const document = db.collection(collection).doc(req.params.id);
       const docRef = document;
 
@@ -221,11 +206,6 @@ routes.delete('/:id', (req, res) => {
         return res.status(httpCodes.OK).send(deletedVariation);
       });
 
-      return null;
-
-    } catch (e) {
-      return constructServerError(res, e);
-    }
   })();
 });
 
@@ -234,71 +214,71 @@ routes.delete('/:id', (req, res) => {
  */
 routes.post('/:id/images', (req, res) => {
   (async () => {
+
+    // Initialize list of images to add
+    let newImages = [];
+
+    // Check whether request body is an array of images, 
+    // a single image, or neither
     try {
-      let newImages = [];
 
-      // Check whether request body is an array of images, a single image, or neither
-      try {
+      if (Array.isArray(req.body)) {
+        // Validate all image objects before adding
+        for (const image of req.body) {
+          const validation = variationImage.validate(image);
 
-        if (Array.isArray(req.body)) {
-          // Validate all image objects before adding
-          for (const image of req.body) {
-            const validation = variationImage.validate(image);
-
-            // Throw error if image is invalid
-            if (validation.error !== undefined) {
-              throw validation.error;
-            } else if (validation.errors !== undefined) {
-              throw validation.errors;
-            }
-
-            newImages.push(image);
+          // Throw error if image is invalid
+          if (validation.error !== undefined) {
+            throw validation.error;
+          } else if (validation.errors !== undefined) {
+            throw validation.errors;
           }
-        } else if (typeof req.body === "object") {
-          // Validate single image
-          // Note: validateAsync throws an error for you
-          await variationImage.validateAsync(req.body);
-          newImages.push(req.body);
-        } else {
-          // Send error if request body is incorrect type
-          return sendIncorrectTypeError(
-            res, 
-            'Request body must be (array of) Variation image object(s)'
-          );
-        }
 
-      } catch (e) {
-        // Schema validation errors end up here
-        return sendSchemaValidationError(res, e);
+          newImages.push(image);
+        }
+      } else if (typeof req.body === "object") {
+        // Validate single image
+        // Note: validateAsync throws an error for you
+        await variationImage.validateAsync(req.body);
+        newImages.push(req.body);
+      } else {
+        // Send error if request body is incorrect type
+        return sendIncorrectTypeError(
+          res, 
+          'Request body must be (array of) Variation image object(s)'
+        );
       }
-      
-      // Once all images have been validated, add them to the variation with id
-      let images = [];
-      const document = db.collection(collection).doc(req.params.id);
-      const docRef = document;
-
-      await document.get().then(doc => {
-        if (!doc.exists) {
-          return sendNonexistentIdError(res, req.params.id);
-        }
-
-        // Fetch original images and add new images
-        images = doc.data().images;
-
-        for (const newImage of newImages) {
-          images.push(newImage);
-        }
-
-        docRef.update({images: images});
-        return res.status(httpCodes.OK).send(images);
-
-      });
-
-      return null;
 
     } catch (e) {
-      return constructServerError(res, e);
+      // Schema validation errors end up here
+      return sendSchemaValidationError(res, e);
     }
+    
+    // Once all images have been validated, add them to the variation with id
+    let images = [];
+    const document = db.collection(collection).doc(req.params.id);
+    const docRef = document;
+
+    await document.get().then(doc => {
+      if (!doc.exists) {
+        return sendNonexistentIdError(res, req.params.id);
+      }
+
+      // Fetch original images and add new images
+      images = doc.data().images;
+
+      for (const newImage of newImages) {
+        images.push(newImage);
+      }
+
+      docRef.update({images: images});
+      return res.status(httpCodes.OK).send(images);
+
+    });
+
+    // linting purposes
+    return null;
+
   })();
 })
 
@@ -307,22 +287,17 @@ routes.post('/:id/images', (req, res) => {
  */
 routes.get('/:id/images', (req, res) => {
   (async () => {
-    try {
-      const document = db.collection(collection).doc(req.params.id);
-      
-      await document.get().then(doc => {
-        if (doc.exists) {
-          return res.status(httpCodes.OK).send(doc.data().images);
-        } else {
-          return sendNonexistentIdError(res, req.params.id);
-        }
-      });
 
-      return null;
+    const document = db.collection(collection).doc(req.params.id);
+    
+    await document.get().then(doc => {
+      if (doc.exists) {
+        return res.status(httpCodes.OK).send(doc.data().images);
+      } else {
+        return sendNonexistentIdError(res, req.params.id);
+      }
+    });
 
-    } catch (e) {
-      return constructServerError(res, e);
-    }
   })();
 });
 
@@ -331,45 +306,43 @@ routes.get('/:id/images', (req, res) => {
  */
 routes.post('/:id/description', (req, res) => {
   (async () => {
-    try {
-      let newParagraphs = [];
-      
-      // Check that the body is either string or array of strings, and
-      // add body contents to 'additions' if valid
-      if (typeof req.body === 'string' || req.body instanceof String) {
-        newParagraphs.push(req.body);
-      } else if (Array.isArray(req.body)) {
-        await variationDescription.validateAsync(req.body);
-        newParagraphs = req.body;
-      } else {
-        return sendIncorrectTypeError(res, 'Body must be string or array of strings');
+
+    let newParagraphs = [];
+    
+    // Check that the body is either string or array of strings, and
+    // add body contents to 'additions' if valid
+    if (typeof req.body === 'string' || req.body instanceof String) {
+      newParagraphs.push(req.body);
+    } else if (Array.isArray(req.body)) {
+      await variationDescription.validateAsync(req.body);
+      newParagraphs = req.body;
+    } else {
+      return sendIncorrectTypeError(res, 'Body must be string or array of strings');
+    }
+
+    const document = db.collection(collection).doc(req.params.id);
+    const docRef = document;
+
+    await document.get().then(doc => {
+      if (!doc.exists) {
+        return sendNonexistentIdError(res, req.params.id);
       }
 
-      const document = db.collection(collection).doc(req.params.id);
-      const docRef = document;
+      // Get the current description and add the additions
+      let desc = doc.data().description;
+      for (let paragraph of newParagraphs) {
+        desc.push(paragraph);
+      }
 
-      await document.get().then(doc => {
-        if (!doc.exists) {
-          return sendNonexistentIdError(res, req.params.id);
-        }
+      // Update the description and send response
+      docRef.update({description: desc});
+      return res.status(httpCodes.OK).send(desc);
 
-        // Get the current description and add the additions
-        let desc = doc.data().description;
-        for (let paragraph of newParagraphs) {
-          desc.push(paragraph);
-        }
+    });
 
-        // Update the description and send response
-        docRef.update({description: desc});
-        return res.status(httpCodes.OK).send(desc);
-
-      });
-
-      return null;
-
-    } catch (e) {
-      return constructServerError(res, e);
-    }
+    // linting purposes
+    return null;
+    
   })();
 })
 
@@ -378,22 +351,17 @@ routes.post('/:id/description', (req, res) => {
  */
 routes.get('/:id/description', (req, res) => {
   (async () => {
-    try {
-      const document = db.collection(collection).doc(req.params.id);
-      
-      await document.get().then(doc => {
-        if (doc.exists) {
-          return res.status(httpCodes.OK).send(doc.data().description);
-        } else {
-          return sendNonexistentIdError(res, req.params.id);
-        }
-      });
 
-      return null;
+    const document = db.collection(collection).doc(req.params.id);
+    
+    await document.get().then(doc => {
+      if (doc.exists) {
+        return res.status(httpCodes.OK).send(doc.data().description);
+      } else {
+        return sendNonexistentIdError(res, req.params.id);
+      }
+    });
 
-    } catch (e) {
-      return constructServerError(res, e);
-    }
   })();
 })
 

@@ -22,9 +22,10 @@ app.use(cors({ origin: true }));
 const variations = require('./routes/variations');
 const projects = require('./routes/projects');
 
-// Constants
+// Error imports
 const { URL_NOT_FOUND } = require('./errors/codes');
 const errorTypes = require('./errors/types');
+const { constructServerError } = require('./errors/helpers');
 
 /**
  * Test endpoints
@@ -44,6 +45,7 @@ app.get('/alive', (req, res) => {
  * Hip Hop Xpress Endpoint routes
  */
 app.use('/v1/variations', variations);
+app.use('/v1/projects',   projects);
 
 // For unhandled routes
 app.all('*', (req, res, next) => {
@@ -55,6 +57,11 @@ app.all('*', (req, res, next) => {
     original: null
   });
 });
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  return constructServerError(res, err);
+})
 
 // Used by Firebase Functions in deployment (see index.js)
 module.exports = app;
