@@ -1,3 +1,6 @@
+// Helper functions for constructing different error responses
+// TODO: should probably make custom Error classes for this...
+
 const errorTypes = require('./types');
 const httpCodes = require('./codes');
 

@@ -24,7 +24,7 @@ const projects = require('./routes/projects');
 
 // Error imports
 const { URL_NOT_FOUND } = require('./errors/codes');
-const errorTypes = require('./errors/types');
+const { INVALID_ENDPOINT_ERR } = require('./errors/types');
 const { constructServerError } = require('./errors/helpers');
 
 /**
@@ -50,7 +50,7 @@ app.use('/v1/projects',   projects);
 // For unhandled routes
 app.all('*', (req, res, next) => {
   res.status(URL_NOT_FOUND).json({
-    type: errorTypes.INVALID_ENDPOINT_ERR,
+    type: INVALID_ENDPOINT_ERR,
     code: URL_NOT_FOUND.toString(),
     message: `The requested URL ${req.originalUrl} was not found!`,
     id: 'URL',

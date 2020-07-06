@@ -5,21 +5,21 @@ const routes = require('express').Router();
 const admin = require('firebase-admin');
 const db = admin.firestore();
 
-const httpCodes = require('../errors/codes');
-const errorTypes = require('../errors/types');
-
-// Error handling functions
+// Error handling functions/constants
 const {
   sendNonexistentIdError,
   sendIncorrectTypeError,
   sendSchemaValidationError,
-  constructServerError
 } = require('../errors/helpers');
 
+const { OK } = require('../errors/codes');
+
+// Collection name in Firestore
 const collection = 'variations';
 
 /**
  * Schematics for Variation data
+ * TODO: move some of the generic ones to the ../schema folder
  */
 const variationId          = Joi.number().integer().min(0);
 const variationName        = Joi.string().min(1);
@@ -86,7 +86,7 @@ routes.post('/', (req, res) => {
         images: req.body.images,
       });
 
-    return res.status(httpCodes.OK).send(req.body);
+    return res.status(OK).send(req.body);
 
   })();
 });
@@ -120,7 +120,7 @@ routes.get('/', (req, res) => {
       }
 
       // Send the response once every doc has been put in
-      return res.status(httpCodes.OK).send(response);
+      return res.status(OK).send(response);
     });
 
     // Return null for linter's sake
@@ -141,7 +141,7 @@ routes.get('/:id', (req, res) => {
         if (doc.exists) {
           // Fetch and send data if variation of :id is found
           let response = doc.data();
-          return res.status(httpCodes.OK).send(response);
+          return res.status(OK).send(response);
         } else {
           // If ID is not found, send error response
           return sendNonexistentIdError(res, req.params.id);
@@ -177,7 +177,7 @@ routes.put('/:id', (req, res) => {
 
       // Spread operator to combine old data with updated data
       // Shared fields are overwritten by rightmost object (updated data)
-      return res.status(httpCodes.OK).send({...doc.data(), ...req.body});
+      return res.status(OK).send({...doc.data(), ...req.body});
 
     });
 
@@ -203,7 +203,7 @@ routes.delete('/:id', (req, res) => {
         
         const deletedVariation = doc.data();
         docRef.delete();
-        return res.status(httpCodes.OK).send(deletedVariation);
+        return res.status(OK).send(deletedVariation);
       });
 
   })();
@@ -272,7 +272,7 @@ routes.post('/:id/images', (req, res) => {
       }
 
       docRef.update({images: images});
-      return res.status(httpCodes.OK).send(images);
+      return res.status(OK).send(images);
 
     });
 
@@ -292,7 +292,7 @@ routes.get('/:id/images', (req, res) => {
     
     await document.get().then(doc => {
       if (doc.exists) {
-        return res.status(httpCodes.OK).send(doc.data().images);
+        return res.status(OK).send(doc.data().images);
       } else {
         return sendNonexistentIdError(res, req.params.id);
       }
@@ -336,7 +336,7 @@ routes.post('/:id/description', (req, res) => {
 
       // Update the description and send response
       docRef.update({description: desc});
-      return res.status(httpCodes.OK).send(desc);
+      return res.status(OK).send(desc);
 
     });
 
@@ -356,7 +356,7 @@ routes.get('/:id/description', (req, res) => {
     
     await document.get().then(doc => {
       if (doc.exists) {
-        return res.status(httpCodes.OK).send(doc.data().description);
+        return res.status(OK).send(doc.data().description);
       } else {
         return sendNonexistentIdError(res, req.params.id);
       }
