@@ -65,7 +65,11 @@ const testImage = {
   componentImage: true,
 };
 
-// GET Endpoints
+/**
+ * GET endpoints tests
+ * 
+ * Checks basic GET functionality to work as expected
+ */
 describe('GET endpoints', () => {
 
   it('GET /v1/variations', async () => {

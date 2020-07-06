@@ -9,7 +9,7 @@ const sinon = require('sinon');
 const api = require('../index').app;
 
 // Constants
-const { OK } = require('../errors/codes');
+const { OK, INVALID_PARAMS } = require('../errors/codes');
 const errorTypes = require('../errors/types');
 const base = '/v1/projects';
 const numProjects = 8;
@@ -55,6 +55,7 @@ const testProject = {
 
 /**
  * GET endpoints tests
+ * 
  * NOTE: assumes that all current HHX projects are in the database
  *       (see variable 'numProjects')
  */
@@ -94,6 +95,68 @@ describe('GET endpoints', () => {
     expect(Array.isArray(proj.members)).toBe(true);
     expect(proj.members.length).toBeGreaterThan(0);
 
+  });
+
+  it('GET /v1/projects/:id/description', async () => {
+
+    const res = await supertest(api).get(base + '/0/description');
+
+    // Verify success response returns array
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+
+    const description = res.body;
+    expect(description.length).toBeGreaterThan(0);
+
+  });
+
+  it('GET /v1/projects/:id/members', async () => {
+
+    const res = await supertest(api).get(base + '/0/members');
+
+    // Verify success response returns array
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+
+    const description = res.body;
+    expect(description.length).toBeGreaterThan(0);
+
+  });
+
+});
+
+describe('GET endpoints errors', () => {
+
+  // Setup expected errors
+  let id = 999;
+  const expectedError = {
+    type: 'id_not_found_error',
+    code: '422',
+    message: `The requested project with id ${id} does not exist!`,
+    param: 'id',
+    original: null
+  };
+
+  it('GET /v1/projects/:id - nonexistent id', async () => {
+    // Using nonexistent id
+    const response = await supertest(api).get(base + `/${id}`);
+
+    expect(response.status).toBe(INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
+  });
+
+  it('GET /v1/projects/:id/description - nonexistent id', async () => {
+    const response = await supertest(api).get(base + `/${id}/description`);
+
+    expect(response.status).toBe(INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
+  });
+
+  it('GET /v1/projects/:id/members - nonexistent id', async () => {
+    const response = await supertest(api).get(base + `/${id}/members`);
+
+    expect(response.status).toBe(INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
   });
 
 });
