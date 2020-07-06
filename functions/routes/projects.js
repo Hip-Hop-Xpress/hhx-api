@@ -186,4 +186,26 @@ routes.put('/:id', (req, res) => {
   })();
 });
 
+/**
+ * DELETE /projects/:id
+ */
+routes.delete('/:id', (req, res) => {
+  (async () => {
+  
+      const document = db.collection(collection).doc(req.params.id);
+      const docRef = document;
+
+      await document.get().then(doc => {
+        if (!doc.exists) {
+          return sendNonexistentIdError(res, req.params.id, 'project');
+        }
+        
+        const deletedProject = doc.data();
+        docRef.delete();
+        return res.status(OK).send(deletedProject);
+      });
+
+  })();
+});
+
 module.exports = routes;

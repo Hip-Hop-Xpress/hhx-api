@@ -195,7 +195,7 @@ routes.delete('/:id', (req, res) => {
 
       await document.get().then(doc => {
         if (!doc.exists) {
-          return res.status(404).send(`Error: Variation id ${req.params.id} does not exist!`);
+          return sendNonexistentIdError(res, req.params.id, 'variation');
         }
         
         const deletedVariation = doc.data();
