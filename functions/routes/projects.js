@@ -208,4 +208,42 @@ routes.delete('/:id', (req, res) => {
   })();
 });
 
+/**
+ * GET /projects/:id/description
+ */
+routes.get('/:id/description', (req, res) => {
+  (async () => {
+
+    const document = db.collection(collection).doc(req.params.id);
+    
+    await document.get().then(doc => {
+      if (doc.exists) {
+        return res.status(OK).send(doc.data().description);
+      } else {
+        return sendNonexistentIdError(res, req.params.id, 'project');
+      }
+    });
+
+  })();
+});
+
+/**
+ * GET /projects/:id/members
+ */
+routes.get('/:id/members', (req, res) => {
+  (async () => {
+
+    const document = db.collection(collection).doc(req.params.id);
+    
+    await document.get().then(doc => {
+      if (doc.exists) {
+        return res.status(OK).send(doc.data().members);
+      } else {
+        return sendNonexistentIdError(res, req.params.id, 'project');
+      }
+    });
+
+  })();
+});
+
 module.exports = routes;

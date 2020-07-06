@@ -360,6 +360,6 @@ routes.get('/:id/description', (req, res) => {
     });
 
   })();
-})
+});
 
 module.exports = routes;
