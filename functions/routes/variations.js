@@ -8,11 +8,13 @@ const db = admin.firestore();
 const httpCodes = require('../errors/codes');
 const errorTypes = require('../errors/types');
 
-const helpers = require('../errors/helpers');
-const sendNonexistentIdError = helpers.sendNonexistentIdError;
-const sendSchemaValidationError = helpers.sendSchemaValidationError;
-const sendIncorrectTypeError = helpers.sendIncorrectTypeError;
-const constructServerError = helpers.constructServerError;
+// Error handling functions
+const {
+  sendNonexistentIdError,
+  sendIncorrectTypeError,
+  sendSchemaValidationError,
+  constructServerError
+} = require('../errors/helpers');
 
 const collection = 'variations';
 
@@ -60,7 +62,6 @@ const putSchema = Joi.object({
  *   POST, GET               /variations/:id/description
  * 
  * TODO: add support for query strings eventually
- * TODO: move these error constructing functions to ../errors to be used by all routes
  */
 
 /**

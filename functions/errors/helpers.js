@@ -83,7 +83,9 @@ const constructServerError = (res, e) => {
   return res.status(httpCodes.SERVER_ERR).send(errorResponse);
 }
 
-exports.sendNonexistentIdError = sendNonexistentIdError;
-exports.sendSchemaValidationError = sendSchemaValidationError;
-exports.sendIncorrectTypeError = sendIncorrectTypeError;
-exports.constructServerError = constructServerError;
+module.exports = {
+  sendNonexistentIdError,
+  sendSchemaValidationError,
+  sendIncorrectTypeError,
+  constructServerError
+};
