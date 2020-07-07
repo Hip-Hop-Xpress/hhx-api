@@ -14,8 +14,9 @@ const {
 
 const { OK } = require('../errors/codes');
 
-// Collection name in Firestore
+// Collection/doc name in Firestore
 const collection = 'projects';
+const docName = 'project';
 
 /**
  * Schematics for Project data
@@ -143,7 +144,7 @@ routes.get('/:id', (req, res) => {
           return res.status(OK).send(response);
         } else {
           // If ID is not found, send error response
-          return sendNonexistentIdError(res, req.params.id, 'project');
+          return sendNonexistentIdError(res, req.params.id, docName);
         }
       }
     );
@@ -169,7 +170,7 @@ routes.put('/:id', (req, res) => {
 
     await document.get().then(doc => {
       if (!doc.exists) {
-        return sendNonexistentIdError(res, req.params.id, 'project');
+        return sendNonexistentIdError(res, req.params.id, docName);
       }
 
       docRef.update(req.body);
@@ -197,7 +198,7 @@ routes.delete('/:id', (req, res) => {
 
       await document.get().then(doc => {
         if (!doc.exists) {
-          return sendNonexistentIdError(res, req.params.id, 'project');
+          return sendNonexistentIdError(res, req.params.id, docName);
         }
         
         const deletedProject = doc.data();
@@ -220,7 +221,7 @@ routes.get('/:id/description', (req, res) => {
       if (doc.exists) {
         return res.status(OK).send(doc.data().description);
       } else {
-        return sendNonexistentIdError(res, req.params.id, 'project');
+        return sendNonexistentIdError(res, req.params.id, docName);
       }
     });
 
@@ -239,7 +240,7 @@ routes.get('/:id/members', (req, res) => {
       if (doc.exists) {
         return res.status(OK).send(doc.data().members);
       } else {
-        return sendNonexistentIdError(res, req.params.id, 'project');
+        return sendNonexistentIdError(res, req.params.id, docName);
       }
     });
 

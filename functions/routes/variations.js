@@ -14,8 +14,9 @@ const {
 
 const { OK } = require('../errors/codes');
 
-// Collection name in Firestore
+// Collection/doc name in Firestore
 const collection = 'variations';
+const docName = 'variation';
 
 /**
  * Schematics for Variation data
@@ -141,7 +142,7 @@ routes.get('/:id', (req, res) => {
           return res.status(OK).send(response);
         } else {
           // If ID is not found, send error response
-          return sendNonexistentIdError(res, req.params.id, 'variation');
+          return sendNonexistentIdError(res, req.params.id, docName);
         }
       }
     );
@@ -167,7 +168,7 @@ routes.put('/:id', (req, res) => {
 
     await document.get().then(doc => {
       if (!doc.exists) {
-        return sendNonexistentIdError(res, req.params.id, 'variation');
+        return sendNonexistentIdError(res, req.params.id, docName);
       }
 
       docRef.update(req.body);
@@ -195,7 +196,7 @@ routes.delete('/:id', (req, res) => {
 
       await document.get().then(doc => {
         if (!doc.exists) {
-          return sendNonexistentIdError(res, req.params.id, 'variation');
+          return sendNonexistentIdError(res, req.params.id, docName);
         }
         
         const deletedVariation = doc.data();
@@ -258,7 +259,7 @@ routes.post('/:id/images', (req, res) => {
 
     await document.get().then(doc => {
       if (!doc.exists) {
-        return sendNonexistentIdError(res, req.params.id, 'variation');
+        return sendNonexistentIdError(res, req.params.id, docName);
       }
 
       // Fetch original images and add new images
@@ -291,7 +292,7 @@ routes.get('/:id/images', (req, res) => {
       if (doc.exists) {
         return res.status(OK).send(doc.data().images);
       } else {
-        return sendNonexistentIdError(res, req.params.id, 'variation');
+        return sendNonexistentIdError(res, req.params.id, docName);
       }
     });
 
@@ -322,7 +323,7 @@ routes.post('/:id/description', (req, res) => {
 
     await document.get().then(doc => {
       if (!doc.exists) {
-        return sendNonexistentIdError(res, req.params.id, 'variation');
+        return sendNonexistentIdError(res, req.params.id, docName);
       }
 
       // Get the current description and add the additions
@@ -355,7 +356,7 @@ routes.get('/:id/description', (req, res) => {
       if (doc.exists) {
         return res.status(OK).send(doc.data().description);
       } else {
-        return sendNonexistentIdError(res, req.params.id, 'variation');
+        return sendNonexistentIdError(res, req.params.id, docName);
       }
     });
 
