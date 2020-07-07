@@ -210,6 +210,51 @@ routes.delete('/:id', (req, res) => {
 });
 
 /**
+ * POST /projects/:id/description
+ */
+routes.post('/:id/description', (req, res) => {
+  (async () => {
+
+    let newParagraphs = [];
+    
+    // Check that the body is either string or array of strings, and
+    // add body contents to 'additions' if valid
+    if (typeof req.body === 'string' || req.body instanceof String) {
+      newParagraphs.push(req.body);
+    } else if (Array.isArray(req.body)) {
+      await projectDescription.validateAsync(req.body);
+      newParagraphs = req.body;
+    } else {
+      return sendIncorrectTypeError(res, 'Body must be string or array of strings');
+    }
+
+    const document = db.collection(collection).doc(req.params.id);
+    const docRef = document;
+
+    await document.get().then(doc => {
+      if (!doc.exists) {
+        return sendNonexistentIdError(res, req.params.id, docName);
+      }
+
+      // Get the current description and add the additions
+      let desc = doc.data().description;
+      for (let paragraph of newParagraphs) {
+        desc.push(paragraph);
+      }
+
+      // Update the description and send response
+      docRef.update({description: desc});
+      return res.status(OK).send(desc);
+
+    });
+
+    // linting purposes
+    return null;
+    
+  })();
+});
+
+/**
  * GET /projects/:id/description
  */
 routes.get('/:id/description', (req, res) => {
@@ -225,6 +270,51 @@ routes.get('/:id/description', (req, res) => {
       }
     });
 
+  })();
+});
+
+/**
+ * POST /projects/:id/members
+ */
+routes.post('/:id/members', (req, res) => {
+  (async () => {
+
+    let newParagraphs = [];
+    
+    // Check that the body is either string or array of strings, and
+    // add body contents to 'additions' if valid
+    if (typeof req.body === 'string' || req.body instanceof String) {
+      newParagraphs.push(req.body);
+    } else if (Array.isArray(req.body)) {
+      await projectMembers.validateAsync(req.body);
+      newParagraphs = req.body;
+    } else {
+      return sendIncorrectTypeError(res, 'Body must be string or array of strings');
+    }
+
+    const document = db.collection(collection).doc(req.params.id);
+    const docRef = document;
+
+    await document.get().then(doc => {
+      if (!doc.exists) {
+        return sendNonexistentIdError(res, req.params.id, docName);
+      }
+
+      // Get the current members and add new members
+      let members = doc.data().members;
+      for (let paragraph of newParagraphs) {
+        members.push(paragraph);
+      }
+
+      // Update the members and send response
+      docRef.update({members: members});
+      return res.status(OK).send(members);
+
+    });
+
+    // linting purposes
+    return null;
+    
   })();
 });
 

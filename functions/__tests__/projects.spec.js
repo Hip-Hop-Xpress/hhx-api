@@ -206,8 +206,7 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
       '... in an array!'
     ];
 
-    // 1 original entry + 3 new entries
-    const expectedNewLength = 4;
+    const expectedNewLength = testProject.description.length + newEntries.length;
     
     const res = await supertest(api)
       .post(endpoint)
@@ -232,7 +231,7 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
     ];
 
     // 1 original entry + 4 new entries
-    const expectedNewLength = 5;
+    const expectedNewLength = testProject.members.length + newMembers.length;
     
     const res = await supertest(api)
       .post(endpoint)
