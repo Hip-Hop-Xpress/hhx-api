@@ -10,7 +10,7 @@ const api = require('../index').app;
 
 // Constants
 const { OK, INVALID_PARAMS } = require('../errors/codes');
-const { INVALID_REQUEST_ERR } = require('../errors/types');
+const { INVALID_REQUEST_ERR, ID_NOT_FOUND_ERR } = require('../errors/types');
 const base = '/v1/projects';
 const numProjects = 8;
 
@@ -168,6 +168,8 @@ describe('GET endpoints errors', () => {
  * - creates a mock project in the database
  * - performs POST requests on description and members
  * - deletes mock project afterwards
+ * TODO: need to test POST errors, specifically schema errors
+ * TODO: test nonexistent ID in /DELETE
  * 
  */
 describe('POST endpoint tests (tests /DELETE too)', () => {
@@ -230,7 +232,6 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
       'new member 4'
     ];
 
-    // 1 original entry + 4 new entries
     const expectedNewLength = testProject.members.length + newMembers.length;
     
     const res = await supertest(api)
@@ -238,7 +239,7 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
       .set('Accept', /json/)
       .send(newMembers);
 
-    // Response should contain updated description
+    // Response should contain updated members
     expect(res.status).toBe(OK);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body).toHaveLength(expectedNewLength);
@@ -249,6 +250,7 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
 
 /**
  * POST errors for description and members
+ * TODO: figure out how to send strings in request body
  */
 describe('POST description and members errors', () => {
 
@@ -344,6 +346,118 @@ describe('POST description and members errors', () => {
       code: INVALID_PARAMS.toString(),
       message: 'Body must be string or array of strings',
       param: null,
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+});
+
+/**
+ * PUT tests for projects
+ */
+describe('PUT /v1/projects/:id updates project', () => {
+
+  const id = 500;
+
+  // Setting up an initial project which will have its values
+  // updated to be the updated project
+  const initialProject = {
+    ...testProject,
+    id: id
+  };
+
+  const updatedProject = {
+    id: id,
+    name: 'the updated project',
+    description: [
+      'this is...',
+      '... an updated description!'
+    ],
+    members: [
+      'updated member 1',
+      'updated member 2',
+      'updated member 3',
+      'updated member 4'
+    ],
+    startDate: 'January 2020',
+    endDate: 'June 2020',
+    icon: 'chair',
+  };
+
+  // PUT and DELETE operations all use this endpoint
+  const endpoint = `${base}/${initialProject.id}`
+
+  // POST the variation before testing PUT operations
+  beforeAll(async () => {
+
+    await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(initialProject)
+      .expect(OK);
+
+  });
+
+  // DELETE the variation after testing
+  afterAll(async () => {
+    await supertest(api).delete(endpoint);
+  });
+
+  it('updates project', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send(updatedProject);
+
+    expect(res.status).toBe(OK);
+    expect(res.body).toEqual(updatedProject);
+
+  });
+
+});
+
+describe('PUT /v1/projects/:id errors', () => {
+
+  const invalidId = 501;
+  const endpoint = `${base}/${invalidId}`;
+
+  it('tests for nonexistent id', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({name: 'valid test name'});
+
+    const expectedError = {
+      type: ID_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: `The requested project with id ${invalidId} does not exist!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for empty name', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({name: ''});
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"name" is not allowed to be empty',
+      param: 'name',
       original: null
     };
 

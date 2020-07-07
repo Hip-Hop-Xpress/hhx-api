@@ -196,8 +196,11 @@ describe('GET endpoint errors', () => {
  * - performs POST requests on description and images
  * - deletes the test variation after all tests run
  * 
+ * TODO: test nonexistent id error for DELETE
+ * TODO: figure out how to send strings in request body
+ * 
  */
-describe('POST endpoint tests (tests /DELETE too)', () => {
+describe('POST endpoint tests (tests DELETE too)', () => {
 
   // Mock variation/image/description to add for POST requests
   const testVariation1 = testVariation;
