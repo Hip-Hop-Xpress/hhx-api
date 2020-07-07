@@ -10,7 +10,7 @@ const api = require('../index').app;
 
 // Constants
 const { OK, INVALID_PARAMS } = require('../errors/codes');
-const errorTypes = require('../errors/types');
+const { INVALID_REQUEST_ERR } = require('../errors/types');
 const base = '/v1/projects';
 const numProjects = 8;
 
@@ -243,6 +243,113 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
     expect(res.status).toBe(OK);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body).toHaveLength(expectedNewLength);
+
+  });
+
+});
+
+/**
+ * POST errors for description and members
+ */
+describe('POST description and members errors', () => {
+
+  it('description - nonexistent id', async () => {
+    // this id won't exist
+    const id = 600;
+    const description = [
+      'test',
+      'test'
+    ];
+
+    // Valid description, nonexistent id
+    const res = await supertest(api)
+      .post(`${base}/${id}/description`)
+      .set('Accept', /json/)
+      .send(description);
+
+    const expectedError = {
+      type: 'id_not_found_error',
+      code: '422',
+      message: `The requested project with id ${id} does not exist!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('description - incorrect type', async () => {
+    
+    const id = 601;
+
+    // Send nothing, will get caught by type checking
+    const res = await supertest(api)
+      .post(`${base}/${id}/description`)
+      .set('Accept', /json/)
+      .send();
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'Body must be string or array of strings',
+      param: null,
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('members - nonexistent id', async () => {
+    // this id won't exist
+    const id = 600;
+    const members = [
+      'test member 1',
+      'test member 2'
+    ];
+
+    // Valid description, nonexistent id
+    const res = await supertest(api)
+      .post(`${base}/${id}/members`)
+      .set('Accept', /json/)
+      .send(members);
+
+    const expectedError = {
+      type: 'id_not_found_error',
+      code: '422',
+      message: `The requested project with id ${id} does not exist!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('members - incorrect type', async () => {
+    
+    const id = 601;
+
+    // Send nothing, will get caught by type checking
+    const res = await supertest(api)
+      .post(`${base}/${id}/members`)
+      .set('Accept', /json/)
+      .send();
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'Body must be string or array of strings',
+      param: null,
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
 
   });
 
