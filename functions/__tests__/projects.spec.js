@@ -82,7 +82,7 @@ describe('GET endpoints', () => {
 
     const proj = res.body;
 
-    // Verify the contents of the variation object
+    // Verify the contents of the project object
     expect(proj.id).toEqual(0);
     expect(proj.startDate).not.toBeUndefined();
     expect(proj.endDate).not.toBeUndefined();
@@ -157,6 +157,93 @@ describe('GET endpoints errors', () => {
 
     expect(response.status).toBe(INVALID_PARAMS);
     expect(response.body).toEqual(expectedError);
+  });
+
+});
+
+/**
+ * POST endpoint tests
+ *
+ * This test suite:
+ * - creates a mock project in the database
+ * - performs POST requests on description and members
+ * - deletes mock project afterwards
+ * 
+ */
+describe('POST endpoint tests (tests /DELETE too)', () => {
+
+  // Create test project before running unit tests
+  beforeAll(async () => {
+    await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(testProject)
+      .expect(OK);
+  });
+
+  // Delete the test project after tests
+  afterAll(async () => {
+    await supertest(api).delete(`${base}/${testProject.id}`);
+  });
+
+  it('POST /v1/projects - creates new project', async () => {
+
+    // Test project has already been created in beforeAll block
+    // Just check that it exists and is equal
+    const res = await supertest(api).get(`${base}/${testProject.id}`);
+
+    expect(res.status).toBe(OK);
+    expect(res.body).toEqual(testProject);
+
+  });
+
+  it('POST /v1/projects/:id/description', async() => {
+
+    const endpoint = `${base}/${testProject.id}/description`;
+    const newEntries = [
+      'multiple entries...',
+      '... added to description...',
+      '... in an array!'
+    ];
+
+    // 1 original entry + 3 new entries
+    const expectedNewLength = 4;
+    
+    const res = await supertest(api)
+      .post(endpoint)
+      .set('Accept', /json/)
+      .send(newEntries);
+
+    // Response should contain updated description
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toHaveLength(expectedNewLength);
+
+  });
+
+  it('POST /v1/projects/:id/members', async() => {
+
+    const endpoint = `${base}/${testProject.id}/members`;
+    const newMembers = [
+      'new member 1',
+      'new member 2',
+      'new member 3',
+      'new member 4'
+    ];
+
+    // 1 original entry + 4 new entries
+    const expectedNewLength = 5;
+    
+    const res = await supertest(api)
+      .post(endpoint)
+      .set('Accept', /json/)
+      .send(newMembers);
+
+    // Response should contain updated description
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toHaveLength(expectedNewLength);
+
   });
 
 });

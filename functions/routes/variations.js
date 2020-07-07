@@ -342,7 +342,7 @@ routes.post('/:id/description', (req, res) => {
     return null;
     
   })();
-})
+});
 
 /**
  * GET /variations/:id/description
