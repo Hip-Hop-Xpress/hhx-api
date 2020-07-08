@@ -20,10 +20,12 @@ app.use(cors({ origin: true }));
 
 // Hip Hop Xpress Endpoint Imports
 const variations = require('./routes/variations');
+const projects = require('./routes/projects');
 
-// Constants
-const { URL_NOT_FOUND: NOT_FOUND } = require('./errors/codes');
-const errorTypes = require('./errors/types');
+// Error imports
+const { URL_NOT_FOUND } = require('./errors/codes');
+const { INVALID_ENDPOINT_ERR } = require('./errors/types');
+const { constructServerError } = require('./errors/helpers');
 
 /**
  * Test endpoints
@@ -43,18 +45,23 @@ app.get('/alive', (req, res) => {
  * Hip Hop Xpress Endpoint routes
  */
 app.use('/v1/variations', variations);
+app.use('/v1/projects',   projects);
 
 // For unhandled routes
 app.all('*', (req, res, next) => {
-  res.status(NOT_FOUND).json({
-    type: errorTypes.INVALID_ENDPOINT_ERR,
-    code: NOT_FOUND.toString(),
+  res.status(URL_NOT_FOUND).json({
+    type: INVALID_ENDPOINT_ERR,
+    code: URL_NOT_FOUND.toString(),
     message: `The requested URL ${req.originalUrl} was not found!`,
     id: 'URL',
     original: null
   });
 });
 
-// Used by jest for running unit tests (see server.js)
+// Error handling middleware
+app.use((err, req, res, next) => {
+  return constructServerError(res, err);
+})
+
 // Used by Firebase Functions in deployment (see index.js)
 module.exports = app;
