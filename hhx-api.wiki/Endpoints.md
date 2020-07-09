@@ -33,7 +33,7 @@ Endpoint | Implemented | Tested | Connected to App
 Historical artists | :x: | :x: | :x:
 [Variations](variations) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 Courses | :x: | :x: | :x:
-[Projects](projects) | :heavy_check_mark: | :heavy_check_mark: | :x:
+[Projects](projects) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 Featured artists | :x: | :x: | :x:
 Updates | :x: | :x: | :x:
 Location | :x: | :x: | :x:
