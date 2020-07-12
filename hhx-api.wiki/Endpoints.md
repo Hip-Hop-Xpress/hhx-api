@@ -36,5 +36,5 @@ Courses | :x: | :x: | :x:
 [Projects](projects) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 Featured artists | :x: | :x: | :x:
 Updates | :x: | :x: | :x:
-Location | :x: | :x: | :x:
+[Location](location) | :heavy_check_mark: | :heavy_check_mark: | :x:
 Social Media | :x: | :x: | :x:

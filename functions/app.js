@@ -21,6 +21,7 @@ app.use(cors({ origin: true }));
 // Hip Hop Xpress Endpoint Imports
 const variations = require('./routes/variations');
 const projects = require('./routes/projects');
+const location = require('./routes/location');
 
 // Error imports
 const { URL_NOT_FOUND } = require('./errors/codes');
@@ -46,6 +47,7 @@ app.get('/alive', (req, res) => {
  */
 app.use('/v1/variations', variations);
 app.use('/v1/projects',   projects);
+app.use('/v1/location',   location);
 
 // For unhandled routes
 app.all('*', (req, res, next) => {

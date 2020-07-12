@@ -56,9 +56,9 @@ const putSchema = Joi.object({
  * Projects endpoints
  * 
  *   POST, GET               /projects
- *         GET, PUT, DELETE  /projects/:id TODO:
- *   POST, GET               /projects/:id/members TODO:
- *   POST, GET               /projects/:id/description TODO:
+ *         GET, PUT, DELETE  /projects/:id
+ *   POST, GET               /projects/:id/members
+ *   POST, GET               /projects/:id/description
  * 
  * TODO: add support for query strings eventually
  */
