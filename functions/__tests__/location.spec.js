@@ -127,10 +127,33 @@ describe('PUT /v1/location', () => {
 
 });
 
+/**
+ * PUT error tests
+ * Test expected errors when sending PUT requests for the location
+ */
 describe('PUT endpoint errors', () => {
 
-  it('empty string', async () => {
+  it('tests for empty string', async () => {
     
+    // Send an empty name in the req body
+    const res = await supertest(api)
+      .put(base)
+      .set('Accept', /json/)
+      .send({
+        name: ''
+      });
+
+    const expectedErr = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"name" is not allowed to be empty',
+      param: 'name',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedErr);
+
   });
 
 });
