@@ -31,7 +31,7 @@ const docName = 'location';
  */
 routes.get('/', (req, res) => {
   (async () => {
-
+    return res.status(404).send();
   })();
 });
 
@@ -40,7 +40,7 @@ routes.get('/', (req, res) => {
  */
 routes.put('/', (req, res) => {
   (async () => {
-
+    return res.status(404).send();
   })();
 });
 
