@@ -26,3 +26,35 @@ afterAll(async () => {
   adminInitStub.restore();
   functionsTest.cleanup();
 });
+
+describe('GET endpoint', () => {
+
+  it('GET /v1/location', async () => {
+
+  });
+
+});
+
+describe('PUT /v1/location', () => {
+
+  it('updates name correctly', async () => {
+
+  });
+
+  it('updates latitude correctly', async () => {
+
+  });
+
+  it('updates longitude correctly', async () => {
+
+  });
+
+});
+
+describe('PUT endpoint errors', () => {
+
+  it('empty string', async () => {
+    
+  });
+
+});
