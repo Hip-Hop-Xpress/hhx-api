@@ -39,6 +39,27 @@ All use cases for the projects endpoints are listed below:
 
 ### Retrieve location
 
+`GET /v1/location`
+
+Retrieves the location.
+
+#### Parameters
+None
+
+#### Returns
+The location object as specified [above](#the-location-object).
+
+---
+
 ### Update location
+`PUT /v1/location`
+
+Updates the location based on the parameters. 
+
+#### Parameters
+An object containing only the attributes needing change, and their updated values. (For example, you can just include the `latitude` field in your request body without the `longitude` or `name` field, and it will update just the `latitude` field).
+
+#### Returns
+The updated location object
 
 [**Back to top**](#location-endpoint)
