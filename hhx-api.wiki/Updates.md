@@ -25,14 +25,23 @@ The Hip Hop Xpress App will send users updates about events, courses, and other 
 
 ### Attributes
 
+These attributes are to be included in `POST` and `PUT` request bodies.
+
 Name | Type | Restrictions | Description
 -|-|-|-
 `id` | `number` | must be unique non-zero integer | unique identifier for update
 `title` | `string` | must be non-empty | title of the update
-`dateCreated` | `string` | date format follows the [`toString()` method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toString) of the [`Date` JavaScript Object type](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) | the date the update was created or released
-`lastUpdated` | `string` or `null` | follows same format as `dateCreated` if not `null` | the date the update was last updated, or `null` if never updated
 `author` | `string` | must be non-empty | the author of the update
 `body` | `Array` of `string` | must be non-empty | body text of the update
+
+
+These attributes are automatically created, immutable, and should **not** be included in your `POST` and `PUT` request bodies (doing so will result in errors)
+
+Name | Type | Restrictions | Description
+-|-|-|-
+`dateCreated` | `string` | date format follows the [`toString()` method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toString) of the [`Date` JavaScript Object type](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) | the date the update was created or released
+`lastUpdated` | `string` or `null` | follows same format as `dateCreated` if not `null` | the date the update was last updated, or `null` if never updated
+
 
 ## Endpoints
 
