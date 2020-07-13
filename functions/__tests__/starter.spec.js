@@ -68,4 +68,21 @@ describe('The test group name goes here', () => {
 
   });
 
+  // Put as many it() tests as you want
+  it('tests that two different objects are not equal', async () => {
+
+    const obj1 = {
+      name: 'renzo',
+      major: 'cs + music'
+    };
+
+    const obj2 = {
+      name: 'aliva',
+      major: 'cs + music'
+    };
+
+    expect(obj1).not.toEqual(obj2);
+
+  });
+
 });
