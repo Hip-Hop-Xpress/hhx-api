@@ -3,10 +3,10 @@ Listed below are the planned endpoints for `v1` of the API. Checked endpoints wi
 - [ ] [Historical artists](#historical-artists)
 - [x] [Variations](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Variations)
 - [ ] [Courses](#courses)
-- [ ] [Projects](#projects)
+- [x] [Projects](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Projects)
 - [ ] [Featured artists](#featured-artists)
 - [ ] [Updates](#updates)
-- [ ] [Location](#location)
+- [x] [Location](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Location)
 - [ ] [Social Media](#social-media)
 
 ### **Historical artists**
@@ -37,17 +37,7 @@ Information on past courses held by the Hip Hop Xpress
 </details>
 
 ### **Projects**
-Information on the current, ongoing projects by or under the Hip Hop Xpress
-
-<details>
-  <summary>Projects endpoint details</summary>
-
-  Endpoint | `POST` | `GET` | `PUT` | `DELETE`
-  -|-|-|-|-
-  `/projects` | Create data for project | Retrieve info for all projects | Bulk update of all projects | Remove all info for projects
-  `/projects/:id` | Error | Retrieve info of project with `id` | Update info of project with `id` | Delete project with `id`
-
-</details>
+This info has been updated and moved to the [wiki](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Projects).
 
 ### **Featured artists**
 Information about artists featured by the Hip Hop Xpress
@@ -78,16 +68,7 @@ Posts with updates regarding progress, projects, and news about the Hip Hop Xpre
 </details>
 
 ### **Location**
-Current location of the Double Dutch Boom Bus or other Hip Hop Xpress devices.
-
-<details>
-  <summary>Location endpoint details</summary>
-
-  Endpoint | `POST` | `GET` | `PUT` | `DELETE`
-  -|-|-|-|-
-  `/location` | Write new location for the lab | Get location of lab | Update location information about lab | Delete location info
-
-</details>
+This info has been updated and moved to the [wiki](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Location).
 
 ### **Social Media**
 List of all social media platforms associated with the Hip Hop Xpress
