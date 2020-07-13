@@ -1,8 +1,6 @@
 // Test file for Location endpoints
 
 const supertest = require('supertest');
-
-// Cloud functions test
 const admin = require('firebase-admin');
 const test = require('firebase-functions-test');
 const sinon = require('sinon');
