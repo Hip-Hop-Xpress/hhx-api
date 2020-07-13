@@ -18,27 +18,39 @@ const collection = 'updates';
 const docName = 'update';
 
 /**
- * TODO: Schematics for your data
+ * Schematics for Updates data
  */
+const updateString = Joi.string().min(1);
+const updateId     = Joi.number().integer().min(0);
+const updateTitle  = updateString;
+const updateAuthor = updateString;
+const updateBody = Joi.array().min(1).items(projectString.required());
 
-// TODO: schema for POST requests
 const postSchema = Joi.object({
-
+  id: updateId.required(),
+  title: updateTitle.required(),
+  author: updateAuthor.required(),
+  body: updateBody.required()
 });
 
-// TODO: schema for PUT requests
 const putSchema = Joi.object({
-
+  id: updateId,
+  title: updateTitle,
+  author: updateAuthor,
+  body: updateBody
 });
 
 /**
  * Updates endpoints
+ * 
+ *   POST, GET               /updates
+ *         GET, PUT, DELETE  /updates/:id
+ *   POST, GET               /updates/:id/body
  * 
  * TODO: plan out your endpoints here!
  * TODO: add queries for filtering by month, year, etc.
  * TODO: add queries for number of updates
  */
 
-// TODO: write your tests here!
 
 module.exports = routes;
