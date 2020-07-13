@@ -12,6 +12,7 @@ const {
   sendSchemaValidationError,
 } = require('../errors/helpers');
 
+const wrap = require('../errors/wrap');
 const { OK } = require('../errors/codes');
 
 // Collection/doc name in Firestore
@@ -68,29 +69,27 @@ const putSchema = Joi.object({
 /**
  * POST /variations
  */
-routes.post('/', (req, res) => {
-  (async () => {
+routes.post('/', wrap(async (req, res, next) => {
 
-    // Validate request body using schema
-    try {
-      await postSchema.validateAsync(req.body);
-    } catch (e) {
-      return sendSchemaValidationError(res, e);
-    }
+  // Validate request body using schema
+  try {
+    await postSchema.validateAsync(req.body);
+  } catch (e) {
+    return sendSchemaValidationError(res, e);
+  }
+  
+  await db.collection(collection).doc(`/${req.body.id}/`)
+    .create({
+      id: req.body.id,
+      name: req.body.name,
+      date: req.body.date,
+      description: req.body.description,
+      images: req.body.images,
+    });
 
-    await db.collection(collection).doc(`/${req.body.id}/`)
-      .create({
-        id: req.body.id,
-        name: req.body.name,
-        date: req.body.date,
-        description: req.body.description,
-        images: req.body.images,
-      });
+  return res.status(OK).send(req.body);
 
-    return res.status(OK).send(req.body);
-
-  })();
-});
+}));
 
 /**
  * GET /variations

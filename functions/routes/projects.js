@@ -10,8 +10,10 @@ const {
   sendNonexistentIdError,
   sendIncorrectTypeError,
   sendSchemaValidationError,
+  constructServerError,
 } = require('../errors/helpers');
 
+const wrap = require('../errors/wrap');
 const { OK } = require('../errors/codes');
 
 // Collection/doc name in Firestore
@@ -66,31 +68,29 @@ const putSchema = Joi.object({
  /**
   * POST /projects
   */
-routes.post('/', (req, res) => {
-  (async () => {
+routes.post('/', wrap(async (req, res, next) => {
 
-    // Validate request body using schema
-    try {
-      await postSchema.validateAsync(req.body);
-    } catch (e) {
-      return sendSchemaValidationError(res, e);
-    }
+  // Validate request body using schema
+  try {
+    await postSchema.validateAsync(req.body);
+  } catch (e) {
+    return sendSchemaValidationError(res, e);
+  }
 
-    await db.collection(collection).doc(`/${req.body.id}/`)
-      .create({
-        id: req.body.id,
-        name: req.body.name,
-        description: req.body.description,
-        members: req.body.members,
-        startDate: req.body.startDate,
-        endDate: req.body.endDate,
-        icon: req.body.icon
-      });
+  await db.collection(collection).doc(`/${req.body.id}/`)
+    .create({
+      id: req.body.id,
+      name: req.body.name,
+      description: req.body.description,
+      members: req.body.members,
+      startDate: req.body.startDate,
+      endDate: req.body.endDate,
+      icon: req.body.icon
+    });
 
-    return res.status(OK).send(req.body);
+  return res.status(OK).send(req.body);
 
-  })();
-});
+}));
 
 /**
  * GET /projects

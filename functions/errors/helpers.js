@@ -74,7 +74,7 @@ const sendIncorrectTypeError = (res, message) => {
  * @returns {Response} the response with correct status and body
  */
 const constructServerError = (res, e) => {
-  console.log(e);  // is meant to be here, NOT for testing
+  console.error(e);  // is meant to be here, NOT for testing
 
   const errorResponse = {
     type: errorTypes.API_ERR,
