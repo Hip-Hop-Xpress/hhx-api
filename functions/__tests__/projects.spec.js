@@ -169,7 +169,8 @@ describe('GET endpoints errors', () => {
  * - performs POST requests on description and members
  * - deletes mock project afterwards
  * TODO: need to test POST errors, specifically schema errors
- * TODO: test nonexistent ID in /DELETE
+ * TODO: test that POST with an existing ID throws more specific error 
+ * TODO: test nonexistent ID in DELETE
  * 
  */
 describe('POST endpoint tests (tests /DELETE too)', () => {
