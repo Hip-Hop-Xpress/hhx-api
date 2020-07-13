@@ -38,6 +38,6 @@ const putSchema = Joi.object({
  * TODO: plan out your endpoints here!
  */
 
-// TODO: write your tests here!
+// TODO: write your endpoints here!
 
 module.exports = routes;
