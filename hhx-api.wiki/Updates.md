@@ -65,4 +65,69 @@ All use cases for the updates endpoints are listed below.
 * [Add body text for update: `POST /v1/updates/:id/body`](#add-to-body)
 * [Retrieve body text for update: `GET /v1/updates/:id/body`](#retrieve-body)
 
+View the [error documentation](errors) for what to expect if your request fails.
+
+---
+
+### Create Update
+`POST /v1/updates`
+
+#### Parameters
+
+#### Returns
+
+---
+
+### Retrieve all updates
+`GET /v1/updates`
+
+#### Parameters
+
+#### Returns
+
+---
+
+### Retrieve update
+`GET /v1/updates/:id`
+
+#### Parameters
+
+#### Returns
+
+---
+
+### Update update
+`PUT /v1/updates/:id`
+
+#### Parameters
+
+#### Returns
+
+---
+
+### Delete update
+`DELETE /v1/updates/:id`
+
+#### Parameters
+
+#### Returns
+
+---
+
+### Add to body
+`POST /v1/updates/:id/body`
+
+#### Parameters
+
+#### Returns
+
+---
+
+### Retrieve body
+`GET /v1/updates/:id/body`
+
+#### Parameters
+
+#### Returns
+
 [**Back to top**](#updates-endpoint)
