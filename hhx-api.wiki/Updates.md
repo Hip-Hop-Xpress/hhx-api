@@ -35,7 +35,34 @@ Name | Type | Restrictions | Description
 ## Endpoints
 
 ### Overview
+A quick overview of all endpoints related to our updates:
+
+```javascript
+   POST /v1/updates
+    GET /v1/updates
+
+    GET /v1/updates/:id
+    PUT /v1/updates/:id
+ DELETE /v1/updates/:id
+
+   POST /v1/updates/:id/body
+    GET /v1/updates/:id/body
+```
 
 ### Usage
+All use cases for the updates endpoints are listed below.
+
+**Collection wide:**
+* [Create update: `POST /v1/updates`](#create-update)
+* [Retrieve all updates: `GET /v1/updates`](#retrieve-all-updates)
+
+**Update specific:**
+* [Retrieve an update: `GET /v1/updates/:id`](#retrieve-update)
+* [Update an update: `PUT /v1/updates/:id`](#update-update)
+* [Delete an update: `DELETE /v1/updates/:id`](#delete-update)
+
+**Update data specific:**
+* [Add body text for update: `POST /v1/updates/:id/body`](#add-to-body)
+* [Retrieve body text for update: `GET /v1/updates/:id/body`](#retrieve-body)
 
 [**Back to top**](#updates-endpoint)
