@@ -22,6 +22,7 @@ app.use(cors({ origin: true }));
 const variations = require('./routes/variations');
 const projects = require('./routes/projects');
 const location = require('./routes/location');
+const updates = require('./routes/updates');
 
 // Error imports
 const { URL_NOT_FOUND } = require('./errors/codes');
@@ -48,6 +49,7 @@ app.get('/alive', (req, res) => {
 app.use('/v1/variations', variations);
 app.use('/v1/projects',   projects);
 app.use('/v1/location',   location);
+app.use('/v1/updates',    updates);
 
 // For unhandled routes
 app.all('*', (req, res, next) => {
