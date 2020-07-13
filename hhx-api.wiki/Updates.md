@@ -13,7 +13,8 @@ The Hip Hop Xpress App will send users updates about events, courses, and other 
 {
   "id": 0,
   "title": "Double Dutch Boom Bus Playlists",
-  "date": "Thu 14 May 2020",
+  "dateCreated": "Thu May 14 2020 12:00:00 GMT-0500 (Central Daylight Time)",
+  "lastUpdated": null,
   "author": "Hip Hop Xpress Admin",
   "body": [
     "As UIUC students wrap up their final exams of the semester, we want...",
@@ -28,7 +29,8 @@ Name | Type | Restrictions | Description
 -|-|-|-
 `id` | `number` | must be unique non-zero integer | unique identifier for update
 `title` | `string` | must be non-empty | title of the update
-`date` | `string` | date format follows the [`toDateString()` method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toDateString) of the [`Date` JavaScript Object type](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) | the date the update is released
+`dateCreated` | `string` | date format follows the [`toString()` method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toString) of the [`Date` JavaScript Object type](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) | the date the update was created or released
+`lastUpdated` | `string` or `null` | follows same format as `dateCreated` if not `null` | the date the update was last updated, or `null` if never updated
 `author` | `string` | must be non-empty | the author of the update
 `body` | `Array` of `string` | must be non-empty | body text of the update
 
