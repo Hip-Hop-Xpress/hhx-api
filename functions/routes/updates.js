@@ -52,5 +52,53 @@ const putSchema = Joi.object({
  * TODO: add queries for number of updates
  */
 
+/**
+ * POST /updates
+ */
+routes.post('/', (req, res) => {
+
+}); 
+
+/**
+ * GET /updates
+ */
+routes.get('/', (req, res) => {
+
+});
+
+/**
+ * GET /updates/:id
+ */
+routes.get('/:id', (req, res) => {
+
+});
+
+/**
+ * PUT /updates/:id
+ */
+routes.put('/:id', (req, res) => {
+
+});
+
+/**
+ * DELETE /updates/:id
+ */
+routes.delete('/:id', (req, res) => {
+
+});
+
+/**
+ * POST /updates/:id/body
+ */
+routes.post('/:id/body', (req, res) => {
+
+});
+
+/**
+ * GET /updates/:id/body
+ */
+routes.get('/:id/body', (req, res) => {
+
+});
 
 module.exports = routes;

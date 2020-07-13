@@ -63,9 +63,9 @@ const putSchema = Joi.object({
  * TODO: add support for query strings eventually
  */
 
- /**
-  * POST /projects
-  */
+/**
+ * POST /projects
+ */
 routes.post('/', (req, res) => {
   (async () => {
 
