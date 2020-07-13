@@ -197,6 +197,7 @@ describe('GET endpoint errors', () => {
  * - deletes the test variation after all tests run
  * 
  * TODO: test nonexistent id error for DELETE
+ * TODO: test that POST with an existing ID throws more specific error 
  * TODO: figure out how to send strings in request body
  * 
  */
