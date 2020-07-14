@@ -8,7 +8,7 @@ const api = require('../index').app;
 
 // Constants
 const { OK, INVALID_PARAMS } = require('../errors/codes');
-const { INVALID_REQUEST_ERR } = require('../errors/types');
+const { INVALID_REQUEST_ERR, ID_NOT_FOUND_ERR } = require('../errors/types');
 const base = '/v1/updates';
 
 // TODO:  THIS IS SUBJECT TO CHANGE
@@ -104,12 +104,30 @@ describe('GET endpoints', () => {
  */
 describe('GET endpoint errors', () => {
 
-  it('GET update tests for nonexistent id', async () => {
+  // Setup expected errors
+  let id = 999;
+  const expectedError = {
+    type: ID_NOT_FOUND_ERR,
+    code: INVALID_PARAMS.toString(),
+    message: `The requested update with id ${id} does not exist!`,
+    param: 'id',
+    original: null
+  };
 
+  it('GET update tests for nonexistent id', async () => {
+    // Using nonexistent id
+    const response = await supertest(api).get(base + `/${id}`);
+
+    expect(response.status).toBe(INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
   });
 
   it('GET update body tests for nonexistent id', async () => {
+    // Using nonexistent id
+    const response = await supertest(api).get(base + `/${id}/body`);
 
+    expect(response.status).toBe(INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
   });
 
 });
