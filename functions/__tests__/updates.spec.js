@@ -403,9 +403,22 @@ describe('POST /updates/:id/body error tests', () => {
  */
 describe('PUT /v1/updates/:id updates the update', () => {
 
-  const initialUpdate = {};
+  const putId = 806;
 
-  const updatedUpdate = {};
+  const initialUpdate = {
+    ...testUpdate,
+    id: putId
+  };
+
+  const updatedUpdate = {
+    id: putId,
+    title: 'the updated title',
+    author: 'the updated author',
+    body: [
+      'new paragraph 1',
+      'new paragraph 2'
+    ]
+  };
 
   const endpointUrl = `${base}/${initialUpdate.id}`;
 
@@ -415,24 +428,47 @@ describe('PUT /v1/updates/:id updates the update', () => {
     await supertest(api)
       .post(base)
       .set('Accept', /json/)
-      .send(initialProject)
+      .send(initialUpdate)
       .expect(OK);
 
   });
 
   // DELETE the variation after testing
   afterAll(async () => {
-    await supertest(api).delete(endpoint).expect(OK);
+    await supertest(api).delete(endpointUrl).expect(OK);
   });
   
   /**
-   * TODO: check that the PUT requests changes the 'lastUpdated' field
+   * Check that the PUT requests changes the 'lastUpdated' field
    * 1. perform GET request to make sure that lastUpdated is null
    * 2. perform PUT request
-   * 3. perform another GET request to make sure that lastUpdated is now a string
+   * 3. Make sure that lastUpdated is now a string
    */
-   it('updates update successfully', async() => {
+  it('update document updates successfully', async() => {
     
+    const initialGetRes = await supertest(api).get(endpointUrl);
+    expect(initialGetRes.status).toBe(OK);
+    expect(initialGetRes.body.lastUpdated).toBe(null);
+
+    const dateCreated = initialGetRes.body.dateCreated;
+
+    const putRes = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send(updatedUpdate);
+
+    expect(putRes.status).toBe(OK);
+    const update = putRes.body;
+
+    // Check attributes individually
+    expect(update.id).toBe(updatedUpdate.id);
+    expect(update.title).toEqual(updatedUpdate.title);
+    expect(update.author).toEqual(updatedUpdate.author);
+    expect(update.body).toEqual(updatedUpdate.body);
+    expect(update.dateCreated).toEqual(dateCreated);
+    expect(update.lastUpdated).not.toBe(null);
+    expect(typeof update.lastUpdated).toEqual('string');
+
   });
 
 });
