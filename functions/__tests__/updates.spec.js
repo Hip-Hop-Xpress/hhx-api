@@ -485,9 +485,87 @@ describe('PUT /v1/updates/:id errors', () => {
 
   it('tests for nonexistent id', async() => {
 
+    const res = await supertest(api)
+    .put(endpoint)
+    .set('Accept', /json/)
+    .send({title: 'valid title'});
+
+    const expectedError = {
+      type: ID_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: `The requested update with id ${invalidId} does not exist!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
   });
 
-  it('tests for wrong schema', async() => {
+  it('tests for empty title', async() => {
+
+    const emptyTitle = '';
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({title: emptyTitle});
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"title" is not allowed to be empty',
+      param: 'title',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for empty author', async() => {
+
+    const emptyAuthor = '';
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({author: emptyAuthor});
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"author" is not allowed to be empty',
+      param: 'author',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for empty body', async() => {
+
+    const emptyBody = [];
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({body: emptyBody});
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"body" is not allowed to be empty',
+      param: 'body',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
 
   });
 
