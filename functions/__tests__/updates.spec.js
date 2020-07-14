@@ -276,15 +276,101 @@ describe('POST/DELETE /updates endpoint error tests', () => {
 
   });
 
-  it('POST /updates tests for wrong name/author schema', async () => {
+  it('POST /updates tests for empty author', async () => {
 
+    const emptyAuthor = '';
+    const invalidUpdateReq = {
+      ...testUpdate,
+      author: emptyAuthor
+    };
+
+    const res = await supertest(api)
+      .post(`${base}/${id}`)
+      .set('Accept', /json/)
+      .send(invalidUpdateReq);
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"author" is not allowed to be empty',
+      param: 'author',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+    
   });
 
-  it('POST /updates tests for wrong body schema', async () => {
+  it('POST /updates tests for empty name', async () => {
+
+    const emptyName = '';
+    const invalidUpdateReq = {
+      ...testUpdate,
+      name: emptyName
+    };
+
+    const res = await supertest(api)
+      .post(`${base}/${id}`)
+      .set('Accept', /json/)
+      .send(invalidUpdateReq);
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"name" is not allowed to be empty',
+      param: 'name',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+    
+  });
+
+  it('POST /updates tests for empty body', async () => {
+
+    const emptyBody = [];
+    const invalidUpdateReq = {
+      ...testUpdate,
+      body: emptyBody
+    };
+
+    const res = await supertest(api)
+      .post(`${base}/${id}`)
+      .set('Accept', /json/)
+      .send(invalidUpdateReq);
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"body" is not allowed to be empty',
+      param: 'body',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
 
   });
 
   it('DELETE /updates tests for nonexistent id', async () => {
+
+    const nonexistentId = 404;
+
+    const res = await supertest(api)
+      .delete(`${base}/${nonexistentId}`);
+
+    const expectedError = {
+      type: ID_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: `The requested update with id ${invalidId} does not exist!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
 
   });
 
