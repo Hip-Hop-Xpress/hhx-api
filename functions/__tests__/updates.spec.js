@@ -8,7 +8,7 @@ const api = require('../index').app;
 
 // Constants
 const { OK, INVALID_PARAMS } = require('../errors/codes');
-const { INVALID_REQUEST_ERR, ID_NOT_FOUND_ERR } = require('../errors/types');
+const { INVALID_REQUEST_ERR, ID_NOT_FOUND_ERR, ID_ALREADY_EXISTS } = require('../errors/types');
 const base = '/v1/updates';
 
 // TODO:  THIS IS SUBJECT TO CHANGE
@@ -193,26 +193,86 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
 });
 
 /**
- * POST endpoint errors
+ * POST /updates endpoint errors
  * - schema errors
  * - nonexistent ID errors
  * - already existing ID errors
  */
-describe('POST/DELETE endpoint error tests', () => {
+describe('POST/DELETE /updates endpoint error tests', () => {
 
   it('POST /updates tests for already existing id', async () => {
 
-  });
+    const existingId = 0;  // assuming there's at least one existing update
+    const invalidUpdateReq = {
+      ...testUpdate,
+      id: existingId
+    };
 
-  it('POST /updates tests for nonexistent id', async () => {
+    // Valid update, invalid request because id already exists
+    const res = await supertest(api)
+      .post(`${base}/${existingId}`)
+      .set('Accept', /json/)
+      .send(invalidUpdateReq);
+    
+    const expectedError = {
+      type: ID_ALREADY_EXISTS,
+      code: INVALID_PARAMS.toString(),
+      message: `The requested update with id ${existingId} already exists!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
 
   });
 
   it('POST /updates tests for wrong type', async () => {
 
+    const id = 500;
+
+    // Send nothing, will get caught by type checking
+    const res = await supertest(api)
+      .post(`${base}/${id}`)
+      .set('Accept', /json/)
+      .send();
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'some random error msg idk what\'s gonna be here',
+      param: null,
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
   });
 
   it('POST /updates tests for wrong id schema', async () => {
+
+    const negativeId = -404;
+    const invalidUpdateReq = {
+      ...testUpdate,
+      id: negativeId
+    };
+
+    const res = await supertest(api)
+      .post(`${base}/${id}`)
+      .set('Accept', /json/)
+      .send(invalidUpdateReq);
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"id" must be larger than or equal to 0',
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
 
   });
 
@@ -223,6 +283,19 @@ describe('POST/DELETE endpoint error tests', () => {
   it('POST /updates tests for wrong body schema', async () => {
 
   });
+
+  it('DELETE /updates tests for nonexistent id', async () => {
+
+  });
+
+});
+
+/**
+ * POST /updates/:id/body endpoint errors
+ * - schema errors
+ * - nonexistent ID errors
+ */
+describe('POST /updates/:id/body error tests', () => {
 
   it('POST /body tests for nonexistent id', async () => {
 
@@ -235,8 +308,6 @@ describe('POST/DELETE endpoint error tests', () => {
   it('POST /body tests for wrong schema', async () => {
 
   });
-
-  
 
 });
 
