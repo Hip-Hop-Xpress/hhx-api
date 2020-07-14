@@ -105,7 +105,7 @@ describe('GET endpoints', () => {
 describe('GET endpoint errors', () => {
 
   // Setup expected errors
-  let id = 999;
+  let id = 404;
   const expectedError = {
     type: ID_NOT_FOUND_ERR,
     code: INVALID_PARAMS.toString(),
@@ -116,7 +116,7 @@ describe('GET endpoint errors', () => {
 
   it('GET update tests for nonexistent id', async () => {
     // Using nonexistent id
-    const response = await supertest(api).get(base + `/${id}`);
+    const response = await supertest(api).get(`${base}/${id}`);
 
     expect(response.status).toBe(INVALID_PARAMS);
     expect(response.body).toEqual(expectedError);
@@ -124,7 +124,7 @@ describe('GET endpoint errors', () => {
 
   it('GET update body tests for nonexistent id', async () => {
     // Using nonexistent id
-    const response = await supertest(api).get(base + `/${id}/body`);
+    const response = await supertest(api).get(`${base}/${id}/body`);
 
     expect(response.status).toBe(INVALID_PARAMS);
     expect(response.body).toEqual(expectedError);
@@ -158,9 +158,35 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
 
   it('POST /v1/updates', async () => {
 
+    // Test update has already been created in beforeAll block
+    // Just check that it exists and is equal
+    const res = await supertest(api).get(`${base}/${testUpdate.id}`);
+
+    expect(res.status).toBe(OK);
+    expect(res.body).toEqual(testUpdate);
+
   });
 
   it('POST /v1/updates/body', async () => {
+
+    const endpoint = `${base}/${testUpdate.id}/body`;
+    const newEntries = [
+      'multiple entries...',
+      '... added to body...',
+      '... in an array!'
+    ];
+
+    const expectedNewLength = testUpdate.body.length + newEntries.length;
+    
+    const res = await supertest(api)
+      .post(endpoint)
+      .set('Accept', /json/)
+      .send(newEntries);
+
+    // Response should contain updated description
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toHaveLength(expectedNewLength);
 
   });
 
