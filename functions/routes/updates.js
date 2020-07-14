@@ -12,7 +12,8 @@ const {
   sendSchemaValidationError,
 } = require('../errors/helpers');
 
-const { OK } = require('../errors/codes');
+const wrap = require('../errors/wrap');
+const { OK, SERVER_ERR } = require('../errors/codes');
 
 const collection = 'updates';
 const docName = 'update';
@@ -55,112 +56,108 @@ const putSchema = Joi.object({
 /**
  * POST /updates
  */
-routes.post('/', (req, res) => {
-  (async () => {
+routes.post('/', wrap(async (req, res, next) => {
 
-    // Validate request body using schema
-    try {
-      await postSchema.validateAsync(req.body);
-    } catch (e) {
-      return sendSchemaValidationError(res, e);
-    }
+  // Validate request body using schema
+  try {
+    await postSchema.validateAsync(req.body);
+  } catch (e) {
+    return sendSchemaValidationError(res, e);
+  }
 
-    // Construct a Timestamp object using the current date
-    const currentDate = new Date();
-    const dateCreated = admin.firestore.Timestamp.fromDate(currentDate);
+  // Construct a Timestamp object using the current date
+  const currentDate = new Date();
+  const dateCreated = admin.firestore.Timestamp.fromDate(currentDate);
 
-    await db.collection(collection).doc(`/${req.body.id}/`)
-      .create({
-        id: req.body.id,
-        title: req.body.title,
-        dateCreated: dateCreated,
-        lastUpdated: null,
-        author: req.body.author,
-        body: req.body.body
-      });
+  await db.collection(collection).doc(`/${req.body.id}/`)
+    .create({
+      id: req.body.id,
+      title: req.body.title,
+      dateCreated: dateCreated,
+      lastUpdated: null,
+      author: req.body.author,
+      body: req.body.body
+    });
 
-    return res.status(OK).send(req.body);
+  return res.status(OK).send(req.body);
 
-  })();
-}); 
+})); 
 
 /**
  * GET /updates
  */
-routes.get('/', (req, res) => {
-  (async () => {
+routes.get('/', wrap(async (req, res, next) => {
 
-    // Query the collection and setup response
-    let query = db.collection(collection);
-    let response = [];
+  // Query the collection and setup response
+  let query = db.collection(collection);
+  let response = [];
 
-    // Get all documents from collection
-    await query.get().then(snapshot => {
-      let docs = snapshot.docs;
+  // Get all documents from collection
+  await query.get().then(snapshot => {
+    let docs = snapshot.docs;
 
-      for (let update of docs) {
+    for (let update of docs) {
 
-        let lastUpdated = null;
+      let lastUpdated = null;
 
-        // Convert lastUpdated attribute if not null
-        if (update.data().lastUpdated !== null) {
-          lastUpdated = update.data().lastUpdated.toDate().toString();
-        }
-
-        // Insert all data from server doc to response doc
-        const selectedItem = {
-          id: update.id,
-          title: update.data().title,
-          dateCreated: update.data().dateCreated.toDate().toString(),
-          lastUpdated: lastUpdated,
-          author: update.data().author,
-          body: update.data().body,
-        };
-
-        // Put the response doc into the response list
-        response.push(selectedItem);
+      // Convert lastUpdated attribute if not null
+      if (update.data().lastUpdated !== null) {
+        lastUpdated = update.data().lastUpdated.toDate().toString();
       }
 
-      // Send the response once every doc has been put in
-      return res.status(OK).send(response);
-    });
+      // Insert all data from server doc to response doc
+      const selectedItem = {
+        id: update.id,
+        title: update.data().title,
+        dateCreated: update.data().dateCreated.toDate().toString(),
+        lastUpdated: lastUpdated,
+        author: update.data().author,
+        body: update.data().body,
+      };
 
-  })();
-});
+      // Put the response doc into the response list
+      response.push(selectedItem);
+    }
+
+    // Send the response once every doc has been put in
+    return res.status(OK).send(response);
+  });
+
+}));
 
 /**
  * GET /updates/:id
  */
-routes.get('/:id', (req, res) => {
-
-});
+routes.get('/:id', wrap(async (req, res, next) => {
+  return res.status(SERVER_ERR).send();
+}));
 
 /**
  * PUT /updates/:id
  */
-routes.put('/:id', (req, res) => {
-
-});
+routes.put('/:id', wrap(async (req, res, next) => {
+  return res.status(SERVER_ERR).send();
+}));
 
 /**
  * DELETE /updates/:id
  */
-routes.delete('/:id', (req, res) => {
-
-});
+routes.delete('/:id', wrap(async (req, res, next) => {
+  return res.status(SERVER_ERR).send();
+}));
 
 /**
  * POST /updates/:id/body
  */
-routes.post('/:id/body', (req, res) => {
-
-});
+routes.post('/:id/body', wrap(async (req, res, next) => {
+  return res.status(SERVER_ERR).send();
+}));
 
 /**
  * GET /updates/:id/body
  */
-routes.get('/:id/body', (req, res) => {
-
-});
+routes.get('/:id/body', wrap(async (req, res, next) => {
+  return res.status(SERVER_ERR).send();
+}));
 
 module.exports = routes;
