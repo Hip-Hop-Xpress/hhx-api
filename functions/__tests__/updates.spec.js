@@ -159,11 +159,21 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
   it('POST /v1/updates', async () => {
 
     // Test update has already been created in beforeAll block
-    // Just check that it exists and is equal
+    // Just check that its main contents are equal (not the timestamps)
     const res = await supertest(api).get(`${base}/${testUpdate.id}`);
 
     expect(res.status).toBe(OK);
-    expect(res.body).toEqual(testUpdate);
+
+    const update = res.body;
+
+    // Verify contents of update object
+    expect(update.id).toEqual(testUpdate.id);
+    expect(update.title).toEqual(testUpdate.title);
+    expect(update.author).toEqual(testUpdate.author);
+    expect(typeof update.dateCreated).toEqual('string');
+    expect(update.lastUpdated).toBe(null);
+    expect(Array.isArray(update.body)).toBe(true);
+    expect(update.body.length).toBeGreaterThan(0);
 
   });
 
@@ -210,7 +220,7 @@ describe('POST/DELETE /updates endpoint error tests', () => {
 
     // Valid update, invalid request because id already exists
     const res = await supertest(api)
-      .post(`${base}/${existingId}`)
+      .post(base)
       .set('Accept', /json/)
       .send(invalidUpdateReq);
     
@@ -229,19 +239,17 @@ describe('POST/DELETE /updates endpoint error tests', () => {
 
   it('POST /updates tests for wrong type', async () => {
 
-    const id = 500;
-
     // Send nothing, will get caught by type checking
     const res = await supertest(api)
-      .post(`${base}/${id}`)
+      .post(base)
       .set('Accept', /json/)
       .send();
 
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: 'some random error msg idk what\'s gonna be here',
-      param: null,
+      message: '"id" is required',
+      param: 'id',
       original: null
     };
 
@@ -259,7 +267,7 @@ describe('POST/DELETE /updates endpoint error tests', () => {
     };
 
     const res = await supertest(api)
-      .post(`${base}/${id}`)
+      .post(base)
       .set('Accept', /json/)
       .send(invalidUpdateReq);
 
@@ -285,7 +293,7 @@ describe('POST/DELETE /updates endpoint error tests', () => {
     };
 
     const res = await supertest(api)
-      .post(`${base}/${id}`)
+      .post(base)
       .set('Accept', /json/)
       .send(invalidUpdateReq);
 
@@ -302,24 +310,24 @@ describe('POST/DELETE /updates endpoint error tests', () => {
     
   });
 
-  it('POST /updates tests for empty name', async () => {
+  it('POST /updates tests for empty title', async () => {
 
-    const emptyName = '';
+    const emptyTitle = '';
     const invalidUpdateReq = {
       ...testUpdate,
-      name: emptyName
+      title: emptyTitle
     };
 
     const res = await supertest(api)
-      .post(`${base}/${id}`)
+      .post(base)
       .set('Accept', /json/)
       .send(invalidUpdateReq);
 
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: '"name" is not allowed to be empty',
-      param: 'name',
+      message: '"title" is not allowed to be empty',
+      param: 'title',
       original: null
     };
 
@@ -337,14 +345,14 @@ describe('POST/DELETE /updates endpoint error tests', () => {
     };
 
     const res = await supertest(api)
-      .post(`${base}/${id}`)
+      .post(base)
       .set('Accept', /json/)
       .send(invalidUpdateReq);
 
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: '"body" is not allowed to be empty',
+      message: '"body" does not contain 1 required value(s)',
       param: 'body',
       original: null
     };
@@ -364,7 +372,7 @@ describe('POST/DELETE /updates endpoint error tests', () => {
     const expectedError = {
       type: ID_NOT_FOUND_ERR,
       code: INVALID_PARAMS.toString(),
-      message: `The requested update with id ${invalidId} does not exist!`,
+      message: `The requested update with id ${nonexistentId} does not exist!`,
       param: 'id',
       original: null
     };
@@ -453,7 +461,7 @@ describe('PUT /v1/updates/:id updates the update', () => {
     const dateCreated = initialGetRes.body.dateCreated;
 
     const putRes = await supertest(api)
-      .put(endpoint)
+      .put(endpointUrl)
       .set('Accept', /json/)
       .send(updatedUpdate);
 
@@ -559,7 +567,7 @@ describe('PUT /v1/updates/:id errors', () => {
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: '"body" is not allowed to be empty',
+      message: '"body" does not contain 1 required value(s)',
       param: 'body',
       original: null
     };
