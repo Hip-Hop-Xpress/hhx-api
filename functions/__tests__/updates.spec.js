@@ -11,6 +11,9 @@ const { OK, INVALID_PARAMS } = require('../errors/codes');
 const { INVALID_REQUEST_ERR } = require('../errors/types');
 const base = '/v1/updates';
 
+// TODO:  THIS IS SUBJECT TO CHANGE
+const numUpdates = 4;
+
 let adminInitStub;
 const functionsTest = test();
 
@@ -24,6 +27,12 @@ afterAll(async () => {
   adminInitStub.restore();
   functionsTest.cleanup();
 });
+
+/**
+ * Updates Endpoints Unit Tests
+ * 
+ * NOTE: all tests use the production Firestore database
+ */
 
 // Mock update for testing POST requests
 const testUpdate = {
@@ -44,13 +53,46 @@ describe('GET endpoints', () => {
 
   it('GET /v1/updates', async () => {
 
+    const res = await supertest(api).get(base);
+
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toHaveLength(numUpdates);
+
   });
 
   it('GET /v1/updates/:id', async () => {
 
+    // Check first update
+    const res = await supertest(api).get(base + '/0');
+
+    // Verify that the success respones returns an object
+    expect(res.status).toBe(OK);
+    expect(typeof res.body).toEqual('object');
+
+    const update = res.body;
+
+    // Verify contents of update object
+    expect(update.id).toEqual(0);
+    expect(typeof update.title).toEqual('string');
+    expect(typeof update.dateCreated).toEqual('string');
+    expect(typeof update.author).toEqual('string');
+
+    expect(Array.isArray(update.body)).toBe(true);
+    expect(update.body.length).toBeGreaterThan(0);
+
   });
 
   it('GET /v1/updates/:id/body', async () => {
+
+    const res = await supertest(api).get(base + '/0/body');
+
+    // Verify success response returns array
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+
+    const body = res.body;
+    expect(body.length).toBeGreaterThan(0);
 
   });
 
@@ -181,9 +223,15 @@ describe('PUT /v1/updates/:id updates the update', () => {
   afterAll(async () => {
     await supertest(api).delete(endpoint).expect(OK);
   });
-
-  it('updates update successfully', async() => {
-
+  
+  /**
+   * TODO: check that the PUT requests changes the 'lastUpdated' field
+   * 1. perform GET request to make sure that lastUpdated is null
+   * 2. perform PUT request
+   * 3. perform another GET request to make sure that lastUpdated is now a string
+   */
+   it('updates update successfully', async() => {
+    
   });
 
 });
