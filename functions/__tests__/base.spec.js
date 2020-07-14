@@ -4,8 +4,8 @@
  * Testing console commands
  * 
  * Run unit tests using jest:               npm run test
- * Run local server (production Firestore): firebase emulators:start
- * Run local server (emulator Firestore):   npm run serve
+ * Run local server (emulator Firestore):   firebase emulators:start
+ * Run local server (production Firestore): npm run serve
  */
 
 const supertest = require('supertest');

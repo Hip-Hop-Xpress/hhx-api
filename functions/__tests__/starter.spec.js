@@ -5,8 +5,8 @@
  * Testing commands
  * 
  * Run unit tests using jest and coverage:  npm run test
- * Run local server (production Firestore): firebase emulators:start
- * Run local server (emulator Firestore):   npm run serve
+ * Run local server (emulator Firestore):   firebase emulators:start
+ * Run local server (production Firestore): npm run serve
  */
 
 // supertest allows us to make API calls directly using the code
