@@ -7,7 +7,7 @@ Listed below are the planned endpoints for `v1` of the API. Checked endpoints wi
 - [ ] [Featured artists](#featured-artists)
 - [x] [Updates](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Updates)
 - [x] [Location](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Location)
-- [ ] [Social Media](#social-media)
+- [ ] [Social Media](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Social-Media)
 
 ### **Historical artists**
 Information and histories about artists on the physical lab
