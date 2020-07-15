@@ -7,6 +7,7 @@ const db = admin.firestore();
 
 // Error handling functions/constants
 const {
+  sendExistingIdError,
   sendNonexistentIdError,
   sendIncorrectTypeError,
   sendSchemaValidationError,
@@ -78,15 +79,20 @@ routes.post('/', wrap(async (req, res, next) => {
     return sendSchemaValidationError(res, e);
   }
   
-  await db.collection(collection).doc(`/${req.body.id}/`)
-    .create({
-      id: req.body.id,
-      name: req.body.name,
-      date: req.body.date,
-      description: req.body.description,
-      images: req.body.images,
-    });
-
+  // Try creating a document, and throw error if the doc exists
+  try {
+    await db.collection(collection).doc(`/${req.body.id}/`)
+      .create({
+        id: req.body.id,
+        name: req.body.name,
+        date: req.body.date,
+        description: req.body.description,
+        images: req.body.images,
+      });
+  } catch (e) {
+    return sendExistingIdError(res, req.body.id, docName);
+  }
+  
   return res.status(OK).send(req.body);
 
 }));

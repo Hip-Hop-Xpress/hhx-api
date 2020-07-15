@@ -10,7 +10,7 @@ const api = require('../index').app;
 
 // Constants
 const { OK, INVALID_PARAMS } = require('../errors/codes');
-const { INVALID_REQUEST_ERR, ID_NOT_FOUND_ERR } = require('../errors/types');
+const { INVALID_REQUEST_ERR, ID_NOT_FOUND_ERR, ID_ALREADY_EXISTS } = require('../errors/types');
 const base = '/v1/projects';
 const numProjects = 8;
 
@@ -168,9 +168,6 @@ describe('GET endpoints errors', () => {
  * - creates a mock project in the database
  * - performs POST requests on description and members
  * - deletes mock project afterwards
- * TODO: need to test POST errors, specifically schema errors
- * TODO: test that POST with an existing ID throws more specific error 
- * TODO: test nonexistent ID in DELETE
  * 
  */
 describe('POST endpoint tests (tests /DELETE too)', () => {
@@ -244,6 +241,43 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
     expect(res.status).toBe(OK);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body).toHaveLength(expectedNewLength);
+
+  });
+
+});
+
+/**
+ * POST /projects endpoint errors
+ * - TODO: schema errors
+ * - TODO: nonexistent ID errors
+ * - already existing ID errors
+ */
+describe('POST/DELETE project endpoint errors', () => {
+
+  it('POST /projects tests for already existing id', async () => {
+
+    const existingId = 0;  // assuming there's at least one existing project
+    const invalidUpdateReq = {
+      ...testProject,
+      id: existingId
+    };
+
+    // Valid project, invalid request because id already exists
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(invalidUpdateReq);
+    
+    const expectedError = {
+      type: ID_ALREADY_EXISTS,
+      code: INVALID_PARAMS.toString(),
+      message: `The requested project with id ${existingId} already exists!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
 
   });
 
