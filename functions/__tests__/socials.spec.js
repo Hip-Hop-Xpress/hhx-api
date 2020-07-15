@@ -178,13 +178,21 @@ describe('POST/GET/DELETE endpoint test', () => {
 
   it('POST successfully created new social and DELETE deletes/returns it', async() => {
 
-    // TODO: perform GET request on mock
+    // Perform GET request on mock
+    const getRes = await supertest(api)
+      .get(`${base}/${testSocial.type}`)
+      .expect(OK);
+    
+    expect(getRes.status).toBe(OK);
+    expect(getRes.body).toEqual(testSocial);
 
     const deleteRes = await supertest(api)
       .delete(`${base}/${testSocial.type}`)
       .expect(OK);
 
-    // TODO: verify that res contains deleted mock social
+    // Verify that res contains deleted mock social
+    expect(deleteRes.status).toBe(OK);
+    expect(deleteRes.body).toEqual(testSocial);
 
   });
 
