@@ -8,6 +8,7 @@ const db = admin.firestore();
 // Error handling functions/constants
 const {
   sendNonexistentIdError,
+  sendExistingIdError,
   sendIncorrectTypeError,
   sendSchemaValidationError,
 } = require('../errors/helpers');
@@ -63,12 +64,14 @@ routes.post('/', wrap(async (req, res, next) => {
   } catch (e) {
     return sendSchemaValidationError(res, e);
   }
-
+  
   // Construct a Timestamp object using the current date
   const currentDate = new Date();
   const dateCreated = admin.firestore.Timestamp.fromDate(currentDate);
 
-  await db.collection(collection).doc(`/${req.body.id}/`)
+  // Try creating a document, and throw error if the doc exists
+  try {
+    await db.collection(collection).doc(`/${req.body.id}/`)
     .create({
       id: req.body.id,
       title: req.body.title,
@@ -77,7 +80,10 @@ routes.post('/', wrap(async (req, res, next) => {
       author: req.body.author,
       body: req.body.body
     });
-
+  } catch (e) {
+    return sendExistingIdError(res, req.body.id, docName);
+  }
+  
   return res.status(OK).send(req.body);
 
 })); 

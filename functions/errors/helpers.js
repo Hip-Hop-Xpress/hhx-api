@@ -8,7 +8,7 @@ const httpCodes = require('./codes');
  * Sends error response when a nonexistent ID is requested
  * 
  * @param {Response} res the error Response to be sent
- * @param {number} id an invalid ID (doesn't point to variation)
+ * @param {number} id an invalid ID (doesn't point to document)
  * @param {String} docName name of document in collection 
  * @returns {Response} the response with correct status and body
  */
@@ -17,6 +17,27 @@ const sendNonexistentIdError = (res, id, docName) => {
     type: errorTypes.ID_NOT_FOUND_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
     message: `The requested ${docName} with id ${id} does not exist!`,
+    param: 'id',
+    original: null
+  };
+
+  return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+}
+
+/**
+ * Sends error response when a request tries creating a
+ * document that already exists
+ * 
+ * @param {Response} res the error Response to be sent
+ * @param {number} id an invalid ID (already points to document)
+ * @param {String} docName name of document in collection 
+ * @returns {Response} the response with correct status and body
+ */
+const sendExistingIdError = (res, id, docName) => {
+  const errorResponse = {
+    type: errorTypes.ID_ALREADY_EXISTS,
+    code: httpCodes.INVALID_PARAMS.toString(),
+    message: `The requested ${docName} with id ${id} already exists!`,
     param: 'id',
     original: null
   };
@@ -89,6 +110,7 @@ const constructServerError = (res, e) => {
 
 module.exports = {
   sendNonexistentIdError,
+  sendExistingIdError,
   sendSchemaValidationError,
   sendIncorrectTypeError,
   constructServerError
