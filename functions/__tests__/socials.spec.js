@@ -121,11 +121,40 @@ describe('GET endpoints', () => {
 
 /**
  * GET endpoints error tests
- * Only error should be getting nonexistent type
  */
 describe('GET endpoints errors', () => {
 
-  it('tests for nonexistent type', async () => {});
+  it('tests for nonexistent type', async () => {
+
+    const nonexistentType = 'wordpress';
+    const res = await supertest(api).get(`${base}/${nonexistentType}`);
+
+    const expectedError = {
+      // TODO: figure out what kind of error should be thrown
+    };
+
+    expect(res.status).toBe(ID_NOT_FOUND_ERR);
+
+  });
+
+  it('tests for invalid type', async () => {
+
+    // not a valid type from the react-native-elements social icon types
+    const invalidType = 'not a valid type';
+    const res = await supertest(api).get(`${base}/${invalidType}`);
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'message about invalid type',  // TODO: figure out msg
+      param: 'type',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
 
 });
 
