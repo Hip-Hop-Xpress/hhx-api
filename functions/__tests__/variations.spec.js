@@ -335,7 +335,7 @@ describe('POST /v1/variations errors', () => {
       id: existingId
     };
 
-    // Valid update, invalid request because id already exists
+    // Valid variation, invalid request because id already exists
     const res = await supertest(api)
       .post(base)
       .set('Accept', /json/)
