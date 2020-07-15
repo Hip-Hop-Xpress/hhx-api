@@ -390,7 +390,7 @@ describe('PUT /v1/projects/:id updates project', () => {
   };
 
   // PUT and DELETE operations all use this endpoint
-  const endpoint = `${base}/${initialProject.id}`
+  const endpoint = `${base}/${initialProject.id}`;
 
   // POST the variation before testing PUT operations
   beforeAll(async () => {
@@ -405,7 +405,7 @@ describe('PUT /v1/projects/:id updates project', () => {
 
   // DELETE the variation after testing
   afterAll(async () => {
-    await supertest(api).delete(endpoint);
+    await supertest(api).delete(endpoint).expect(OK);
   });
 
   it('updates project', async () => {

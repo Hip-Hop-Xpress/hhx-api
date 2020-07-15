@@ -10,7 +10,6 @@ const {
   sendNonexistentIdError,
   sendIncorrectTypeError,
   sendSchemaValidationError,
-  constructServerError,
 } = require('../errors/helpers');
 
 const wrap = require('../errors/wrap');
@@ -135,16 +134,15 @@ routes.get('/:id', wrap(async (req, res, next) => {
   const document = db.collection(collection).doc(req.params.id);
 
   await document.get().then(doc => {
-      if (doc.exists) {
-        // Fetch and send data if variation of :id is found
-        let response = doc.data();
-        return res.status(OK).send(response);
-      } else {
-        // If ID is not found, send error response
-        return sendNonexistentIdError(res, req.params.id, docName);
-      }
+    if (doc.exists) {
+      // Fetch and send data if variation of :id is found
+      let response = doc.data();
+      return res.status(OK).send(response);
+    } else {
+      // If ID is not found, send error response
+      return sendNonexistentIdError(res, req.params.id, docName);
     }
-  );
+  });
     
 }));
 

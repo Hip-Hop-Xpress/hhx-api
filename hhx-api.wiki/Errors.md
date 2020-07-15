@@ -21,6 +21,7 @@ api_error | an error popped up on our end - if persistent, contact us!
 invalid_endpoint_error | the requested endpoint doesn't exist - usually due to an incorrect HTTP verb or typo in the endpoint address
 invalid_request_error | the endpoint was reached, but data in the body request was invalid or omitted and is required
 id_not_found_error | the endpoint was reached, but the document/object with specified ID was not found
+id_already_exists_error | the request tried creating a new document with an ID that already exists
 rate_limit_error | too many requests in a short amount of time
 
 ## Error object
