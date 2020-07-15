@@ -37,4 +37,4 @@ Courses | :x: | :x: | :x:
 Featured artists | :x: | :x: | :x:
 [Updates](updates) | :heavy_check_mark: | :heavy_check_mark: | :x:
 [Location](location) | :heavy_check_mark: | :heavy_check_mark: | :x:
-Social Media | :x: | :x: | :x:
+[Social Media](social-media) | :x: | :x: | :x:
