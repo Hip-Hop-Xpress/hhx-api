@@ -35,6 +35,6 @@ Historical artists | :x: | :x: | :x:
 Courses | :x: | :x: | :x:
 [Projects](projects) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 Featured artists | :x: | :x: | :x:
-Updates | :x: | :x: | :x:
+[Updates](updates) | :heavy_check_mark: | :heavy_check_mark: | :x:
 [Location](location) | :heavy_check_mark: | :heavy_check_mark: | :x:
 Social Media | :x: | :x: | :x:
