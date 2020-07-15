@@ -10,8 +10,8 @@ const sinon = require('sinon');
 const api = require('../index').app;
 
 // Constants
-const httpCodes = require('../errors/codes');
-const errorTypes = require('../errors/types');
+const { INVALID_PARAMS, OK } = require('../errors/codes');
+const { INVALID_REQUEST_ERR, ID_NOT_FOUND_ERR, ID_ALREADY_EXISTS } = require('../errors/types');
 const base = '/v1/variations';
 const numVariations = 2;
 
@@ -76,7 +76,7 @@ describe('GET endpoints', () => {
 
     const res = await supertest(api).get(base);
 
-    expect(res.status).toBe(httpCodes.OK);
+    expect(res.status).toBe(OK);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body).toHaveLength(numVariations);
 
@@ -88,7 +88,7 @@ describe('GET endpoints', () => {
     const res = await supertest(api).get(base + '/0');
 
     // Verify that the success response returns an object
-    expect(res.status).toBe(httpCodes.OK);
+    expect(res.status).toBe(OK);
     expect(typeof res.body).toEqual('object');
 
     const variation = res.body;
@@ -112,7 +112,7 @@ describe('GET endpoints', () => {
     const res = await supertest(api).get(base + '/0/images');
 
     // Verify that the success response returns an array
-    expect(res.status).toBe(httpCodes.OK);
+    expect(res.status).toBe(OK);
     expect(Array.isArray(res.body)).toBe(true);
 
     // Images should have at least on image object
@@ -133,7 +133,7 @@ describe('GET endpoints', () => {
     const res = await supertest(api).get(base + '/0/description');
 
     // Verify success response returns array
-    expect(res.status).toBe(httpCodes.OK);
+    expect(res.status).toBe(OK);
     expect(Array.isArray(res.body)).toBe(true);
 
     const description = res.body;
@@ -164,21 +164,21 @@ describe('GET endpoint errors', () => {
     // Using nonexistent id
     const response = await supertest(api).get(base + `/${id}`);
 
-    expect(response.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(response.status).toBe(INVALID_PARAMS);
     expect(response.body).toEqual(expectedError);
   });
 
   it('GET /v1/variations/:id/images - nonexistent id', async() => {
     const response = await supertest(api).get(base + `/${id}/images`);
 
-    expect(response.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(response.status).toBe(INVALID_PARAMS);
     expect(response.body).toEqual(expectedError);
   });
 
   it('GET /v1/variations/:id/description - nonexistent id', async() => {
     const response = await supertest(api).get(base + `/${id}/description`);
 
-    expect(response.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(response.status).toBe(INVALID_PARAMS);
     expect(response.body).toEqual(expectedError);
   });
 
@@ -224,13 +224,13 @@ describe('POST endpoint tests (tests DELETE too)', () => {
       .post(base)
       .set('Accept', /json/)
       .send(testVariation1)
-      .expect(httpCodes.OK);
+      .expect(OK);
 
     await supertest(api)
       .post(base)
       .set('Accept', /json/)
       .send(testVariation2)
-      .expect(httpCodes.OK);
+      .expect(OK);
   });
 
   // Delete the test variation after tests
@@ -244,7 +244,7 @@ describe('POST endpoint tests (tests DELETE too)', () => {
     // Test variation has already been created in beforeEach block
     // Just check that it exists and is equal
     const response = await supertest(api).get(`${base}/${testVariation1.id}`);
-    expect(response.status).toBe(httpCodes.OK);
+    expect(response.status).toBe(OK);
     expect(response.body).toEqual(testVariation1);
 
   });
@@ -258,7 +258,7 @@ describe('POST endpoint tests (tests DELETE too)', () => {
       .set('Accept', /json/)
       .send(testImage);
 
-    expect(firstRes.status).toBe(httpCodes.OK);
+    expect(firstRes.status).toBe(OK);
     expect(Array.isArray(firstRes.body)).toBe(true);
     expect(firstRes.body).toHaveLength(expectedNewLength);
 
@@ -285,7 +285,7 @@ describe('POST endpoint tests (tests DELETE too)', () => {
       .set('Accept', /json/)
       .send(newImages);
     
-      expect(secondRes.status).toBe(httpCodes.OK);
+      expect(secondRes.status).toBe(OK);
       expect(Array.isArray(secondRes.body)).toBe(true);
       expect(secondRes.body).toHaveLength(expectedNewLength);
 
@@ -309,7 +309,7 @@ describe('POST endpoint tests (tests DELETE too)', () => {
       .send(newEntries);
 
     // Response should contain updated description
-    expect(res.status).toBe(httpCodes.OK);
+    expect(res.status).toBe(OK);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body).toHaveLength(expectedNewLength);
 
@@ -325,8 +325,35 @@ describe('POST endpoint tests (tests DELETE too)', () => {
  * 
  * Image schema errors are handled in another test section
  */
-describe('POST /v1/variations schema errors', () => {
+describe('POST /v1/variations errors', () => {
   
+  it('tests for already existing id', async () => {
+
+    const existingId = 0;  // assuming there's at least one existing variation
+    const invalidUpdateReq = {
+      ...testVariation,
+      id: existingId
+    };
+
+    // Valid update, invalid request because id already exists
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(invalidUpdateReq);
+    
+    const expectedError = {
+      type: ID_ALREADY_EXISTS,
+      code: INVALID_PARAMS.toString(),
+      message: `The requested variation with id ${existingId} already exists!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
   it('tests negative id', async () => {
 
     const negativeId = {
@@ -340,14 +367,14 @@ describe('POST /v1/variations schema errors', () => {
       .send(negativeId);
 
     const expectedError = {
-      type: errorTypes.INVALID_REQUEST_ERR,
-      code: httpCodes.INVALID_PARAMS.toString(),
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
       message: '"id" must be larger than or equal to 0',
       param: 'id',
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -365,14 +392,14 @@ describe('POST /v1/variations schema errors', () => {
       .send(nonIntegerId);
     
     const expectedError = {
-      type: errorTypes.INVALID_REQUEST_ERR,
-      code: httpCodes.INVALID_PARAMS.toString(),
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
       message: '"id" must be an integer',
       param: 'id',
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -392,14 +419,14 @@ describe('POST /v1/variations schema errors', () => {
       .send(emptyName);
     
     const expectedError = {
-      type: errorTypes.INVALID_REQUEST_ERR,
-      code: httpCodes.INVALID_PARAMS.toString(),
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
       message: '"name" is not allowed to be empty',
       param: 'name',
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -419,14 +446,14 @@ describe('POST /v1/variations schema errors', () => {
       .send(shortDate);
     
     const expectedError = {
-      type: errorTypes.INVALID_REQUEST_ERR,
-      code: httpCodes.INVALID_PARAMS.toString(),
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
       message: '"date" length must be at least 4 characters long',
       param: 'date',
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -446,14 +473,14 @@ describe('POST /v1/variations schema errors', () => {
       .send(emptyDescription);
     
     const expectedError = {
-      type: errorTypes.INVALID_REQUEST_ERR,
-      code: httpCodes.INVALID_PARAMS.toString(),
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
       message: '"description" does not contain 1 required value(s)',
       param: 'description',
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -473,14 +500,14 @@ describe('POST /v1/variations schema errors', () => {
       .send(emptyImages);
     
     const expectedError = {
-      type: errorTypes.INVALID_REQUEST_ERR,
-      code: httpCodes.INVALID_PARAMS.toString(),
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
       message: '"images" must contain at least 1 items',
       param: 'images',
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -515,14 +542,14 @@ describe('POST /v1/variations + /:id/images schema errors', () => {
       .send(invalidUrl);
     
     const expectedError = {
-      type: errorTypes.INVALID_REQUEST_ERR,
-      code: httpCodes.INVALID_PARAMS.toString(),
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
       message: '"images[0].url" must be a valid uri',
       param: 'url',
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -547,14 +574,14 @@ describe('POST /v1/variations + /:id/images schema errors', () => {
       .send(captionUndefined);
     
     const expectedError = {
-      type: errorTypes.INVALID_REQUEST_ERR,
-      code: httpCodes.INVALID_PARAMS.toString(),
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
       message: '"images[0].caption" is required',
       param: 'caption',
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -575,14 +602,14 @@ describe('POST /v1/variations + /:id/images schema errors', () => {
       .send(emptyUrl);
     
     const expectedError = {
-      type: errorTypes.INVALID_REQUEST_ERR,
-      code: httpCodes.INVALID_PARAMS.toString(),
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
       message: '"url" is required',
       param: 'url',
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -606,7 +633,7 @@ describe('POST /v1/variations + /:id/images schema errors', () => {
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -632,14 +659,14 @@ describe('POST /v1/variations + /:id/images schema errors', () => {
       .send(imagesArray);
 
     const expectedError = {
-      type: errorTypes.INVALID_REQUEST_ERR,
-      code: httpCodes.INVALID_PARAMS.toString(),
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
       message: '"componentImage" is required',
       param: 'componentImage',
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -673,7 +700,7 @@ describe('POST /v1/variations/:id/description errors', () => {
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -689,14 +716,14 @@ describe('POST /v1/variations/:id/description errors', () => {
       .send();
 
     const expectedError = {
-      type: errorTypes.INVALID_REQUEST_ERR,
-      code: httpCodes.INVALID_PARAMS.toString(),
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
       message: 'Body must be string or array of strings',
       param: null,
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -742,7 +769,7 @@ describe('PUT /v1/variations/:id updates variation', () => {
       .post(base)
       .set('Accept', /json/)
       .send(initialVariation)
-      .expect(httpCodes.OK);
+      .expect(OK);
 
   });
 
@@ -758,7 +785,7 @@ describe('PUT /v1/variations/:id updates variation', () => {
       .set('Accept', /json/)
       .send(updatedVariation);
 
-    expect(res.status).toBe(httpCodes.OK);
+    expect(res.status).toBe(OK);
     expect(res.body).toEqual(updatedVariation);
 
   });
@@ -778,14 +805,14 @@ describe('PUT /v1/variations/:id errors', () => {
       .send({name: 'valid test name'});
 
     const expectedError = {
-      type: errorTypes.ID_NOT_FOUND_ERR,
-      code: httpCodes.INVALID_PARAMS.toString(),
+      type: ID_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
       message: `The requested variation with id ${invalidId} does not exist!`,
       param: 'id',
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -798,14 +825,14 @@ describe('PUT /v1/variations/:id errors', () => {
       .send({name: ''});
 
     const expectedError = {
-      type: errorTypes.INVALID_REQUEST_ERR,
-      code: httpCodes.INVALID_PARAMS.toString(),
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
       message: '"name" is not allowed to be empty',
       param: 'name',
       original: null
     };
 
-    expect(res.status).toBe(httpCodes.INVALID_PARAMS);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });

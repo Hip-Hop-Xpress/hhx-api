@@ -7,8 +7,8 @@ const db = admin.firestore();
 
 // Error handling functions/constants
 const {
-  sendNonexistentIdError,
   sendExistingIdError,
+  sendNonexistentIdError,
   sendIncorrectTypeError,
   sendSchemaValidationError,
 } = require('../errors/helpers');
