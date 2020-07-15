@@ -5,7 +5,7 @@ Listed below are the planned endpoints for `v1` of the API. Checked endpoints wi
 - [ ] [Courses](#courses)
 - [x] [Projects](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Projects)
 - [ ] [Featured artists](#featured-artists)
-- [ ] [Updates](#updates)
+- [x] [Updates](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Updates)
 - [x] [Location](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Location)
 - [ ] [Social Media](#social-media)
 
