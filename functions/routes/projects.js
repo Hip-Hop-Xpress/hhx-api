@@ -77,17 +77,22 @@ routes.post('/', wrap(async (req, res, next) => {
     return sendSchemaValidationError(res, e);
   }
 
-  await db.collection(collection).doc(`/${req.body.id}/`)
-    .create({
-      id: req.body.id,
-      name: req.body.name,
-      description: req.body.description,
-      members: req.body.members,
-      startDate: req.body.startDate,
-      endDate: req.body.endDate,
-      icon: req.body.icon
-    });
-
+  // Try creating a document, and throw error if the doc exists
+  try {
+    await db.collection(collection).doc(`/${req.body.id}/`)
+      .create({
+        id: req.body.id,
+        name: req.body.name,
+        description: req.body.description,
+        members: req.body.members,
+        startDate: req.body.startDate,
+        endDate: req.body.endDate,
+        icon: req.body.icon
+      });
+  } catch (e) {
+    return sendExistingIdError(res, req.body.id, docName);
+  }
+  
   return res.status(OK).send(req.body);
 
 }));

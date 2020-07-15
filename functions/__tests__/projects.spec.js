@@ -10,7 +10,7 @@ const api = require('../index').app;
 
 // Constants
 const { OK, INVALID_PARAMS } = require('../errors/codes');
-const { INVALID_REQUEST_ERR, ID_NOT_FOUND_ERR } = require('../errors/types');
+const { INVALID_REQUEST_ERR, ID_NOT_FOUND_ERR, ID_ALREADY_EXISTS } = require('../errors/types');
 const base = '/v1/projects';
 const numProjects = 8;
 
