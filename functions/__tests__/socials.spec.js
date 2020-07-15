@@ -12,7 +12,14 @@ const api = require('../index').app;
 const { OK, INVALID_PARAMS } = require('../errors/codes');
 const { INVALID_REQUEST_ERR, ID_NOT_FOUND_ERR, ID_ALREADY_EXISTS } = require('../errors/types');
 const base = '/v1/socials';
-const numSocials = 4;
+
+// FIXME: this could change at any point, which will affect tests
+const currentSocials = [
+  'instagram',
+  'facebook',
+  'soundcloud',
+  'twitter'
+];
 
 let adminInitStub;
 const functionsTest = test();
@@ -48,11 +55,67 @@ const testSocial = {
  */
 describe('GET endpoints', () => {
 
-  it('GET /v1/socials', async () => {});
+  it('GET /v1/socials', async () => {
 
-  it('GET /v1/socials/types', async () => {});
+    const res = await supertest(api).get(base);
+
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toHaveLength(currentSocials.length);
+
+  });
+
+  it('GET /v1/socials/types', async () => {
+
+    const res = await supertest(api).get(`${base}/types`);
+
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+
+    const types = res.body;
+
+    // Every known social media type should be here
+    for (const type of currentSocials) {
+      expect(types.includes(type)).toBe(true);
+    }
+
+  });
   
-  it('GET /v1/socials/:type', async () => {});
+  // Starting asynchronous tasks immediately and resolving afterwards
+  // https://eslint.org/docs/rules/no-await-in-loop
+  it('GET /v1/socials/:type', async () => {
+
+    const promises = [];
+
+    // For every known social, send a GET request asking for
+    // the social media object based on its type
+    for (const type of currentSocials) {
+
+      const url = `${base}/${type}`;
+      const res = supertest(api).get(url).expect(OK);
+      promises.push(res);
+
+    }
+
+    const results = await Promise.all(promises);
+    let i = 0;
+
+    // Verify that each response is a valid social media object
+    for (const res of results) {
+
+      expect(res.status).toBe(OK);
+      expect(typeof res.body).toEqual('object');
+
+      const socialMedia = res.body;
+      expect(socialMedia.type).toEqual(currentSocials[i]);
+      expect(socialMedia.handle.length).toBeGreaterThan(0);
+      expect(typeof socialMedia.url).toEqual('string');
+
+      i++;
+
+    }
+
+  });
 
 });
 
