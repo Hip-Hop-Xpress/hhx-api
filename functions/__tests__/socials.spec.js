@@ -46,13 +46,25 @@ const testSocial = {
  * GET endpoints tests
  * NOTE: assumes that all current HHX social medias are in the database
  */
-describe('GET endpoints', () => {});
+describe('GET endpoints', () => {
+
+  it('GET /v1/socials', async () => {});
+
+  it('GET /v1/socials/types', async () => {});
+  
+  it('GET /v1/socials/:type', async () => {});
+
+});
 
 /**
  * GET endpoints error tests
  * Only error should be getting nonexistent type
  */
-describe('GET endpoints errors', () => {});
+describe('GET endpoints errors', () => {
+
+  it('tests for nonexistent type', async () => {});
+
+});
 
 /**
  * POST endpoint tests
@@ -62,7 +74,29 @@ describe('GET endpoints errors', () => {});
  * - deletes mock social afterwards
  * 
  */
-describe('POST endpoint tests (tests /DELETE too)', () => {});
+describe('POST/GET/DELETE endpoint test', () => {
+
+  beforeAll(async () => {
+    await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(testSocial)
+      .expect(OK);
+  });
+
+  it('POST successfully created new social and DELETE deletes/returns it', async() => {
+
+    // TODO: perform GET request on mock
+
+    const deleteRes = await supertest(api)
+      .delete(`${base}/${testSocial.type}`)
+      .expect(OK);
+
+    // TODO: verify that res contains deleted mock social
+
+  });
+
+});
 
 /**
  * POST/DELETE /socials endpoint errors
@@ -71,7 +105,21 @@ describe('POST endpoint tests (tests /DELETE too)', () => {});
  * - already existing type errors (POST)
  * - type is not valid (see: https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type)
  */
-describe('POST/DELETE socials endpoint errors', () => {});
+describe('POST/DELETE socials endpoint errors', () => {
+
+  it('POST tests for type that already exists', async() => {});
+
+  it('POST tests for invalid type', async() => {});
+
+  it('POST tests for empty handle', async() => {});
+
+  it('POST tests for empty url', async() => {});
+
+  it('POST tests for invalid url', async() => {});
+
+  it('DELETE tests for nonexistent type', async() => {});
+
+});
 
 /**
  * PUT tests for socials
