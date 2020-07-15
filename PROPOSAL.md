@@ -55,17 +55,7 @@ Information about artists featured by the Hip Hop Xpress
 
 
 ### **Updates**
-Posts with updates regarding progress, projects, and news about the Hip Hop Xpress
-
-<details>
-  <summary>Update posts endpoint details</summary>
-  
-  Endpoint | `POST` | `GET` | `PUT` | `DELETE`
-  -|-|-|-|-
-  `/updates` | Create new update | Retrieve all updates | Bulk update of all update info | Remove all updates
-  `/updates/:date` | Error | Retrieve update at specified date | Update information of update post at `date` | Remove update post at `date`
-
-</details>
+This info has been updated and moved to the [wiki](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Updates).
 
 ### **Location**
 This info has been updated and moved to the [wiki](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Location).
