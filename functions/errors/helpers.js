@@ -35,7 +35,7 @@ const sendNonexistentIdError = (res, id, docName) => {
  */
 const sendExistingIdError = (res, id, docName) => {
   const errorResponse = {
-    type: errorTypes.ID_ALREADY_EXISTS,
+    type: errorTypes.ID_ALREADY_EXISTS_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
     message: `The requested ${docName} with id ${id} already exists!`,
     param: 'id',
