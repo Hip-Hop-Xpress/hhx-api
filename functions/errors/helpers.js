@@ -25,6 +25,27 @@ const sendNonexistentIdError = (res, id, docName) => {
 }
 
 /**
+ * Sends error response when a nonexistent document is requested
+ * 
+ * @param {Response} res the error Response to be sent
+ * @param {String} paramName name of identifier attribute
+ * @param {number|String} param an identifier that doesn't point to a document
+ * @param {String} docName name of document in collection 
+ * @returns {Response} the response with correct status and body
+ */
+const sendNonexistentDocError = (res, paramName, param, docName) => {
+  const errorResponse = {
+    type: errorTypes.DOC_NOT_FOUND_ERR,
+    code: httpCodes.INVALID_PARAMS.toString(),
+    message: `The requested ${docName} with ${paramName}: "${param}" does not exist!`,
+    param: paramName,
+    original: null
+  };
+
+  return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+}
+
+/**
  * Sends error response when a request tries creating a
  * document that already exists
  * 
@@ -39,6 +60,27 @@ const sendExistingIdError = (res, id, docName) => {
     code: httpCodes.INVALID_PARAMS.toString(),
     message: `The requested ${docName} with id ${id} already exists!`,
     param: 'id',
+    original: null
+  };
+
+  return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+}
+
+/**
+ * Sends error response when a request tries creating a document that already exists
+ * 
+ * @param {Response} res the error Response to be sent
+ * @param {String} paramName name of identifier attribute
+ * @param {number} param an invalid identifer (already points to document)
+ * @param {String} docName name of document in collection 
+ * @returns {Response} the response with correct status and body
+ */
+const sendExistingDocError = (res, paramName, param, docName) => {
+  const errorResponse = {
+    type: errorTypes.DOC_ALRDY_EXISTS_ERR,
+    code: httpCodes.INVALID_PARAMS.toString(),
+    message: `The requested ${docName} with ${paramName}: "${param}" already exists!`,
+    param: paramName,
     original: null
   };
 
@@ -111,6 +153,8 @@ const constructServerError = (res, e) => {
 module.exports = {
   sendNonexistentIdError,
   sendExistingIdError,
+  sendNonexistentDocError,
+  sendExistingDocError,
   sendSchemaValidationError,
   sendIncorrectTypeError,
   constructServerError

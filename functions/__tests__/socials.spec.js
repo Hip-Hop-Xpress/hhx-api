@@ -10,7 +10,7 @@ const api = require('../index').app;
 
 // Constants
 const { OK, INVALID_PARAMS } = require('../errors/codes');
-const { INVALID_REQUEST_ERR, DOC_NOT_FOUND_ERR: ID_NOT_FOUND_ERR, DOC_ALRDY_EXISTS_ERR: ID_ALREADY_EXISTS_ERR } = require('../errors/types');
+const { INVALID_REQUEST_ERR, DOC_NOT_FOUND_ERR, DOC_ALRDY_EXISTS_ERR } = require('../errors/types');
 const base = '/v1/socials';
 
 // FIXME: this could change at any point, which will affect tests
@@ -130,10 +130,15 @@ describe('GET endpoints errors', () => {
     const res = await supertest(api).get(`${base}/${nonexistentType}`);
 
     const expectedError = {
-      // TODO: figure out what kind of error should be thrown
+      type: DOC_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'The requested social media platform with type: "wordpress" does not exist!',
+      param: 'type',
+      original: null
     };
 
-    expect(res.status).toBe(ID_NOT_FOUND_ERR);
+    expect(res.status).toBe(DOC_NOT_FOUND_ERR);
+    expect(res.body).toEqual(expectedError);
 
   });
 
