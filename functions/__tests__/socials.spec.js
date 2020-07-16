@@ -207,17 +207,139 @@ describe('POST/GET/DELETE endpoint test', () => {
  */
 describe('POST/DELETE socials endpoint errors', () => {
 
-  it('POST tests for type that already exists', async() => {});
+  it('POST tests for type that already exists', async() => {
 
-  it('POST tests for invalid type', async() => {});
+    const existingType = 'instagram';
+    const existingSocial = {
+      type: existingType,
+      handle: '@uiuchhx',
+      url: 'https://www.instagram.com/uiuchhx/'
+    };
 
-  it('POST tests for empty handle', async() => {});
+    const res = await supertest(api)
+      .post(`${base}/${existingType}`)
+      .set('Accept', /json/)
+      .send(existingSocial);
 
-  it('POST tests for empty url', async() => {});
+    const expectedError = {
+      // TODO: figure out this error
+    };
 
-  it('POST tests for invalid url', async() => {});
+  });
 
-  it('DELETE tests for nonexistent type', async() => {});
+  it('POST tests for invalid type', async() => {
+
+    // not a valid type from the react-native-elements social icon types
+    const invalidType = 'not a valid type';
+
+    const res = await supertest(api)
+      .post(`${base}/${invalidType}`)
+      .set('Accept', /json/)
+      .send({
+        ...testSocial,
+        type: invalidType
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'message about invalid type',  // TODO: figure out msg
+      param: 'type',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST tests for empty handle', async() => {
+
+    const emptyHandle = '';
+
+    const res = await supertest(api)
+      .post(`${base}/${invalidType}`)
+      .set('Accept', /json/)
+      .send({
+        ...testSocial,
+        handle: emptyHandle
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"handle" is not allowed to be empty',
+      param: 'handle',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST tests for no url', async() => {
+
+    const res = await supertest(api)
+      .post(`${base}/${invalidType}`)
+      .set('Accept', /json/)
+      .send({
+        ...testSocial,
+        url: undefined
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"url" is required',
+      param: 'url',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST tests for invalid url', async() => {
+
+    const invalidUrl = 'not a valid url';
+
+    const res = await supertest(api)
+      .post(`${base}/${invalidType}`)
+      .set('Accept', /json/)
+      .send({
+        ...testSocial,
+        url: invalidUrl
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"url" must be a vaild uri',
+      param: 'url',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('DELETE tests for nonexistent type', async() => {
+
+    const nonexistentType = 'wordpress';
+
+    const res = await supertest(api).delete(`${base}/${nonexistentType}`);
+
+    const expectedError = {
+      // TODO: figure out what kind of error response this should get
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
 
 });
 
