@@ -10,7 +10,7 @@ const api = require('../index').app;
 
 // Constants
 const { OK, INVALID_PARAMS } = require('../errors/codes');
-const { INVALID_REQUEST_ERR, ID_NOT_FOUND_ERR, ID_ALREADY_EXISTS } = require('../errors/types');
+const { INVALID_REQUEST_ERR, DOC_NOT_FOUND_ERR, DOC_ALRDY_EXISTS_ERR } = require('../errors/types');
 const base = '/v1/projects';
 const numProjects = 8;
 
@@ -130,7 +130,7 @@ describe('GET endpoints errors', () => {
   // Setup expected errors
   let id = 999;
   const expectedError = {
-    type: 'id_not_found_error',
+    type: DOC_NOT_FOUND_ERR,
     code: '422',
     message: `The requested project with id ${id} does not exist!`,
     param: 'id',
@@ -269,7 +269,7 @@ describe('POST/DELETE project endpoint errors', () => {
       .send(invalidUpdateReq);
     
     const expectedError = {
-      type: ID_ALREADY_EXISTS,
+      type: DOC_ALRDY_EXISTS_ERR,
       code: INVALID_PARAMS.toString(),
       message: `The requested project with id ${existingId} already exists!`,
       param: 'id',
@@ -304,7 +304,7 @@ describe('POST description and members errors', () => {
       .send(description);
 
     const expectedError = {
-      type: 'id_not_found_error',
+      type: DOC_NOT_FOUND_ERR,
       code: '422',
       message: `The requested project with id ${id} does not exist!`,
       param: 'id',
@@ -354,7 +354,7 @@ describe('POST description and members errors', () => {
       .send(members);
 
     const expectedError = {
-      type: 'id_not_found_error',
+      type: DOC_NOT_FOUND_ERR,
       code: '422',
       message: `The requested project with id ${id} does not exist!`,
       param: 'id',
@@ -469,7 +469,7 @@ describe('PUT /v1/projects/:id errors', () => {
       .send({name: 'valid test name'});
 
     const expectedError = {
-      type: ID_NOT_FOUND_ERR,
+      type: DOC_NOT_FOUND_ERR,
       code: INVALID_PARAMS.toString(),
       message: `The requested project with id ${invalidId} does not exist!`,
       param: 'id',

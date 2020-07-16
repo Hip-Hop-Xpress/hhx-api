@@ -14,7 +14,7 @@ const httpCodes = require('./codes');
  */
 const sendNonexistentIdError = (res, id, docName) => {
   const errorResponse = {
-    type: errorTypes.ID_NOT_FOUND_ERR,
+    type: errorTypes.DOC_NOT_FOUND_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
     message: `The requested ${docName} with id ${id} does not exist!`,
     param: 'id',
@@ -35,7 +35,7 @@ const sendNonexistentIdError = (res, id, docName) => {
  */
 const sendExistingIdError = (res, id, docName) => {
   const errorResponse = {
-    type: errorTypes.ID_ALREADY_EXISTS_ERR,
+    type: errorTypes.DOC_ALRDY_EXISTS_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
     message: `The requested ${docName} with id ${id} already exists!`,
     param: 'id',

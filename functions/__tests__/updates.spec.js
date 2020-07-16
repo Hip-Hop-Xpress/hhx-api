@@ -8,7 +8,7 @@ const api = require('../index').app;
 
 // Constants
 const { OK, INVALID_PARAMS } = require('../errors/codes');
-const { INVALID_REQUEST_ERR, ID_NOT_FOUND_ERR, ID_ALREADY_EXISTS } = require('../errors/types');
+const { INVALID_REQUEST_ERR, DOC_NOT_FOUND_ERR, DOC_ALRDY_EXISTS_ERR } = require('../errors/types');
 const base = '/v1/updates';
 
 // TODO:  THIS IS SUBJECT TO CHANGE
@@ -107,7 +107,7 @@ describe('GET endpoint errors', () => {
   // Setup expected errors
   let id = 404;
   const expectedError = {
-    type: ID_NOT_FOUND_ERR,
+    type: DOC_NOT_FOUND_ERR,
     code: INVALID_PARAMS.toString(),
     message: `The requested update with id ${id} does not exist!`,
     param: 'id',
@@ -225,7 +225,7 @@ describe('POST/DELETE /updates endpoint error tests', () => {
       .send(invalidUpdateReq);
     
     const expectedError = {
-      type: ID_ALREADY_EXISTS,
+      type: DOC_ALRDY_EXISTS_ERR,
       code: INVALID_PARAMS.toString(),
       message: `The requested update with id ${existingId} already exists!`,
       param: 'id',
@@ -370,7 +370,7 @@ describe('POST/DELETE /updates endpoint error tests', () => {
       .delete(`${base}/${nonexistentId}`);
 
     const expectedError = {
-      type: ID_NOT_FOUND_ERR,
+      type: DOC_NOT_FOUND_ERR,
       code: INVALID_PARAMS.toString(),
       message: `The requested update with id ${nonexistentId} does not exist!`,
       param: 'id',
@@ -499,7 +499,7 @@ describe('PUT /v1/updates/:id errors', () => {
     .send({title: 'valid title'});
 
     const expectedError = {
-      type: ID_NOT_FOUND_ERR,
+      type: DOC_NOT_FOUND_ERR,
       code: INVALID_PARAMS.toString(),
       message: `The requested update with id ${invalidId} does not exist!`,
       param: 'id',
