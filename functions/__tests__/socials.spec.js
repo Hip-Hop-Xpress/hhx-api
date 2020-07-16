@@ -10,7 +10,7 @@ const api = require('../index').app;
 
 // Constants
 const { OK, INVALID_PARAMS } = require('../errors/codes');
-const { INVALID_REQUEST_ERR, DOC_NOT_FOUND_ERR, DOC_ALRDY_EXISTS_ERR } = require('../errors/types');
+const { INVALID_REQUEST_ERR, DOC_NOT_FOUND_ERR, DOC_ALRDY_EXISTS_ERR, IMMUTABLE_ATTR_ERR } = require('../errors/types');
 const base = '/v1/socials';
 
 // FIXME: this could change at any point, which will affect tests
@@ -227,7 +227,11 @@ describe('POST/DELETE socials endpoint errors', () => {
       .send(existingSocial);
 
     const expectedError = {
-      // TODO: figure out this error
+      type: DOC_ALRDY_EXISTS_ERR,
+      code: INVALID_PARAMS,
+      message: 'The requested social media platform with type: "instagram" already exists!',
+      param: 'type',
+      original: null
     };
 
     expect(res.status).toBe(INVALID_PARAMS);
@@ -341,7 +345,11 @@ describe('POST/DELETE socials endpoint errors', () => {
     const res = await supertest(api).delete(`${base}/${nonexistentType}`);
 
     const expectedError = {
-      // TODO: figure out what kind of error response this should get
+      type: DOC_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'The requested social media platform with type: "wordpress" does not exist!',
+      param: 'type',
+      original: null
     };
 
     expect(res.status).toBe(INVALID_PARAMS);
@@ -419,7 +427,11 @@ describe('PUT /v1/socials/:id errors', () => {
       .send({url: 'https://www.google.com'});
 
     const expectedError = {
-      // TODO: figure out what kind of error response this should get
+      type: DOC_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'The requested social media platform with type: "wordpress" does not exist!',
+      param: 'type',
+      original: null
     };
 
     expect(res.status).toBe(INVALID_PARAMS);
@@ -436,7 +448,11 @@ describe('PUT /v1/socials/:id errors', () => {
       .send({type: 'github'});
 
     const expectedError = {
-      // TODO: figure out what kind of error res to send (immutable param?)
+      type: IMMUTABLE_ATTR_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'The attribute "type" is immutable and cannot be updated!',
+      param: 'type',
+      original: null
     };
 
     expect(res.status).toBe(INVALID_PARAMS);

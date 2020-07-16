@@ -13,6 +13,7 @@ const httpCodes = require('./codes');
  * @returns {Response} the response with correct status and body
  */
 const sendNonexistentIdError = (res, id, docName) => {
+
   const errorResponse = {
     type: errorTypes.DOC_NOT_FOUND_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
@@ -22,6 +23,7 @@ const sendNonexistentIdError = (res, id, docName) => {
   };
 
   return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
 }
 
 /**
@@ -34,6 +36,7 @@ const sendNonexistentIdError = (res, id, docName) => {
  * @returns {Response} the response with correct status and body
  */
 const sendNonexistentDocError = (res, paramName, param, docName) => {
+
   const errorResponse = {
     type: errorTypes.DOC_NOT_FOUND_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
@@ -43,6 +46,7 @@ const sendNonexistentDocError = (res, paramName, param, docName) => {
   };
 
   return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
 }
 
 /**
@@ -55,6 +59,7 @@ const sendNonexistentDocError = (res, paramName, param, docName) => {
  * @returns {Response} the response with correct status and body
  */
 const sendExistingIdError = (res, id, docName) => {
+
   const errorResponse = {
     type: errorTypes.DOC_ALRDY_EXISTS_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
@@ -64,6 +69,7 @@ const sendExistingIdError = (res, id, docName) => {
   };
 
   return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
 }
 
 /**
@@ -76,6 +82,7 @@ const sendExistingIdError = (res, id, docName) => {
  * @returns {Response} the response with correct status and body
  */
 const sendExistingDocError = (res, paramName, param, docName) => {
+
   const errorResponse = {
     type: errorTypes.DOC_ALRDY_EXISTS_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
@@ -85,6 +92,7 @@ const sendExistingDocError = (res, paramName, param, docName) => {
   };
 
   return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
 }
 
 /**
@@ -96,6 +104,7 @@ const sendExistingDocError = (res, paramName, param, docName) => {
  * @returns {Response} the response with correct status and body
  */
 const sendSchemaValidationError = (res, e) => {
+
   // Cherry pick information from Joi schema validation error
   const schemaError = e.details[0];
 
@@ -108,6 +117,7 @@ const sendSchemaValidationError = (res, e) => {
   };
 
   return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
 }
 
 /**
@@ -118,6 +128,7 @@ const sendSchemaValidationError = (res, e) => {
  * @returns {Response} the response with correct status and body
  */
 const sendIncorrectTypeError = (res, message) => {
+
   const errorResponse = {
     type: errorTypes.INVALID_REQUEST_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
@@ -127,6 +138,29 @@ const sendIncorrectTypeError = (res, message) => {
   };
 
   return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
+}
+
+/**
+ * Sends an immutable attribute error when trying to
+ * update an immutable attribute
+ * 
+ * @param {Response} res the error Response to be esnt
+ * @param {String} attribute name of immutable attribute
+ * @returns {Response} the response with correct status and body 
+ */
+const sendImmutableAttributeError = (res, attribute) => {
+
+  const errorResponse = {
+    type: errorTypes.IMMUTABLE_ATTR_ERR,
+    code: httpCodes.INVALID_PARAMS.toString(),
+    message: `The attribute "${attribute}" is immutable and cannot be updated!`,
+    param: attribute,
+    original: null
+  };
+
+  return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
 }
 
 /**
@@ -137,6 +171,7 @@ const sendIncorrectTypeError = (res, message) => {
  * @returns {Response} the response with correct status and body
  */
 const constructServerError = (res, e) => {
+
   console.error(e);  // is meant to be here, NOT for testing
 
   const errorResponse = {
@@ -148,6 +183,7 @@ const constructServerError = (res, e) => {
   };
 
   return res.status(httpCodes.SERVER_ERR).send(errorResponse);
+
 }
 
 module.exports = {
