@@ -225,6 +225,9 @@ describe('POST/DELETE socials endpoint errors', () => {
       // TODO: figure out this error
     };
 
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
   });
 
   it('POST tests for invalid type', async() => {
@@ -436,10 +439,52 @@ describe('PUT /v1/socials/:id errors', () => {
 
   });
 
-  it('tests for empty handle', async () => {});
+  it('tests for empty handle', async () => {
 
-  it('tests for empty url', async () => {});
+    const emptyHandle = '';
 
-  it('tests for invalid url', async () => {});
+    const res = await supertest(api)
+      .put(`${base}/${invalidType}`)
+      .set('Accept', /json/)
+      .send({
+        handle: emptyHandle
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"handle" is not allowed to be empty',
+      param: 'handle',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for invalid url', async () => {
+
+    const invalidUrl = '';
+
+    const res = await supertest(api)
+      .put(`${base}/${invalidType}`)
+      .set('Accept', /json/)
+      .send({
+        url: invalidUrl
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"url" must be a valid uri',
+      param: 'url',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
 
 });
