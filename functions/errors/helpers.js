@@ -125,15 +125,16 @@ const sendSchemaValidationError = (res, e) => {
  * 
  * @param {Response} res the error Response to be sent
  * @param {String} message error message about correct type to include
+ * @param {String|null} param the param with incorrect type/schema, or null if inapplicable
  * @returns {Response} the response with correct status and body
  */
-const sendIncorrectTypeError = (res, message) => {
+const sendIncorrectTypeError = (res, message, param = null) => {
 
   const errorResponse = {
     type: errorTypes.INVALID_REQUEST_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
     message: message,
-    param: null,
+    param: param,
     original: null
   };
 
@@ -193,5 +194,6 @@ module.exports = {
   sendExistingDocError,
   sendSchemaValidationError,
   sendIncorrectTypeError,
+  sendImmutableAttributeError,
   constructServerError
 };
