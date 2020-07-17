@@ -20,6 +20,7 @@ const { OK, SERVER_ERR } = require('../errors/codes');
 // Collection/doc name in Firestore
 const collection = 'socials';
 const docName = 'social media platform';
+const identifierName = 'type';
 
 /**
  * TODO: Schematics for your data
@@ -61,6 +62,7 @@ routes.post('/', wrap(async (req, res, next) => {
   try {
     await postSchema.validateAsync(req.body);
   } catch (e) {
+    // TODO: send different error if type is not correct schema
     return sendSchemaValidationError(res, e);
   }
 
@@ -68,7 +70,7 @@ routes.post('/', wrap(async (req, res, next) => {
   try {
     await db.collection(collection).doc(`/${req.body.type}/`).create(req.body);
   } catch (e) {
-    return sendExistingDocError(res, 'type', req.body.type, docName);
+    return sendExistingDocError(res, identifierName, req.body.type, docName);
   }
   
   return res.status(OK).send(req.body);
@@ -125,7 +127,7 @@ routes.get('/:type', wrap(async (req, res, next) => {
       return res.status(OK).send(response);
     } else {
       // If type is not found, send error response
-      return sendNonexistentDocError(res, 'type', req.params.type, docName);
+      return sendNonexistentDocError(res, identifierName, req.params.type, docName);
     }
   });
 
@@ -136,7 +138,32 @@ routes.get('/:type', wrap(async (req, res, next) => {
  */
 routes.put('/:type', wrap(async (req, res, next) => {
 
-  return res.status(SERVER_ERR).send();
+  // Validate request body for correct schema
+  try {
+    await putSchema.validateAsync(req.body);
+  } catch (e) {
+    // TODO: check if request tried changing type (send immutable attr err)
+    return sendSchemaValidationError(res, e);
+  }
+
+  const document = db.collection(collection).doc(req.params.type);
+  const docRef = document;
+
+  await document.get().then(doc => {
+    if (!doc.exists) {
+      return sendNonexistentDocError(res, identifierName, req.params.type, docName);
+    }
+
+    docRef.update(req.body);
+
+    // Spread operator to combine old data with updated data
+    // Shared fields are overwritten by rightmost object (updated data)
+    return res.status(OK).send({...doc.data(), ...req.body});
+
+  });
+
+  // linting purposes
+  return null;
 
 }));
 
@@ -145,7 +172,18 @@ routes.put('/:type', wrap(async (req, res, next) => {
  */
 routes.delete('/:type', wrap(async (req, res, next) => {
 
-  return res.status(SERVER_ERR).send();
+  const document = db.collection(collection).doc(req.params.type);
+  const docRef = document;
+
+  await document.get().then(doc => {
+    if (!doc.exists) {
+      return sendNonexistentDocError(res, identifierName, req.params.type, docName);
+    }
+    
+    const deletedSocial = doc.data();
+    docRef.delete();
+    return res.status(OK).send(deletedSocial);
+  });
 
 }));
 
