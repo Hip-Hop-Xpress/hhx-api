@@ -23,14 +23,23 @@ const docName = 'social media platform';
  * TODO: Schematics for your data
  */
 
-// TODO: schema for POST requests
-const postSchema = Joi.object({
+// A really naive RegExp that checks that the type is one of these strings 
+const socialTypeRegex = new RegExp('^(angellist|codepen|envelope|etsy|facebook|flickr|foursquare|github-alt|github|gitlab|instagram|linkedin|medium|pinterest|quora|reddit-alien|soundcloud|stack-overflow|steam|stumbleupon|tumblr|twitch|twitter|google|google-plus-official|vimeo|vk|weibo|wordpress|youtube)$');
+const socialType   = Joi.string().regex(socialTypeRegex);
+const socialHandle = Joi.string().min(1);
+const socialUrl    = Joi.string().uri();
 
+// Schema for POST requests
+const postSchema = Joi.object({
+  type:   socialType.required(),
+  handle: socialHandle.required(),
+  url:    socialUrl.required()
 });
 
-// TODO: schema for PUT requests
+// schema for PUT requests
 const putSchema = Joi.object({
-
+  handle: socialHandle,
+  url: socialUrl
 });
 
 /**
