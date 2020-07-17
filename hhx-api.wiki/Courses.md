@@ -19,6 +19,16 @@ Below is an example Course object:
   "description": [
     "Ghetto Genius (GG), a culture and engineering start-up, used the..."
   ],
+  "images": [
+    {
+      "url": "https://publish.illinois.edu/.../MotorSportsClub.jpg",
+      "caption": "Students designing and building RC cars",
+    },
+    {
+      "url": "https://publish.illinois.edu/.../CourseLogo.jpg",
+      "caption": "A course logo of the GG Motorsports Course",
+    },
+  ],
   "startDate": "Fall 2016",
   "endDate": "Fall 2016",
 }
@@ -33,6 +43,20 @@ Name | Type | Restrictions | Description
 `description` | `Array` of `string` | must be non-empty | short description/summary of the course
 `startDate` | `string` | must be 4 characters or more | the date the course started
 `endDate` | `string` or `null` | must be 4 characters or more | the date the course ended, or `null` if the course is ongoing
+
+## The Course 'Image' object
+Image description for `images` array in the course object. Each field is required when [creating new images.](#add-images)
+```json
+{
+  "url": "https://publish.illinois.edu/.../MotorSportsClub.jpg",
+  "caption": ""
+}
+```
+### Attributes
+Name | Type | Restrictions | Description
+-|-|-|-
+`url` | `string` | must be a valid URL | points to image of course
+`caption` | `string` | none, can be empty | briefly describes the image
 
 ## Endpoints
 
@@ -49,6 +73,9 @@ A quick overview of all endpoints related to our courses:
 
    POST /v1/courses/:id/description
     GET /v1/courses/:id/description
+
+   POST /v1/courses/:id/images
+    GET /v1/courses/:id/images
 ```
 
 ### Usage
@@ -185,5 +212,32 @@ None
 
 #### Returns
 The description (array of `string`s)
+
+---
+
+### Add images
+`POST /v1/courses/:id/images`
+
+Adds images to a specific course by including the [image objects](#the-course-'image'-object) in your request body.
+
+#### Parameters
+Either a single image object or an array of image objects in the request body. All attributes are required for each image object.
+
+#### Returns
+The updated images array
+
+---
+
+### Retrieve images
+`GET /v1/courses/:id/images`
+
+Retrieves all the images for a specified course by `id` 
+
+#### Parameters
+None
+
+#### Returns
+The images array of course with specified `id`
+
 
 [**Back to top**](#courses-endpoint)
