@@ -13,7 +13,7 @@ const {
 } = require('../errors/helpers');
 
 const wrap = require('../errors/wrap');
-const { OK } = require('../errors/codes');
+const { OK, SERVER_ERR } = require('../errors/codes');
 
 // Collection/doc name in Firestore
 const collection = 'socials';
@@ -39,28 +39,68 @@ const postSchema = Joi.object({
 // schema for PUT requests
 const putSchema = Joi.object({
   handle: socialHandle,
-  url: socialUrl
+  url:    socialUrl
 });
 
 /**
- * ___ endpoints
+ * Social media endpoints
  * 
- * TODO: plan out your endpoints here!
+ *   POST, GET               /socials
+ *         GET               /socials/types
+ *         GET, PUT, DELETE  /socials/:type
  */
 
 /**
- * TODO: write your endpoints here! Below is an example
- * 
- * NOTE: DO NOT FORGET THE wrap()
- * This catches errors for you that aren't normally caught
- * HOWEVER, you can add it AFTER you write the function, because
- *  writing it before removes intellisense
- * So write the entire route and then put the wrap() around
+ * POST /socials
  */
+routes.post('/', wrap(async (req, res, next) => {
 
+  return res.status(SERVER_ERR).send();
+
+}));
+
+/**
+ * GET /socials
+ */
 routes.get('/', wrap(async (req, res, next) => {
 
-  return res.status(OK).send();
+  return res.status(SERVER_ERR).send();
+
+}));
+
+/**
+ * GET /socials/types
+ */
+routes.get('/types', wrap(async (req, res, next) => {
+
+  return res.status(SERVER_ERR).send();
+
+}));
+
+/**
+ * GET /socials/:type
+ */
+routes.get('/:type', wrap(async (req, res, next) => {
+
+  return res.status(SERVER_ERR).send();
+
+}));
+
+/**
+ * PUT /socials/:type
+ */
+routes.put('/:type', wrap(async (req, res, next) => {
+
+  return res.status(SERVER_ERR).send();
+
+}));
+
+/**
+ * DELETE /socials/:type
+ */
+routes.delete('/:type', wrap(async (req, res, next) => {
+
+  return res.status(SERVER_ERR).send();
 
 }));
 
