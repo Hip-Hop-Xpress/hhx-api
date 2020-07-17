@@ -79,7 +79,25 @@ routes.post('/', wrap(async (req, res, next) => {
  */
 routes.get('/', wrap(async (req, res, next) => {
 
-  return res.status(SERVER_ERR).send();
+  // Query the collection and setup response
+  let query = db.collection(collection);
+  let response = [];
+
+  // Get all documents from collection
+  await query.get().then(snapshot => {
+    let docs = snapshot.docs;
+
+    for (let social of docs) {
+      // Insert all data from server doc to response doc
+      const selectedItem = social.data();
+
+      // Put the response doc into the response list
+      response.push(selectedItem);
+    }
+
+    // Send the response once every doc has been put in
+    return res.status(OK).send(response);
+  });
 
 }));
 
