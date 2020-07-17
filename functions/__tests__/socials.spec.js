@@ -402,7 +402,10 @@ describe('PUT /v1/socials/:type updates social', () => {
       .send(updatedSocial);
 
     expect(res.status).toBe(OK);
-    expect(res.body).toEqual(updatedSocial);
+    expect(res.body).toEqual({
+      ...updatedSocial,
+      type: initialSocial.type
+    });
 
   });
 
