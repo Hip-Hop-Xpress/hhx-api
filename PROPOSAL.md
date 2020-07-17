@@ -2,7 +2,7 @@
 Listed below are the planned endpoints for `v1` of the API. Checked endpoints will link to the Wiki documentation.
 - [ ] [Historical artists](#historical-artists)
 - [x] [Variations](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Variations)
-- [ ] [Courses](#courses)
+- [ ] [Courses](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Courses)
 - [x] [Projects](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Projects)
 - [ ] [Featured artists](#featured-artists)
 - [x] [Updates](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Updates)
