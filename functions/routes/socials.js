@@ -109,6 +109,7 @@ routes.get('/', wrap(async (req, res, next) => {
  */
 routes.get('/types', wrap(async (req, res, next) => {
 
+  // TODO: get all types
   return res.status(SERVER_ERR).send();
 
 }));
@@ -117,6 +118,8 @@ routes.get('/types', wrap(async (req, res, next) => {
  * GET /socials/:type
  */
 routes.get('/:type', wrap(async (req, res, next) => {
+
+  // TODO: validate type param first
 
   const document = db.collection(collection).doc(req.params.type);
 

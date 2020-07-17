@@ -137,7 +137,7 @@ describe('GET endpoints errors', () => {
       original: null
     };
 
-    expect(res.status).toBe(DOC_NOT_FOUND_ERR);
+    expect(res.status).toBe(INVALID_PARAMS);
     expect(res.body).toEqual(expectedError);
 
   });
@@ -151,7 +151,7 @@ describe('GET endpoints errors', () => {
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: '"type" is not one of the social media types for react-native-elements social icon: https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type',
+      message: '"not a valid type" is not one of the social media types for react-native-elements social icon: https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type',
       param: 'type',
       original: null
     };
@@ -222,7 +222,7 @@ describe('POST/DELETE socials endpoint errors', () => {
     };
 
     const res = await supertest(api)
-      .post(`${base}/${existingType}`)
+      .post(base)
       .set('Accept', /json/)
       .send(existingSocial);
 
@@ -245,7 +245,7 @@ describe('POST/DELETE socials endpoint errors', () => {
     const invalidType = 'not a valid type';
 
     const res = await supertest(api)
-      .post(`${base}/${invalidType}`)
+      .post(base)
       .set('Accept', /json/)
       .send({
         ...testSocial,
@@ -270,7 +270,7 @@ describe('POST/DELETE socials endpoint errors', () => {
     const emptyHandle = '';
 
     const res = await supertest(api)
-      .post(`${base}/${invalidType}`)
+      .post(base)
       .set('Accept', /json/)
       .send({
         ...testSocial,
@@ -293,7 +293,7 @@ describe('POST/DELETE socials endpoint errors', () => {
   it('POST tests for no url', async() => {
 
     const res = await supertest(api)
-      .post(`${base}/${invalidType}`)
+      .post(base)
       .set('Accept', /json/)
       .send({
         ...testSocial,
@@ -318,7 +318,7 @@ describe('POST/DELETE socials endpoint errors', () => {
     const invalidUrl = 'not a valid url';
 
     const res = await supertest(api)
-      .post(`${base}/${invalidType}`)
+      .post(base)
       .set('Accept', /json/)
       .send({
         ...testSocial,
@@ -328,7 +328,7 @@ describe('POST/DELETE socials endpoint errors', () => {
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: '"url" must be a vaild uri',
+      message: '"url" must be a valid uri',
       param: 'url',
       original: null
     };
@@ -371,7 +371,6 @@ describe('PUT /v1/socials/:type updates social', () => {
   };
 
   const updatedSocial = {
-    type: initialSocial.type,
     handle: 'the_updated_hhx',
     url: 'https://images.google.com/'
   };
@@ -385,7 +384,7 @@ describe('PUT /v1/socials/:type updates social', () => {
     await supertest(api)
       .post(base)
       .set('Accept', /json/)
-      .send(initialProject)
+      .send(initialSocial)
       .expect(OK);
 
   });
@@ -416,7 +415,7 @@ describe('PUT /v1/socials/:type updates social', () => {
  */
 describe('PUT /v1/socials/:id errors', () => {
 
-  const invalidType = 'just not a type at all';
+  const invalidType = 'wp';
   const endpoint = `${base}/${invalidType}`;
 
   it('tests for nonexistent type', async () => {
@@ -429,7 +428,7 @@ describe('PUT /v1/socials/:id errors', () => {
     const expectedError = {
       type: DOC_NOT_FOUND_ERR,
       code: INVALID_PARAMS.toString(),
-      message: 'The requested social media platform with type: "wordpress" does not exist!',
+      message: 'The requested social media platform with type: "wp" does not exist!',
       param: 'type',
       original: null
     };
@@ -486,7 +485,7 @@ describe('PUT /v1/socials/:id errors', () => {
 
   it('tests for invalid url', async () => {
 
-    const invalidUrl = '';
+    const invalidUrl = 'not a valid url';
 
     const res = await supertest(api)
       .put(`${base}/${invalidType}`)
