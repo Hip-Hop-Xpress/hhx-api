@@ -12,6 +12,7 @@ const {
   sendSchemaValidationError,
   sendExistingDocError,
   sendNonexistentDocError,
+  sendImmutableAttributeError,
 } = require('../errors/helpers');
 
 const wrap = require('../errors/wrap');
@@ -157,10 +158,17 @@ routes.put('/:type', wrap(async (req, res, next) => {
 
   // Validate request body for correct schema
   try {
+
     await putSchema.validateAsync(req.body);
+
   } catch (e) {
-    // TODO: check if request tried changing type (send immutable attr err)
+
+    // If request tried changing type, notify that type is immutable
+    if (req.body.type !== undefined) {
+      return sendImmutableAttributeError(res, identifierName);
+    }
     return sendSchemaValidationError(res, e);
+    
   }
 
   const document = db.collection(collection).doc(req.params.type);
