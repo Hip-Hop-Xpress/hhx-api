@@ -10,6 +10,7 @@ const {
   sendNonexistentIdError,
   sendIncorrectTypeError,
   sendSchemaValidationError,
+  sendExistingDocError,
 } = require('../errors/helpers');
 
 const wrap = require('../errors/wrap');
@@ -55,7 +56,21 @@ const putSchema = Joi.object({
  */
 routes.post('/', wrap(async (req, res, next) => {
 
-  return res.status(SERVER_ERR).send();
+  // Validate request body using schema
+  try {
+    await postSchema.validateAsync(req.body);
+  } catch (e) {
+    return sendSchemaValidationError(res, e);
+  }
+
+  // Try creating a document, and throw error if the doc exists
+  try {
+    await db.collection(collection).doc(`/${req.body.type}/`).create(req.body);
+  } catch (e) {
+    return sendExistingDocError(res, 'type', req.body.type, docName);
+  }
+  
+  return res.status(OK).send(req.body);
 
 }));
 
