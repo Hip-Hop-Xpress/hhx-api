@@ -11,6 +11,7 @@ const {
   sendIncorrectTypeError,
   sendSchemaValidationError,
   sendExistingDocError,
+  sendNonexistentDocError,
 } = require('../errors/helpers');
 
 const wrap = require('../errors/wrap');
@@ -115,7 +116,18 @@ routes.get('/types', wrap(async (req, res, next) => {
  */
 routes.get('/:type', wrap(async (req, res, next) => {
 
-  return res.status(SERVER_ERR).send();
+  const document = db.collection(collection).doc(req.params.type);
+
+  await document.get().then(doc => {
+    if (doc.exists) {
+      // Fetch and send data if social media obj of :type is found
+      let response = doc.data();
+      return res.status(OK).send(response);
+    } else {
+      // If type is not found, send error response
+      return sendNonexistentDocError(res, 'type', req.params.type, docName);
+    }
+  });
 
 }));
 

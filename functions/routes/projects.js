@@ -141,7 +141,7 @@ routes.get('/:id', wrap(async (req, res, next) => {
 
   await document.get().then(doc => {
     if (doc.exists) {
-      // Fetch and send data if variation of :id is found
+      // Fetch and send data if project of :id is found
       let response = doc.data();
       return res.status(OK).send(response);
     } else {
