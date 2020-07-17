@@ -170,6 +170,9 @@ routes.get('/:type', wrap(async (req, res, next) => {
     }
   });
 
+  // linting error
+  return null;
+
 }));
 
 /**

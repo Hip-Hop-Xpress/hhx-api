@@ -7,7 +7,7 @@ Listed below are the planned endpoints for `v1` of the API. Checked endpoints wi
 - [ ] [Featured artists](#featured-artists)
 - [x] [Updates](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Updates)
 - [x] [Location](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Location)
-- [ ] [Social Media](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Social-Media)
+- [x] [Social Media](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Social-Media)
 
 ### **Historical artists**
 Information and histories about artists on the physical lab
@@ -61,13 +61,4 @@ This info has been updated and moved to the [wiki](https://github.com/Hip-Hop-Xp
 This info has been updated and moved to the [wiki](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Location).
 
 ### **Social Media**
-List of all social media platforms associated with the Hip Hop Xpress
-
-<details>
-  <summary>Social media endpoint details</summary>
-
-  Endpoint | `POST` | `GET` | `PUT` | `DELETE`
-  -|-|-|-|-
-  `/socials` | Create new social media info | Retrieve all social media info | Bulk update of all social media info | Remove all social media info
-  `/socials/:type` | Error | Retrieve social media info of `type` (ex. `"instagram"`) | Update social media info of `type` | Remove social media info of `type`
-</details>
+This info has been updated and moved to the [wiki](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Social-Media).
