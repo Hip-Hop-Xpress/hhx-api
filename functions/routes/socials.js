@@ -24,7 +24,7 @@ const docName = 'social media platform';
 const identifierName = 'type';
 
 /**
- * TODO: Schematics for your data
+ * Schematics for your data
  */
 
 // A really naive RegExp that checks that the type is one of these strings 
@@ -59,11 +59,23 @@ const putSchema = Joi.object({
  */
 routes.post('/', wrap(async (req, res, next) => {
 
-  // Validate request body using schema
   try {
+
+    // Validate request body using schema
     await postSchema.validateAsync(req.body);
+
   } catch (e) {
-    // TODO: send different error if type is not correct schema
+
+    // TODO: clean this up with class based errors later
+    // If the type is not valid, send a special error message
+    if (e.details[0].context.key === 'type') {
+      return sendIncorrectTypeError(
+        res,
+        `"${req.body.type}" is not one of the social media types for react-native-elements social icon: https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type`,
+        identifierName
+      );
+    }
+
     return sendSchemaValidationError(res, e);
   }
 
@@ -134,7 +146,16 @@ routes.get('/types', wrap(async (req, res, next) => {
  */
 routes.get('/:type', wrap(async (req, res, next) => {
 
-  // TODO: validate type param first
+  // Validate type param first
+  try {
+    await socialType.validateAsync(req.params.type);
+  } catch (e) {
+    return sendIncorrectTypeError(
+      res,
+      `"${req.params.type}" is not one of the social media types for react-native-elements social icon: https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type`,
+      identifierName
+    );
+  }
 
   const document = db.collection(collection).doc(req.params.type);
 
@@ -168,7 +189,7 @@ routes.put('/:type', wrap(async (req, res, next) => {
       return sendImmutableAttributeError(res, identifierName);
     }
     return sendSchemaValidationError(res, e);
-    
+
   }
 
   const document = db.collection(collection).doc(req.params.type);

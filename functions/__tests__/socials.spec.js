@@ -255,7 +255,7 @@ describe('POST/DELETE socials endpoint errors', () => {
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: '"type" is not one of the social media types for react-native-elements social icon: https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type',
+      message: '"not a valid type" is not one of the social media types for react-native-elements social icon: https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type',
       param: 'type',
       original: null
     };
