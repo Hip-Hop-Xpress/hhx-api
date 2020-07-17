@@ -228,7 +228,7 @@ describe('POST/DELETE socials endpoint errors', () => {
 
     const expectedError = {
       type: DOC_ALRDY_EXISTS_ERR,
-      code: INVALID_PARAMS,
+      code: INVALID_PARAMS.toString(),
       message: 'The requested social media platform with type: "instagram" already exists!',
       param: 'type',
       original: null

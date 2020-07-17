@@ -109,8 +109,22 @@ routes.get('/', wrap(async (req, res, next) => {
  */
 routes.get('/types', wrap(async (req, res, next) => {
 
-  // TODO: get all types
-  return res.status(SERVER_ERR).send();
+  // Query the collection and setup types
+  let query = db.collection(collection);
+  let types = [];
+
+  // Get all documents from collection
+  await query.get().then(snapshot => {
+    let docs = snapshot.docs;
+
+    for (let social of docs) {
+      const socialType = social.id;
+      types.push(socialType);
+    }
+
+    // Send the response once every doc has been put in
+    return res.status(OK).send(types);
+  });
 
 }));
 
