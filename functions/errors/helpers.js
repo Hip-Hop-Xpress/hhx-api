@@ -13,8 +13,9 @@ const httpCodes = require('./codes');
  * @returns {Response} the response with correct status and body
  */
 const sendNonexistentIdError = (res, id, docName) => {
+
   const errorResponse = {
-    type: errorTypes.ID_NOT_FOUND_ERR,
+    type: errorTypes.DOC_NOT_FOUND_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
     message: `The requested ${docName} with id ${id} does not exist!`,
     param: 'id',
@@ -22,6 +23,30 @@ const sendNonexistentIdError = (res, id, docName) => {
   };
 
   return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
+}
+
+/**
+ * Sends error response when a nonexistent document is requested
+ * 
+ * @param {Response} res the error Response to be sent
+ * @param {String} paramName name of identifier attribute
+ * @param {number|String} param an identifier that doesn't point to a document
+ * @param {String} docName name of document in collection 
+ * @returns {Response} the response with correct status and body
+ */
+const sendNonexistentDocError = (res, paramName, param, docName) => {
+
+  const errorResponse = {
+    type: errorTypes.DOC_NOT_FOUND_ERR,
+    code: httpCodes.INVALID_PARAMS.toString(),
+    message: `The requested ${docName} with ${paramName}: "${param}" does not exist!`,
+    param: paramName,
+    original: null
+  };
+
+  return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
 }
 
 /**
@@ -34,8 +59,9 @@ const sendNonexistentIdError = (res, id, docName) => {
  * @returns {Response} the response with correct status and body
  */
 const sendExistingIdError = (res, id, docName) => {
+
   const errorResponse = {
-    type: errorTypes.ID_ALREADY_EXISTS,
+    type: errorTypes.DOC_ALRDY_EXISTS_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
     message: `The requested ${docName} with id ${id} already exists!`,
     param: 'id',
@@ -43,6 +69,30 @@ const sendExistingIdError = (res, id, docName) => {
   };
 
   return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
+}
+
+/**
+ * Sends error response when a request tries creating a document that already exists
+ * 
+ * @param {Response} res the error Response to be sent
+ * @param {String} paramName name of identifier attribute
+ * @param {number} param an invalid identifer (already points to document)
+ * @param {String} docName name of document in collection 
+ * @returns {Response} the response with correct status and body
+ */
+const sendExistingDocError = (res, paramName, param, docName) => {
+
+  const errorResponse = {
+    type: errorTypes.DOC_ALRDY_EXISTS_ERR,
+    code: httpCodes.INVALID_PARAMS.toString(),
+    message: `The requested ${docName} with ${paramName}: "${param}" already exists!`,
+    param: paramName,
+    original: null
+  };
+
+  return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
 }
 
 /**
@@ -54,6 +104,7 @@ const sendExistingIdError = (res, id, docName) => {
  * @returns {Response} the response with correct status and body
  */
 const sendSchemaValidationError = (res, e) => {
+
   // Cherry pick information from Joi schema validation error
   const schemaError = e.details[0];
 
@@ -66,6 +117,7 @@ const sendSchemaValidationError = (res, e) => {
   };
 
   return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
 }
 
 /**
@@ -73,18 +125,43 @@ const sendSchemaValidationError = (res, e) => {
  * 
  * @param {Response} res the error Response to be sent
  * @param {String} message error message about correct type to include
+ * @param {String|null} param the param with incorrect type/schema, or null if inapplicable
  * @returns {Response} the response with correct status and body
  */
-const sendIncorrectTypeError = (res, message) => {
+const sendIncorrectTypeError = (res, message, param = null) => {
+
   const errorResponse = {
     type: errorTypes.INVALID_REQUEST_ERR,
     code: httpCodes.INVALID_PARAMS.toString(),
     message: message,
-    param: null,
+    param: param,
     original: null
   };
 
   return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
+}
+
+/**
+ * Sends an immutable attribute error when trying to
+ * update an immutable attribute
+ * 
+ * @param {Response} res the error Response to be esnt
+ * @param {String} attribute name of immutable attribute
+ * @returns {Response} the response with correct status and body 
+ */
+const sendImmutableAttributeError = (res, attribute) => {
+
+  const errorResponse = {
+    type: errorTypes.IMMUTABLE_ATTR_ERR,
+    code: httpCodes.INVALID_PARAMS.toString(),
+    message: `The attribute "${attribute}" is immutable and cannot be updated!`,
+    param: attribute,
+    original: null
+  };
+
+  return res.status(httpCodes.INVALID_PARAMS).send(errorResponse);
+
 }
 
 /**
@@ -95,6 +172,7 @@ const sendIncorrectTypeError = (res, message) => {
  * @returns {Response} the response with correct status and body
  */
 const constructServerError = (res, e) => {
+
   console.error(e);  // is meant to be here, NOT for testing
 
   const errorResponse = {
@@ -106,12 +184,16 @@ const constructServerError = (res, e) => {
   };
 
   return res.status(httpCodes.SERVER_ERR).send(errorResponse);
+
 }
 
 module.exports = {
   sendNonexistentIdError,
   sendExistingIdError,
+  sendNonexistentDocError,
+  sendExistingDocError,
   sendSchemaValidationError,
   sendIncorrectTypeError,
+  sendImmutableAttributeError,
   constructServerError
 };

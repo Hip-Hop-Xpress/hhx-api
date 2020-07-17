@@ -11,7 +11,7 @@ const api = require('../index').app;
 
 // Constants
 const { INVALID_PARAMS, OK } = require('../errors/codes');
-const { INVALID_REQUEST_ERR, ID_NOT_FOUND_ERR, ID_ALREADY_EXISTS } = require('../errors/types');
+const { INVALID_REQUEST_ERR, DOC_NOT_FOUND_ERR, DOC_ALRDY_EXISTS_ERR } = require('../errors/types');
 const base = '/v1/variations';
 const numVariations = 2;
 
@@ -153,7 +153,7 @@ describe('GET endpoint errors', () => {
   let id = 999;
 
   const expectedError = {
-    type: 'id_not_found_error',
+    type: DOC_NOT_FOUND_ERR,
     code: '422',
     message: `The requested variation with id ${id} does not exist!`,
     param: 'id',
@@ -342,7 +342,7 @@ describe('POST /v1/variations errors', () => {
       .send(invalidUpdateReq);
     
     const expectedError = {
-      type: ID_ALREADY_EXISTS,
+      type: DOC_ALRDY_EXISTS_ERR,
       code: INVALID_PARAMS.toString(),
       message: `The requested variation with id ${existingId} already exists!`,
       param: 'id',
@@ -626,7 +626,7 @@ describe('POST /v1/variations + /:id/images schema errors', () => {
       .send(testImage);
     
     const expectedError = {
-      type: 'id_not_found_error',
+      type: DOC_NOT_FOUND_ERR,
       code: '422',
       message: `The requested variation with id ${id} does not exist!`,
       param: 'id',
@@ -693,7 +693,7 @@ describe('POST /v1/variations/:id/description errors', () => {
       .send(description);
 
     const expectedError = {
-      type: 'id_not_found_error',
+      type: DOC_NOT_FOUND_ERR,
       code: '422',
       message: `The requested variation with id ${id} does not exist!`,
       param: 'id',
@@ -805,7 +805,7 @@ describe('PUT /v1/variations/:id errors', () => {
       .send({name: 'valid test name'});
 
     const expectedError = {
-      type: ID_NOT_FOUND_ERR,
+      type: DOC_NOT_FOUND_ERR,
       code: INVALID_PARAMS.toString(),
       message: `The requested variation with id ${invalidId} does not exist!`,
       param: 'id',
