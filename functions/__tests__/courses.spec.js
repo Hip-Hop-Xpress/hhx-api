@@ -108,7 +108,7 @@ describe('GET endpoints', () => {
     expect(course.description.length).toBeGreaterThan(0);
 
     expect(Array.isArray(course.images)).toBe(true);
-    expect(course.images.length).toBeGreaterThan(0);
+    expect(course.images.length).toBeGreaterThanOrEqual(0);
 
   });
 
@@ -121,7 +121,7 @@ describe('GET endpoints', () => {
     expect(Array.isArray(res.body)).toBe(true);
 
     const description = res.body;
-    expect(description.length).toBeGreaterThan(0);
+    expect(description.length).toBeGreaterThanOrEqual(0);
 
   });
 
@@ -134,7 +134,7 @@ describe('GET endpoints', () => {
     expect(Array.isArray(res.body)).toBe(true);
 
     const images = res.body;
-    expect(images.length).toBeGreaterThan(0);
+    expect(images.length).toBeGreaterThanOrEqual(0);
 
   });
 

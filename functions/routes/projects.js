@@ -220,7 +220,7 @@ routes.post('/:id/description', wrap(async (req, res, next) => {
     await projectDescription.validateAsync(req.body);
     newParagraphs = req.body;
   } else {
-    return sendIncorrectTypeError(res, 'Body must be string or array of strings');
+    return sendIncorrectTypeError(res, 'Request body must be string or array of strings');
   }
 
   const document = db.collection(collection).doc(req.params.id);
