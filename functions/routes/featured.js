@@ -270,24 +270,98 @@ routes.get('/:id/bio', wrap(async (req, res, next) => {
  * POST /featured/:id/images
  */
 routes.post('/:id/images', wrap(async (req, res, next) => {
-  return res.status(SERVER_ERR).send();
+  
+  // Initialize list of images to add
+  let newImages = [];
+
+  // Check whether request body is an array of images, 
+  // a single image, or neither
+  try {
+
+    if (Array.isArray(req.body)) {
+      // Validate all image objects before adding
+      for (const image of req.body) {
+        const validation = featuredImage.validate(image);
+
+        // Throw error if image is invalid
+        if (validation.error !== undefined) {
+          throw validation.error;
+        } else if (validation.errors !== undefined) {
+          throw validation.errors;
+        }
+
+        newImages.push(image);
+      }
+    } else if (typeof req.body === "object") {
+      // Validate single image
+      // Note: validateAsync throws an error for you
+      await featuredImage.validateAsync(req.body);
+      newImages.push(req.body);
+    } else {
+      // Send error if request body is incorrect type
+      return sendIncorrectTypeError(
+        res, 
+        'Request body must be (array of) Featured Artist image object(s)'
+      );
+    }
+
+  } catch (e) {
+    // Schema validation errors end up here
+    return sendSchemaValidationError(res, e);
+  }
+  
+  // Once all images have been validated, add them to the variation with id
+  let images = [];
+  const document = db.collection(collection).doc(req.params.id);
+  const docRef = document;
+
+  await document.get().then(doc => {
+    if (!doc.exists) {
+      return sendNonexistentIdError(res, req.params.id, docName);
+    }
+
+    // Fetch original images and add new images
+    images = doc.data().images;
+
+    for (const newImage of newImages) {
+      images.push(newImage);
+    }
+
+    docRef.update({images: images});
+    return res.status(OK).send(images);
+
+  });
+
+  // linting purposes
+  return null;
+
 }));
 
- /**
+/**
  * GET /featured/:id/images
  */
 routes.get('/:id/images', wrap(async (req, res, next) => {
-  return res.status(SERVER_ERR).send();
+  
+  const document = db.collection(collection).doc(req.params.id);
+  
+  await document.get().then(doc => {
+    if (doc.exists) {
+      return res.status(OK).send(doc.data().images);
+    } else {
+      return sendNonexistentIdError(res, req.params.id, docName);
+    }
+  });
+
 }));
 
- /**
+/**
  * POST /featured/:id/socials
  */
 routes.post('/:id/socials', wrap(async (req, res, next) => {
   return res.status(SERVER_ERR).send();
 }));
 
- /**
+/**
  * GET /featured/:id/socials
  */
 routes.get('/:id/socials', wrap(async (req, res, next) => {
