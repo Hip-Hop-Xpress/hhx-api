@@ -22,7 +22,7 @@ const collection = 'featured';
 const docName = 'featured artist';
 
 /**
- * Schematics for Project data
+ * Schematics for Featured artist data
  */
 const featuredString         = Joi.string().min(1);  // general non-empty string
 const featuredId             = Joi.number().integer().min(0);
@@ -199,9 +199,9 @@ routes.delete('/:id', wrap(async (req, res, next) => {
       return sendNonexistentIdError(res, req.params.id, docName);
     }
     
-    const deletedProject = doc.data();
+    const deletedFeatured = doc.data();
     docRef.delete();
-    return res.status(OK).send(deletedProject);
+    return res.status(OK).send(deletedFeatured);
   });
 
 }));

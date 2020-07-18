@@ -164,7 +164,7 @@ describe('GET endpoint errors', () => {
   const expectedError = {
     type: DOC_NOT_FOUND_ERR,
     code: INVALID_PARAMS.toString(),
-    message: `The requested project with id ${id} does not exist!`,
+    message: `The requested featured artist with id ${id} does not exist!`,
     param: 'id',
     original: null
   };
@@ -362,7 +362,7 @@ describe('POST /featured endpoint errors', () => {
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: '"id" is not allowed to be negative',
+      message: '"id" must be larger than or equal to 0',
       param: 'id',
       original: null
     };
@@ -454,7 +454,7 @@ describe('POST /featured endpoint errors', () => {
       .set('Accept', /json/)
       .send({
         ...testFeatured,
-        url: invalidUrl
+        headerImageUrl: invalidUrl
       });
 
     const expectedError = {
@@ -492,7 +492,7 @@ describe('POST /featured endpoint errors', () => {
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: '"url" must be a valid uri',
+      message: '"images[1].url" must be a valid uri',
       param: 'url',
       original: null
     };
@@ -515,7 +515,7 @@ describe('POST /featured endpoint errors', () => {
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: '"socials" does not contain 1 required value(s)',
+      message: '"socials" must contain at least 1 items',
       param: 'socials',
       original: null
     };
@@ -840,7 +840,7 @@ describe('POST /socials endpoint errors', () => {
     const invalidUrl = 'not a valid url';
 
     const res = await supertest(api)
-      .post(base)
+      .post(endpointUrl)
       .set('Accept', /json/)
       .send({
         ...testSocial,
@@ -1071,7 +1071,7 @@ describe('PUT endpoint errors', () => {
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: '"socials" does not contain 1 required value(s)',
+      message: '"socials" must contain at least 1 items',
       param: 'socials',
       original: null
     };
