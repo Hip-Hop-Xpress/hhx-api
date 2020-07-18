@@ -593,7 +593,32 @@ describe('DELETE /featured endpoint errors', () => {
  */
 describe('POST /bio endpoint errors', () => {
 
-  it('tests for nonexistent doc', async () => {});
+  it('tests for nonexistent doc', async () => {
+
+    const id = 600;
+    const bio = [
+      'test',
+      'test'
+    ];
+
+    // Valid bio, nonexistent id
+    const res = await supertest(api)
+      .post(`${base}/${id}/bio`)
+      .set('Accept', /json/)
+      .send(bio);
+
+    const expectedError = {
+      type: DOC_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: `The requested featured artist with id ${id} does not exist!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
 
   it('tests for incorrect type', async () => {});
 
