@@ -122,15 +122,105 @@ describe('GET endpoint errors', () => {
  * - retrieve the artist and verify contents
  * - delete the artist and verify again
  */
-describe('POST/GET/DELETE featured artist test', () => {});
+describe('POST/GET/DELETE featured artist test', () => {
 
-/**
- * POST featured artist details tests
- * - create a mock artist
- * - retrieve the artist's bio, images, and socials
- * - delete the artist after
- */
-describe('POST featured artist details tests', () => {});
+  // Create test featured artist before running unit tests
+  beforeAll(async () => {
+    await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(testFeatured)
+      .expect(OK);
+  });
+
+  // Delete the test featuerd artist after tests
+  afterAll(async () => {
+    await supertest(api).delete(`${base}/${testFeatured.id}`);
+  });
+
+  it('POST /v1/featured - creates new artist', async () => {
+
+    // Test artist has already been created in beforeAll block
+    // Just check that it exists and is equal
+    const res = await supertest(api).get(`${base}/${testFeatured.id}`);
+
+    expect(res.status).toBe(OK);
+    expect(res.body).toEqual(testFeatured);
+
+  });
+
+  it('POST /v1/featured/:id/bio', async() => {
+
+    const endpoint = `${base}/${testFeatured.id}/bio`;
+    const newEntries = [
+      'multiple entries...',
+      '... added to bio...',
+      '... in an array!'
+    ];
+
+    const expectedNewLength = testFeatured.bio.length + newEntries.length;
+    
+    const res = await supertest(api)
+      .post(endpoint)
+      .set('Accept', /json/)
+      .send(newEntries);
+
+    // Response should contain updated bio
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toHaveLength(expectedNewLength);
+
+  });
+
+  it('POST /v1/featured/:id/images', async() => {
+
+    const endpoint = `${base}/${testFeatured.id}/images`;
+    const newImages = [
+      testImage,
+      testImage,
+      testImage,
+      testImage
+    ];
+
+    const expectedNewLength = testFeatured.images.length + newImages.length;
+    
+    const res = await supertest(api)
+      .post(endpoint)
+      .set('Accept', /json/)
+      .send(newImages);
+
+    // Response should contain updated images
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toHaveLength(expectedNewLength);
+
+  });
+
+  it('POST /v1/featured/:id/socials', async() => {
+
+    const endpoint = `${base}/${testFeatured.id}/socials`;
+    const newSocials = [
+      testSocial,
+      testSocial,
+      testSocial,
+      testSocial
+    ];
+
+    const expectedNewLength = testFeatured.socials.length + newSocials.length;
+    
+    const res = await supertest(api)
+      .post(endpoint)
+      .set('Accept', /json/)
+      .send(newSocials);
+
+    // Response should contain updated socials
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toHaveLength(expectedNewLength);
+
+  });
+
+});
 
 /**
  * POST /featured endpoint errors
