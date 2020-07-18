@@ -32,7 +32,6 @@ afterAll(async () => {
  * Courses Endpoints Unit Tests
  * 
  * NOTE: all tests use the production Firestore database
- * TODO: figure out how to verify that icon is a Material Icons id
  */
 
 // Test course object with correct schema
@@ -44,13 +43,24 @@ const testCourse = {
     'paragraph 2',
     'paragraph 3'
   ],
-  members: [
-    'member 1',
-    'member 2'
+  images: [
+    {
+      url: 'https://www.google.com',
+      caption: 'caption 1'
+    },
+    {
+      url: 'https://www.google.com',
+      caption: 'caption 2'
+    }
   ],
-  startDate: '2020',
+  startDate: 'Summer 2020',
   endDate: null,
-  icon: 'chair'
+};
+
+// Test course image schema with correct schema
+const testImage = {
+  url: 'https://www.google.com',
+  caption: 'caption 2'
 };
 
 /**
@@ -80,20 +90,19 @@ describe('GET endpoints', () => {
     expect(res.status).toBe(OK);
     expect(typeof res.body).toEqual('object');
 
-    const proj = res.body;
+    const course = res.body;
 
     // Verify the contents of the course object
-    expect(proj.id).toEqual(0);
-    expect(proj.startDate).not.toBeUndefined();
-    expect(proj.endDate).not.toBeUndefined();
-    expect(proj.icon).not.toBeUndefined();
+    expect(course.id).toEqual(0);
+    expect(course.startDate).not.toBeUndefined();
+    expect(course.endDate).not.toBeUndefined();
 
-    // Check that the description and members both have entries
-    expect(Array.isArray(proj.description)).toBe(true);
-    expect(proj.description.length).toBeGreaterThan(0);
+    // Check that the description and image arrays both have entries
+    expect(Array.isArray(course.description)).toBe(true);
+    expect(course.description.length).toBeGreaterThan(0);
 
-    expect(Array.isArray(proj.members)).toBe(true);
-    expect(proj.members.length).toBeGreaterThan(0);
+    expect(Array.isArray(course.images)).toBe(true);
+    expect(course.images.length).toBeGreaterThan(0);
 
   });
 
@@ -110,16 +119,16 @@ describe('GET endpoints', () => {
 
   });
 
-  it('GET /v1/courses/:id/members', async () => {
+  it('GET /v1/courses/:id/images', async () => {
 
-    const res = await supertest(api).get(base + '/0/members');
+    const res = await supertest(api).get(base + '/0/images');
 
     // Verify success response returns array
     expect(res.status).toBe(OK);
     expect(Array.isArray(res.body)).toBe(true);
 
-    const description = res.body;
-    expect(description.length).toBeGreaterThan(0);
+    const images = res.body;
+    expect(images.length).toBeGreaterThan(0);
 
   });
 
@@ -166,7 +175,7 @@ describe('GET endpoints errors', () => {
  *
  * This test suite:
  * - creates a mock course in the database
- * - performs POST requests on description and members
+ * - performs POST requests on description and images
  * - deletes mock course afterwards
  * 
  */
@@ -220,22 +229,22 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
 
   });
 
-  it('POST /v1/courses/:id/members', async() => {
+  it('POST /v1/courses/:id/images', async() => {
 
-    const endpoint = `${base}/${testCourse.id}/members`;
-    const newMembers = [
-      'new member 1',
-      'new member 2',
-      'new member 3',
-      'new member 4'
+    const endpoint = `${base}/${testCourse.id}/images`;
+    const newImages = [
+      testImage,
+      testImage,
+      testImage,
+      testImage
     ];
 
-    const expectedNewLength = testCourse.members.length + newMembers.length;
+    const expectedNewLength = testCourse.images.length + newImages.length;
     
     const res = await supertest(api)
       .post(endpoint)
       .set('Accept', /json/)
-      .send(newMembers);
+      .send(newImages);
 
     // Response should contain updated members
     expect(res.status).toBe(OK);
