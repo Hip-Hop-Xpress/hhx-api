@@ -37,7 +37,7 @@ Each variation object holds data in JSON format. **All attributes are required i
 ### Attributes
 Name | Type | Restrictions | Description
 -|-|-|-
-`id` | `number` | must be unique non-zero integer | unique identifier for variation
+`id` | `number` | must be unique non-zero integer, cannot be updated once created | unique identifier for variation
 `name` | `string` | must be non-empty | display name for variation
 `date` | `string` | must be 4 characters or more | describes the running time of variation
 `description` | `Array` of `string` | must be non-empty | describes the variation

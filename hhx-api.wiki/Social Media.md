@@ -23,7 +23,7 @@ These attributes are to be included in `POST` and `PUT` request bodies.
 
 Name | Type | Restrictions | Description
 -|-|-|-
-`type` | `string` | must be a social media type as listed [here](https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type) | the specific social media platform, also specifies which platform to render on buttons and other components
+`type` | `string` | must be a social media type as listed [here](https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type), cannot be updated once created | the specific social media platform, also specifies which platform to render on buttons and other components
 `handle` | `string` | must be nonempty | the social media handle/username
 `url` | `string` | must be a valid url | the social media URL
 

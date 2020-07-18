@@ -38,12 +38,12 @@ Below is an example Course object:
 
 Name | Type | Restrictions | Description
 -|-|-|-
-`id` | `number` | must be unique non-zero integer | unique identifier for course
+`id` | `number` | must be unique non-zero integer, cannot be updated once created | unique identifier for course
 `name` | `string` | must be non-empty | name of course
 `description` | `Array` of `string` | must be non-empty | short description/summary of the course
 `startDate` | `string` | must be 4 characters or more | the date the course started
 `endDate` | `string` or `null` | must be 4 characters or more | the date the course ended, or `null` if the course is ongoing
-`images` | `Array` of Image objects | can be empty | images associated with the course
+`images` | `Array` of Image objects | all objects must be an [image object](#the-course-'image'-object), array can be empty | images associated with the course
 
 ## The Course 'Image' object
 Image description for `images` array in the course object. Each field is required when [creating new images.](#add-images)
