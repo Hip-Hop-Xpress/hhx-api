@@ -1,4 +1,4 @@
-// Projects API route
+// Courses API route
 
 const Joi = require('@hapi/joi');
 const routes = require('express').Router();
@@ -11,62 +11,63 @@ const {
   sendNonexistentIdError,
   sendIncorrectTypeError,
   sendSchemaValidationError,
+  sendImmutableAttributeError,
 } = require('../errors/helpers');
 
 const wrap = require('../errors/wrap');
 const { OK } = require('../errors/codes');
 
 // Collection/doc name in Firestore
-const collection = 'projects';
-const docName = 'project';
+const collection = 'courses';
+const docName = 'course';
 
 /**
- * Schematics for Project data
+ * Schematics for Course data
  */
-const projectString      = Joi.string().min(1);  // general non-empty string
-const projectId          = Joi.number().integer().min(0);
-const projectName        = projectString;
-const projectStartDate   = Joi.string().min(4);
-const projectEndDate     = Joi.string().min(4).allow(null);
-const projectDescription = Joi.array().min(1).items(projectString.required());
-const projectMembers     = Joi.array().min(1).items(projectString.required());
-const projectIcon        = projectString;
+const courseString      = Joi.string().min(1);  // general non-empty string
+const courseId          = Joi.number().integer().min(0);
+const courseName        = courseString;
+const courseStartDate   = Joi.string().min(4);
+const courseEndDate     = Joi.string().min(4).allow(null);
+const courseDescription = Joi.array().min(1).items(courseString.required());
+const courseImage       = Joi.object({
+                            url:     Joi.string().uri().required(),
+                            caption: Joi.string().allow("").required(),
+                          });
+const courseImages      = Joi.array().items(courseImage);
 
-// POST /projects schema
+// POST /courses schema
 const postSchema = Joi.object({
-  id:          projectId.required(),
-  name:        projectName.required(),
-  description: projectDescription.required(),
-  members:     projectMembers.required(),
-  startDate:   projectStartDate.required(),
-  endDate:     projectEndDate.required(),
-  icon:        projectIcon.required()
+  id:          courseId.required(),
+  name:        courseName.required(),
+  description: courseDescription.required(),
+  images:      courseImages.required(),
+  startDate:   courseStartDate.required(),
+  endDate:     courseEndDate.required(),
 });
 
-// PUT /projects/:id schema
+// PUT /courses/:id schema
 const putSchema = Joi.object({
-  id:          projectId,
-  name:        projectName,
-  description: projectDescription,
-  members:     projectMembers,
-  startDate:   projectStartDate,
-  endDate:     projectEndDate,
-  icon:        projectIcon
+  name:        courseName,
+  description: courseDescription,
+  images:      courseImages,
+  startDate:   courseStartDate,
+  endDate:     courseEndDate,
 });
 
 /**
- * Projects endpoints
+ * Courses endpoints
  * 
- *   POST, GET               /projects
- *         GET, PUT, DELETE  /projects/:id
- *   POST, GET               /projects/:id/members
- *   POST, GET               /projects/:id/description
+ *   POST, GET               /courses
+ *         GET, PUT, DELETE  /courses/:id
+ *   POST, GET               /courses/:id/images
+ *   POST, GET               /courses/:id/description
  * 
  * TODO: add support for query strings eventually
  */
 
  /**
-  * POST /projects
+  * POST /courses
   */
 routes.post('/', wrap(async (req, res, next) => {
 
@@ -79,16 +80,7 @@ routes.post('/', wrap(async (req, res, next) => {
 
   // Try creating a document, and throw error if the doc exists
   try {
-    await db.collection(collection).doc(`/${req.body.id}/`)
-      .create({
-        id: req.body.id,
-        name: req.body.name,
-        description: req.body.description,
-        members: req.body.members,
-        startDate: req.body.startDate,
-        endDate: req.body.endDate,
-        icon: req.body.icon
-      });
+    await db.collection(collection).doc(`/${req.body.id}/`).create(req.body);
   } catch (e) {
     return sendExistingIdError(res, req.body.id, docName);
   }
@@ -98,7 +90,7 @@ routes.post('/', wrap(async (req, res, next) => {
 }));
 
 /**
- * GET /projects
+ * GET /courses
  */
 routes.get('/', wrap(async (req, res, next) => {
   
@@ -110,20 +102,9 @@ routes.get('/', wrap(async (req, res, next) => {
   await query.get().then(snapshot => {
     let docs = snapshot.docs;
 
-    for (let project of docs) {
-      // Insert all data from server doc to response doc
-      const selectedItem = {
-        id: project.id,
-        name: project.data().name,
-        description: project.data().description,
-        members: project.data().members,
-        startDate: project.data().startDate,
-        endDate: project.data().endDate,
-        icon: project.data().icon
-      };
-
+    for (let course of docs) {
       // Put the response doc into the response list
-      response.push(selectedItem);
+      response.push(course.data());
     }
 
     // Send the response once every doc has been put in
@@ -133,7 +114,7 @@ routes.get('/', wrap(async (req, res, next) => {
 }));
 
 /**
- * GET /projects/:id
+ * GET /courses/:id
  */
 routes.get('/:id', wrap(async (req, res, next) => {
   
@@ -141,7 +122,7 @@ routes.get('/:id', wrap(async (req, res, next) => {
 
   await document.get().then(doc => {
     if (doc.exists) {
-      // Fetch and send data if project of :id is found
+      // Fetch and send data if course of :id is found
       let response = doc.data();
       return res.status(OK).send(response);
     } else {
@@ -153,15 +134,24 @@ routes.get('/:id', wrap(async (req, res, next) => {
 }));
 
 /**
- * PUT /projects/:id
+ * PUT /courses/:id
  */
 routes.put('/:id', wrap(async (req, res, next) => {
   
-  // Validate request body for correct schema
   try {
+
+    // Validate request body for correct schema
     await putSchema.validateAsync(req.body);
+
   } catch (e) {
+
+    // If client tries updating id, send immutable attribute error
+    if (e.details[0].context.key === 'id') {
+      return sendImmutableAttributeError(res, 'id');
+    }
+
     return sendSchemaValidationError(res, e);
+
   }
 
   const document = db.collection(collection).doc(req.params.id);
@@ -186,7 +176,7 @@ routes.put('/:id', wrap(async (req, res, next) => {
 }));
 
 /**
- * DELETE /projects/:id
+ * DELETE /courses/:id
  */
 routes.delete('/:id', wrap(async (req, res, next) => {
   
@@ -198,15 +188,15 @@ routes.delete('/:id', wrap(async (req, res, next) => {
       return sendNonexistentIdError(res, req.params.id, docName);
     }
     
-    const deletedProject = doc.data();
+    const deletedCourse = doc.data();
     docRef.delete();
-    return res.status(OK).send(deletedProject);
+    return res.status(OK).send(deletedCourse);
   });
 
 }));
 
 /**
- * POST /projects/:id/description
+ * POST /courses/:id/description
  */
 routes.post('/:id/description', wrap(async (req, res, next) => {
   
@@ -217,7 +207,7 @@ routes.post('/:id/description', wrap(async (req, res, next) => {
   if (typeof req.body === 'string' || req.body instanceof String) {
     newParagraphs.push(req.body);
   } else if (Array.isArray(req.body)) {
-    await projectDescription.validateAsync(req.body);
+    await courseDescription.validateAsync(req.body);
     newParagraphs = req.body;
   } else {
     return sendIncorrectTypeError(res, 'Request body must be string or array of strings');
@@ -249,7 +239,7 @@ routes.post('/:id/description', wrap(async (req, res, next) => {
 }));
 
 /**
- * GET /projects/:id/description
+ * GET /courses/:id/description
  */
 routes.get('/:id/description', wrap(async (req, res, next) => {
   
@@ -266,23 +256,51 @@ routes.get('/:id/description', wrap(async (req, res, next) => {
 }));
 
 /**
- * POST /projects/:id/members
+ * POST /courses/:id/images
  */
-routes.post('/:id/members', wrap(async (req, res, next) => {
-  
-  let newParagraphs = [];
-  
-  // Check that the body is either string or array of strings, and
-  // add body contents to 'additions' if valid
-  if (typeof req.body === 'string' || req.body instanceof String) {
-    newParagraphs.push(req.body);
-  } else if (Array.isArray(req.body)) {
-    await projectMembers.validateAsync(req.body);
-    newParagraphs = req.body;
-  } else {
-    return sendIncorrectTypeError(res, 'Body must be string or array of strings');
-  }
+routes.post('/:id/images', wrap(async (req, res, next) => {
 
+  // Initialize list of images to add
+  let newImages = [];
+
+  // Check whether request body is an array of images, 
+  // a single image, or neither
+  try {
+
+    if (Array.isArray(req.body)) {
+      // Validate all image objects before adding
+      for (const image of req.body) {
+        const validation = courseImage.validate(image);
+
+        // Throw error if image is invalid
+        if (validation.error !== undefined) {
+          throw validation.error;
+        } else if (validation.errors !== undefined) {
+          throw validation.errors;
+        }
+
+        newImages.push(image);
+      }
+    } else if (typeof req.body === "object") {
+      // Validate single image
+      // Note: validateAsync throws an error for you
+      await courseImage.validateAsync(req.body);
+      newImages.push(req.body);
+    } else {
+      // Send error if request body is incorrect type
+      return sendIncorrectTypeError(
+        res, 
+        'Request body must be (array of) Course image object(s)'
+      );
+    }
+
+  } catch (e) {
+    // Schema validation errors end up here
+    return sendSchemaValidationError(res, e);
+  }
+  
+  // Once all images have been validated, add them to the course with id
+  let images = [];
   const document = db.collection(collection).doc(req.params.id);
   const docRef = document;
 
@@ -291,33 +309,33 @@ routes.post('/:id/members', wrap(async (req, res, next) => {
       return sendNonexistentIdError(res, req.params.id, docName);
     }
 
-    // Get the current members and add new members
-    let members = doc.data().members;
-    for (let paragraph of newParagraphs) {
-      members.push(paragraph);
+    // Fetch original images and add new images
+    images = doc.data().images;
+
+    for (const newImage of newImages) {
+      images.push(newImage);
     }
 
-    // Update the members and send response
-    docRef.update({members: members});
-    return res.status(OK).send(members);
+    docRef.update({images: images});
+    return res.status(OK).send(images);
 
   });
 
   // linting purposes
   return null;
-  
+
 }));
 
 /**
- * GET /projects/:id/members
+ * GET /courses/:id/images
  */
-routes.get('/:id/members', wrap(async (req, res, next) => {
-  
+routes.get('/:id/images', wrap(async (req, res, next) => {
+
   const document = db.collection(collection).doc(req.params.id);
   
   await document.get().then(doc => {
     if (doc.exists) {
-      return res.status(OK).send(doc.data().members);
+      return res.status(OK).send(doc.data().images);
     } else {
       return sendNonexistentIdError(res, req.params.id, docName);
     }

@@ -2,7 +2,7 @@
 Listed below are the planned endpoints for `v1` of the API. Checked endpoints will link to the Wiki documentation.
 - [ ] [Historical artists](#historical-artists)
 - [x] [Variations](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Variations)
-- [ ] [Courses](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Courses)
+- [x] [Courses](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Courses)
 - [x] [Projects](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Projects)
 - [ ] [Featured artists](#featured-artists)
 - [x] [Updates](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Updates)
@@ -26,15 +26,7 @@ Information and histories about artists on the physical lab
 This info has been updated and moved to the [wiki](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Variations).
 
 ### Courses
-Information on past courses held by the Hip Hop Xpress
-<details>
-  <summary>Courses endpoint details</summary>
-
-  Endpoint | `POST` | `GET` | `PUT` | `DELETE`
-  -|-|-|-|-
-  `/courses` | Create data for course | Retrieve all courses | Bulk update of all courses | Remove all data for courses
-  `/courses/:id` | Error | Retrieve info of course with `id` | Update info of course with `id` | Delete course with `id`
-</details>
+This info has been updated and moved to the [wiki](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Courses).
 
 ### **Projects**
 This info has been updated and moved to the [wiki](https://github.com/Hip-Hop-Xpress/hhx-api/wiki/Projects).
