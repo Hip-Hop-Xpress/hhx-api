@@ -43,6 +43,7 @@ Name | Type | Restrictions | Description
 `description` | `Array` of `string` | must be non-empty | short description/summary of the course
 `startDate` | `string` | must be 4 characters or more | the date the course started
 `endDate` | `string` or `null` | must be 4 characters or more | the date the course ended, or `null` if the course is ongoing
+`images` | `Array` of Image objects | can be empty | images associated with the course
 
 ## The Course 'Image' object
 Image description for `images` array in the course object. Each field is required when [creating new images.](#add-images)
