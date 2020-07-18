@@ -753,13 +753,112 @@ describe('POST /images endpoint errors', () => {
  */
 describe('POST /socials endpoint errors', () => {
 
-  it('tests for type that already exists', async () => {});
+  const existingId = 0;
+  const endpointUrl = `${base}/${existingId}/socials`
 
-  it('tests for invalid type', async () => {});
+  it('tests for type that already exists', async () => {
 
-  it('tests for empty handle', async () => {});
+    const existingType = 'instagram';
 
-  it('tests for invalid url', async () => {});
+    const existingSocial = {
+      type: existingType,
+      handle: '@uiuchhx',
+      url: 'https://www.instagram.com/uiuchhx/'
+    };
+
+    const res = await supertest(api)
+      .post(endpointUrl)
+      .set('Accept', /json/)
+      .send(existingSocial);
+
+    const expectedError = {
+      type: DOC_ALRDY_EXISTS_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'Featured artist with id: 0 already has social with type: "instagram"',
+      param: 'type',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for invalid type', async () => {
+
+    // not a valid type from the react-native-elements social icon types
+    const invalidType = 'not a valid type';
+
+    const res = await supertest(api)
+      .post(endpointUrl)
+      .set('Accept', /json/)
+      .send({
+        ...testSocial,
+        type: invalidType
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"not a valid type" is not one of the social media types for react-native-elements social icon: https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type',
+      param: 'type',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for empty handle', async () => {
+
+    const emptyHandle = '';
+
+    const res = await supertest(api)
+      .post(endpointUrl)
+      .set('Accept', /json/)
+      .send({
+        ...testSocial,
+        handle: emptyHandle
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"handle" is not allowed to be empty',
+      param: 'handle',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for invalid url', async () => {
+
+    const invalidUrl = 'not a valid url';
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send({
+        ...testSocial,
+        url: invalidUrl
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"url" must be a valid uri',
+      param: 'url',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
 
 });
 
