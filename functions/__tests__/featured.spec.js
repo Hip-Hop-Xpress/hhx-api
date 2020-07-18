@@ -92,9 +92,29 @@ describe('GET endpoints', () => {
 
 /**
  * GET endpoint tests with errors
- * These endpoints should send identical errors
+ * These endpoints should all test for nonexistent id error
  */
-describe('GET endpoint errors', () => {});
+describe('GET endpoint errors', () => {
+
+  // Setup expected error
+  let id = 909;
+  const expectedError = {
+    type: DOC_NOT_FOUND_ERR,
+    code: INVALID_PARAMS.toString(),
+    message: `The requested project with id ${id} does not exist!`,
+    param: 'id',
+    original: null
+  };
+
+  it('GET /v1/featured/:id', async () => {});
+
+  it('GET /v1/featured/:id/bio', async () => {});
+
+  it('GET /v1/featured/:id/socials', async () => {});
+
+  it('GET /v1/featured/:id/images', async () => {});
+
+});
 
 /**
  * POST endpoint test
