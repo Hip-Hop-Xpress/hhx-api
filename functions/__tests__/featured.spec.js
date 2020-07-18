@@ -142,7 +142,7 @@ describe('GET endpoints', () => {
 
   it('GET /v1/featured/:id/images', async () => {
 
-    const res = await supertest(api).get(base + '/0/description');
+    const res = await supertest(api).get(base + '/0/images');
 
     // Verify success response returns array
     expect(res.status).toBe(OK);
@@ -322,23 +322,241 @@ describe('POST /featured endpoint errors', () => {
 
   it('tests for existing document', async () => {
 
+    const existingId = 0;  // assuming there's at least one existing artist
+    const invalidFeaturedReq = {
+      ...testFeatured,
+      id: existingId
+    };
+
+    // Valid artist schema, invalid request because id already exists
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(invalidFeaturedReq);
+    
+    const expectedError = {
+      type: DOC_ALRDY_EXISTS_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: `The requested featured artist with id ${existingId} already exists!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
   });
 
-  it('tests for negative id', async () => {});
+  it('tests for negative id', async () => {
 
-  it('tests for empty name', async () => {});
+    const negativeId = -1;
 
-  it('tests for short date', async () => {});
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send({
+        ...testFeatured,
+        id: negativeId
+      });
 
-  it('tests for empty bio', async () => {});
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"id" is not allowed to be negative',
+      param: 'id',
+      original: null
+    };
 
-  it('tests for invalid header image url', async () => {});
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
 
-  it('tests for invalid image in array', async () => {});
+  });
 
-  it('tests for empty socials', async () => {});
+  it('tests for empty name', async () => {
 
-  it('tests for invalid social in array', async () => {});
+    const emptyName = '';
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send({
+        ...testFeatured,
+        name: emptyName
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"name" is not allowed to be empty',
+      param: 'name',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for short date', async () => {
+
+    const shortDate = {
+      ...testFeatured,
+      date: '200'
+    };
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(shortDate);
+    
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"date" length must be at least 4 characters long',
+      param: 'date',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for empty bio', async () => {
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send({
+        ...testFeatured,
+        bio: []
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"bio" does not contain 1 required value(s)',
+      param: 'bio',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for invalid header image url', async () => {
+
+    const invalidUrl = 'not a valid url';
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send({
+        ...testFeatured,
+        url: invalidUrl
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"headerImageUrl" must be a valid uri',
+      param: 'headerImageUrl',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for invalid image in array', async () => {
+
+    const invalidUrl = 'not a valid url';
+
+    // Second image has an invalid url
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send({
+        ...testFeatured,
+        images: [
+          testImage,
+          {
+            caption: '',
+            url: invalidUrl
+          }
+        ]
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"url" must be a valid uri',
+      param: 'url',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for empty socials', async () => {
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send({
+        ...testFeatured,
+        socials: []
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"socials" does not contain 1 required value(s)',
+      param: 'socials',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+    
+  });
+
+  it('tests for invalid social in array', async () => {
+
+    // not a valid type from the react-native-elements social icon types
+    const invalidType = 'gogle';
+
+    // Second social has invalid type
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send({
+        ...testFeatured,
+        socials: [
+          testSocial,
+          {
+            ...testSocial,
+            type: invalidType
+          }
+        ]
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"gogle" is not one of the social media types for react-native-elements social icon: https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type',
+      param: 'type',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
   
 });
 
