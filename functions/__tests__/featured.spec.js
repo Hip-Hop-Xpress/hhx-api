@@ -255,31 +255,121 @@ describe('POST /featured endpoint errors', () => {
  * DELETE /featured endpoint errors
  * - trying to delete nonexistent doc
  */
-describe('DELETE /featured endpoint errors', () => {});
+describe('DELETE /featured endpoint errors', () => {
+
+  it('tests for nonexistent doc', async () => {});
+
+});
 
 /**
  * POST /bio endpoint errors
  * - sending empty strings
  */
-describe('POST /bio endpoint errors', () => {});
+describe('POST /bio endpoint errors', () => {
+
+  it('tests for nonexistent doc', async () => {});
+
+  it('tests for incorrect type', async () => {});
+
+});
 
 /**
  * POST /images endpoint errors
  * - incorrect schema
  */
-describe('POST /images endpoint errors', () => {});
+describe('POST /images endpoint errors', () => {
+
+  it('tests for nonexistent doc', async () => {});
+
+  it('tests for invalid url', async () => {});
+
+  it('tests for undefined caption', async () => {});
+
+});
 
 /**
  * POST /socials endpoint errors
  * - incorrect schema
  */
-describe('POST /socials endpoint errors', () => {});
+describe('POST /socials endpoint errors', () => {
+
+  it('tests for type that already exists', async () => {});
+
+  it('tests for invalid type', async () => {});
+
+  it('tests for empty handle', async () => {});
+
+  it('tests for invalid url', async () => {});
+
+});
 
 /**
  * PUT /featured/:id test
  * - test for successful update of featured artist
  */
-describe('PUT /featured/:id updates featured artist', () => {});
+describe('PUT /featured/:id updates featured artist', () => {
+
+  const id = 500;
+
+  // Setting up an initial project which will have its values
+  // updated to be the updated project
+  const initialFeatured = {
+    ...testFeatured,
+    id: id
+  };
+
+  const updatedFeatured = {
+    id: id,
+    name: 'the updated featured artist',
+    current: false,
+    headerImageUrl: 'https://www.google.com',
+    bio: [
+      'this is...',
+      '... an updated bio!'
+    ],
+    images: [],
+    socials: [
+      testSocial,
+      testSocial
+    ],
+    date: 'January 2020',
+  };
+
+  // PUT and DELETE operations all use this endpoint
+  const endpoint = `${base}/${initialFeatured.id}`;
+
+  // POST the project before testing PUT operations
+  beforeAll(async () => {
+
+    await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(initialFeatured)
+      .expect(OK);
+
+  });
+
+  // DELETE the project after testing
+  afterAll(async () => {
+    await supertest(api).delete(endpoint).expect(OK);
+  });
+
+  it('updates project', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({
+        ...updatedFeatured,
+        id: undefined  // id cannot be included in PUT requests
+      });
+
+    expect(res.status).toBe(OK);
+    expect(res.body).toEqual(updatedFeatured);
+
+  });
+
+});
 
 /**
  * PUT endpoint errors
