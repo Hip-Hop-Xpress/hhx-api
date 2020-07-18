@@ -117,12 +117,20 @@ describe('GET endpoint errors', () => {
 });
 
 /**
- * POST endpoint test
+ * POST featured artist endpoint test
  * - create a mock artist
  * - retrieve the artist and verify contents
  * - delete the artist and verify again
  */
-describe('POST/GET/DELETE endpoint test', () => {});
+describe('POST/GET/DELETE featured artist test', () => {});
+
+/**
+ * POST featured artist details tests
+ * - create a mock artist
+ * - retrieve the artist's bio, images, and socials
+ * - delete the artist after
+ */
+describe('POST featured artist details tests', () => {});
 
 /**
  * POST /featured endpoint errors
