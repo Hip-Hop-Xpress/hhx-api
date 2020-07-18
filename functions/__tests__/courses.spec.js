@@ -619,21 +619,16 @@ describe('PUT /v1/courses/:id updates course', () => {
   };
 
   const updatedCourse = {
-    id: id,
     name: 'the updated course',
     description: [
       'this is...',
       '... an updated description!'
     ],
-    members: [
-      'updated member 1',
-      'updated member 2',
-      'updated member 3',
-      'updated member 4'
+    images: [
+      testImage
     ],
     startDate: 'January 2020',
     endDate: 'June 2020',
-    icon: 'chair',
   };
 
   // PUT and DELETE operations all use this endpoint
@@ -663,12 +658,20 @@ describe('PUT /v1/courses/:id updates course', () => {
       .send(updatedCourse);
 
     expect(res.status).toBe(OK);
-    expect(res.body).toEqual(updatedCourse);
+
+    // Updated course + the id of initial course
+    expect(res.body).toEqual({
+      ...updatedCourse,
+      id: id
+    });
 
   });
 
 });
 
+/**
+ * PUT errors for courses
+ */
 describe('PUT /v1/courses/:id errors', () => {
 
   const invalidId = 501;
@@ -706,6 +709,27 @@ describe('PUT /v1/courses/:id errors', () => {
       code: INVALID_PARAMS.toString(),
       message: '"name" is not allowed to be empty',
       param: 'name',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for trying to update id', async () => {
+
+    // Trying to update the id should send back an error
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({id: 101});
+
+    const expectedError = {
+      type: IMMUTABLE_ATTR_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'The attribute "id" is immutable and cannot be updated!',
+      param: 'id',
       original: null
     };
 
