@@ -40,12 +40,6 @@ afterAll(async () => {
  * NOTE: all tests look at the production Firestore database
  */
 
-// A test featured artist object with correct schema
-// Used to test POST endpoints and errors
-const testFeatured = {
-
-};
-
 // A test image object with correct schema
 const testImage = {
   url: 'https://www.facebook.com',
@@ -59,12 +53,42 @@ const testSocial = {
   url: 'https://github.com/Hip-Hop-Xpress'
 };
 
+// A test featured artist object with correct schema
+// Used to test POST endpoints and errors
+const testFeatured = {
+  id: 999,
+  name: 'test artist',
+  current: false,
+  date: 'Summer 2020',
+  bio: [
+    'paragraph 1',
+    'paragraph 2'
+  ],
+  headerImageUrl: 'https://www.google.com',
+  images: [],
+  socials: [
+    testSocial
+  ]
+};
+
 /**
  * GET endpoints tests
  * 
  * Checks basic GET functionality to work as expected
  */
-describe('GET endpoints', () => {});
+describe('GET endpoints', () => {
+
+  it('GET /v1/featured', async () => {});
+
+  it('GET /v1/featured/:id', async () => {});
+
+  it('GET /v1/featured/:id/bio', async () => {});
+
+  it('GET /v1/featured/:id/socials', async () => {});
+
+  it('GET /v1/featured/:id/images', async () => {});
+
+});
 
 /**
  * GET endpoint tests with errors
