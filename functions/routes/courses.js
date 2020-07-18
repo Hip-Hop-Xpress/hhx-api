@@ -11,6 +11,7 @@ const {
   sendNonexistentIdError,
   sendIncorrectTypeError,
   sendSchemaValidationError,
+  sendImmutableAttributeError,
 } = require('../errors/helpers');
 
 const wrap = require('../errors/wrap');
@@ -47,7 +48,6 @@ const postSchema = Joi.object({
 
 // PUT /courses/:id schema
 const putSchema = Joi.object({
-  id:          courseId,
   name:        courseName,
   description: courseDescription,
   images:      courseImages,
@@ -138,11 +138,20 @@ routes.get('/:id', wrap(async (req, res, next) => {
  */
 routes.put('/:id', wrap(async (req, res, next) => {
   
-  // Validate request body for correct schema
   try {
+
+    // Validate request body for correct schema
     await putSchema.validateAsync(req.body);
+
   } catch (e) {
+
+    // If client tries updating id, send immutable attribute error
+    if (e.details[0].context.key === 'id') {
+      return sendImmutableAttributeError(res, 'id');
+    }
+
     return sendSchemaValidationError(res, e);
+
   }
 
   const document = db.collection(collection).doc(req.params.id);

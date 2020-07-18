@@ -10,7 +10,13 @@ const api = require('../index').app;
 
 // Constants
 const { OK, INVALID_PARAMS } = require('../errors/codes');
-const { INVALID_REQUEST_ERR, DOC_NOT_FOUND_ERR, DOC_ALRDY_EXISTS_ERR } = require('../errors/types');
+const { 
+  INVALID_REQUEST_ERR, 
+  DOC_NOT_FOUND_ERR, 
+  DOC_ALRDY_EXISTS_ERR,
+  IMMUTABLE_ATTR_ERR 
+} = require('../errors/types');
+
 const base = '/v1/courses';
 const numCourses = 9;
 
@@ -332,7 +338,7 @@ describe('POST/DELETE course endpoint errors', () => {
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: '"description" must contain at least 1 items',
+      message: '"description" does not contain 1 required value(s)',
       param: 'description',
       original: null
     };
@@ -521,29 +527,6 @@ describe('POST description and images errors', () => {
 
   });
 
-  it('images - incorrect type', async () => {
-    
-    const id = 601;
-
-    // Send nothing, will get caught by type checking
-    const res = await supertest(api)
-      .post(`${base}/${id}/members`)
-      .set('Accept', /json/)
-      .send();
-
-    const expectedError = {
-      type: INVALID_REQUEST_ERR,
-      code: INVALID_PARAMS.toString(),
-      message: 'Request body must be string or array of strings',
-      param: null,
-      original: null
-    };
-
-    expect(res.status).toBe(INVALID_PARAMS);
-    expect(res.body).toEqual(expectedError);
-
-  });
-
   it('images - invalid url', async () => {
     // this id won't exist
     const id = 0;
@@ -564,7 +547,7 @@ describe('POST description and images errors', () => {
       .send(images);
 
     const expectedError = {
-      type: DOC_NOT_FOUND_ERR,
+      type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
       message: '"url" must be a valid uri',
       param: 'url',
@@ -594,7 +577,7 @@ describe('POST description and images errors', () => {
       .send(images);
 
     const expectedError = {
-      type: DOC_NOT_FOUND_ERR,
+      type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
       message: `"caption" is required`,
       param: 'caption',
