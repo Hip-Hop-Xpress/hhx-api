@@ -620,7 +620,28 @@ describe('POST /bio endpoint errors', () => {
 
   });
 
-  it('tests for incorrect type', async () => {});
+  it('tests for incorrect type', async () => {
+
+    const id = 601;
+
+    // Send nothing, will get caught by type checking
+    const res = await supertest(api)
+      .post(`${base}/${id}/bio`)
+      .set('Accept', /json/)
+      .send();
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'Request body must be string or array of strings',
+      param: null,
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
 
 });
 
@@ -630,11 +651,99 @@ describe('POST /bio endpoint errors', () => {
  */
 describe('POST /images endpoint errors', () => {
 
-  it('tests for nonexistent doc', async () => {});
+  it('tests for nonexistent doc', async () => {
 
-  it('tests for invalid url', async () => {});
+    const id = 600;
+    const images = [
+      testImage,
+      testImage
+    ];
 
-  it('tests for undefined caption', async () => {});
+    // Valid request, nonexistent id
+    const res = await supertest(api)
+      .post(`${base}/${id}/images`)
+      .set('Accept', /json/)
+      .send(images);
+
+    const expectedError = {
+      type: DOC_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: `The requested featured artist with id ${id} does not exist!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for invalid url', async () => {
+
+    // Existing id
+    const id = 0;
+
+    // The second image has an invalid url
+    const images = [
+      testImage,
+      {
+        ...testImage,
+        url: 'not a url'
+      }
+    ];
+
+    // Valid description, nonexistent id
+    const res = await supertest(api)
+      .post(`${base}/${id}/images`)
+      .set('Accept', /json/)
+      .send(images);
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"url" must be a valid uri',
+      param: 'url',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+
+  });
+
+  it('tests for undefined caption', async () => {
+
+    // Existing id
+    const id = 0;
+
+    // Invalid image schema
+    const images = [
+      testImage,
+      {
+        ...testImage,
+        caption: undefined
+      }
+    ];
+
+    // Valid description, nonexistent id
+    const res = await supertest(api)
+      .post(`${base}/${id}/images`)
+      .set('Accept', /json/)
+      .send(images);
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: `"caption" is required`,
+      param: 'caption',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+    
+  });
 
 });
 
