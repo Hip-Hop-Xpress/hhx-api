@@ -45,8 +45,8 @@ Name | Type | Restrictions | Description
 `date` | `string` | must be 4 characters or more | describes the time period that the artist was featured
 `bio` | `Array` of `string` | must be non-empty | describes the featured artist
 `headerImageUrl` | `string` | must be a valid url | the main image of the artist, to be displayed as a header or other prominent feature
-`images` | `Array` of image `Object`s | can be empty, contents must follow the image schema | all images to be displayed for this artist
-`socials` | `Array` of Social media `Object`s | must be non-empty, contents must follow the Social media object schema (see below)| lists all social media platforms for featured artist
+`images` | `Array` of image `Object`s | can be empty, contents must follow the [image schema](#the-image-object) | all images to be displayed for this artist
+`socials` | `Array` of Social media `Object`s | must be non-empty, contents must follow the [social media object schema](#the-social-media-object) | lists all social media platforms for featured artist
 
 ## The Image object
 Image object schema for `images` array in the featured artist object. Each field is required when [creating new images.](#add-images)
@@ -64,7 +64,7 @@ Name | Type | Restrictions | Description
 `caption` | `string` | none, can be empty | briefly describes the image
 
 ## The Social media object
-Social media schema for `socials` array in the featured artist object. Each field is required when [creating new images.](#add-images)
+Social media schema for `socials` array in the featured artist object. Each field is required when [adding social media platforms](#add-social)
 ```json
 {
   "type": "instagram",
@@ -85,18 +85,26 @@ Name | Type | Restrictions | Description
 ### Overview
 A quick overview of all endpoints related to Featured artists on the Hip Hop Xpress
 ```javascript
-   POST /v1/featured artists
-    GET /v1/featured artists
+// Collection wide endpoints
+   POST /v1/featured
+    GET /v1/featured
 
-    GET /v1/featured artists/:id
-    PUT /v1/featured artists/:id
- DELETE /v1/featured artists/:id
+// Artist specific endpoints
+    GET /v1/featured/:id
+    PUT /v1/featured/:id
+ DELETE /v1/featured/:id
 
-   POST /v1/featured artists/:id/images
-    GET /v1/featured artists/:id/images
+// Bio specific endpoints
+   POST /v1/featured/:id/bio
+    GET /v1/featured/:id/bio
 
-   POST /v1/featured artists/:id/description
-    GET /v1/featured artists/:id/description
+// Image specific endpoints
+   POST /v1/featured/:id/images
+    GET /v1/featured/:id/images
+
+// Social media specific endpoints
+   POST /v1/featured/:id/socials
+    GET /v1/featured/:id/socials 
 ```
 
 ### Usage
@@ -112,10 +120,11 @@ All use cases for the Featured artists endpoints are listed below.
 * [Delete a featured artist: `DELETE /v1/featured artists/:id`](#delete-featured-artist)
 
 **Featured artist data specific:**
+* [Add text to featured artist bio: `POST /v1/featured artists/:id/bio`](#add-to-bio)
+* [Retrieve featured artist's bio: `GET /v1/featured artists/:id/bio`](#retrieve-bio)
 * [Add images for featured artist: `POST /v1/featured artists/:id/images`](#add-images)
 * [Retrieve images for featured artist: `GET /v1/featured artists/:id/images`](#retrieve-images)
-* [Add text to featured artist description: `POST /v1/featured artists/:id/description`](#add-to-description)
-* [Retrieve featured artist's description: `GET /v1/featured artists/:id/description`](#retrieve-description)
+
 
 View the [error documentation](errors) for what to expect if your request fails.
 
