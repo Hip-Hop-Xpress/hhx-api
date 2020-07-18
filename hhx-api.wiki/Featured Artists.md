@@ -111,19 +111,21 @@ A quick overview of all endpoints related to Featured artists on the Hip Hop Xpr
 All use cases for the Featured artists endpoints are listed below.
 
 **Collection wide:**
-* [Create featured artist: `POST /v1/featured artists`](#create-featured-artist)
-* [Retrieve all featured artists: `GET /v1/featured artists`](#retrieve-all-featured-artists)
+* [Create featured artist: `POST /v1/featured`](#create-featured-artist)
+* [Retrieve all featured artists: `GET /v1/featured`](#retrieve-all-featured-artists)
 
 **Featured artist specific:**
-* [Retrieve a featured artist: `GET /v1/featured artists/:id`](#retrieve-featured-artist)
-* [Update a featured artist: `PUT /v1/featured artists/:id`](#update-featured-artist)
-* [Delete a featured artist: `DELETE /v1/featured artists/:id`](#delete-featured-artist)
+* [Retrieve a featured artist: `GET /v1/featured/:id`](#retrieve-featured-artist)
+* [Update a featured artist: `PUT /v1/featured/:id`](#update-featured-artist)
+* [Delete a featured artist: `DELETE /v1/featured/:id`](#delete-featured-artist)
 
 **Featured artist data specific:**
-* [Add text to featured artist bio: `POST /v1/featured artists/:id/bio`](#add-to-bio)
-* [Retrieve featured artist's bio: `GET /v1/featured artists/:id/bio`](#retrieve-bio)
-* [Add images for featured artist: `POST /v1/featured artists/:id/images`](#add-images)
-* [Retrieve images for featured artist: `GET /v1/featured artists/:id/images`](#retrieve-images)
+* [Add text to featured artist bio: `POST /v1/featured/:id/bio`](#add-to-bio)
+* [Retrieve featured artist's bio: `GET /v1/featured/:id/bio`](#retrieve-bio)
+* [Add images for featured artist: `POST /v1/featured/:id/images`](#add-images)
+* [Retrieve images for featured artist: `GET /v1/featured/:id/images`](#retrieve-images)
+* [Create social media: `POST /v1/featured/:id/socials`](#create-social-platform)
+* [Retrieve all socials: `GET /v1/featured/:id/socials`](#retrieve-all-socials)
 
 
 View the [error documentation](errors) for what to expect if your request fails.
@@ -131,7 +133,7 @@ View the [error documentation](errors) for what to expect if your request fails.
 ---
 
 ### Create featured artist 
-`POST /v1/featured artists`
+`POST /v1/featured`
 
 Creates a featured artist by including a [featured artist object](#the-featured-artist-object) (JSON) in the request body. All fields are required, and the `id` must be a unique, non-negative integer.
 
@@ -144,7 +146,7 @@ The featured artist object as added in the database if successful
 ---
 
 ### Retrieve all featured artists
-`GET /v1/featured artists`
+`GET /v1/featured`
 
 Retrieves the data for all featured artists
 
@@ -157,7 +159,7 @@ An array of all featured artist objects
 ---
 
 ### Retrieve featured artist
-`GET /v1/featured artists/:id`
+`GET /v1/featured/:id`
 
 Retrieves a specific featured artist through its `id`
 
@@ -170,7 +172,7 @@ The featured artist object with specified `id`
 ---
 
 ### Update featured artist
-`PUT /v1/featured artists/:id`
+`PUT /v1/featured/:id`
 
 Updates attributes of a specified featured artist object by `id`
 
@@ -183,7 +185,7 @@ The updated featured artist object
 ---
 
 ### Delete featured artist
-`DELETE /v1/featured artists/:id`
+`DELETE /v1/featured/:id`
 
 Deles a featured artist object with `id`
 
@@ -196,9 +198,9 @@ The featured artist object that was deleted
 ---
 
 ### Add images
-`POST /v1/featured artists/:id/images`
+`POST /v1/featured/:id/images`
 
-Adds images to a specific featured artist by including the [image objects](#the-featured-artist-'image'-object) in your request body.
+Adds images to a specific featured artist by including the [image objects](#the-image-object) in your request body.
 
 #### Parameters
 Either a single image object or an array of image objects in the request body. All attributes are required for each image object.
@@ -209,7 +211,7 @@ The updated images array
 ---
 
 ### Retrieve images
-`GET /v1/featured artists/:id/images`
+`GET /v1/featured/:id/images`
 
 Retrieves all the images for a specified featured artist by `id` 
 
@@ -221,28 +223,52 @@ The images array of featured artist with specified `id`
 
 ---
 
-### Add to description
-`POST /v1/featured artists/:id/description`
+### Add to bio
+`POST /v1/featured/:id/bio`
 
-Adds text to a featured artist's description by by including the text in the request body
+Adds text to a featured artist's bio by by including the text in the request body
 
 #### Parameters
 Either a single `string` or an array of `string`s in the request body
 
 #### Returns
-The updated description (array of `string`s)t
+The updated bio (array of `string`s)t
 
 ---
 
-### Retrieve description
-`GET /v1/featured artists/:id/description`
+### Retrieve bio
+`GET /v1/featured/:id/bio`
 
-Retrieves all the text in a specific featured artist's description
+Retrieves all the text in a specific featured artist's bio
 
 #### Parameters
 None
 
 #### Returns
 The description (array of `string`s)
+
+### Create social platform
+`POST /v1/featured/:id/socials`
+
+Creates an social media object for the artist by including a [social media object](#the-social-media-object) (JSON) in the request body - all attributes are required.
+
+#### Parameters
+A valid [social media object](#the-social-media-object) (JSON) with correct attributes
+
+#### Returns
+The social media object as added in the database
+
+---
+
+### Retrieve all socials
+`GET /v1/featured/:id/socials`
+
+Retrieves the data for all of the featured artist's socials
+
+#### Parameters
+None
+
+#### Returns
+An array of all social media objects
 
 [**Back to top**](#featured-artists-endpoint)
