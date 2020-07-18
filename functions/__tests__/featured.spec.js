@@ -937,18 +937,148 @@ describe('PUT /featured/:id updates featured artist', () => {
  */
 describe('PUT endpoint errors', () => {
 
-  it('tests for updating id (immutable)', async () => {});
+  const invalidId = 501;
+  const endpoint = `${base}/${invalidId}`;
 
-  it('tests for empty name', async () => {});
+  it('tests for updating id (immutable)', async () => {
 
-  it('tests for updating nonexistent id', async () => {});
+    // Trying to update the id should send back an error
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({id: 101});
 
-  it('tests for short date', async () => {});
+    const expectedError = {
+      type: IMMUTABLE_ATTR_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'The attribute "id" is immutable and cannot be updated!',
+      param: 'id',
+      original: null
+    };
 
-  it('tests for empty bio', async () => {});
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
 
-  it('tests for invalid header image url', async () => {});
+  });
 
-  it('tests for empty socials', async () => {});
+  it('tests for empty name', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({name: ''});
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"name" is not allowed to be empty',
+      param: 'name',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for updating nonexistent id', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({name: 'valid test name'});
+
+    const expectedError = {
+      type: DOC_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: `The requested featured artist with id ${invalidId} does not exist!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for short date', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({date: '2'});
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"date" length must be at least 4 characters long',
+      param: 'date',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for empty bio', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({bio: []});
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"bio" does not contain 1 required value(s)',
+      param: 'bio',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for invalid header image url', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({headerImageUrl: 'uwu'});
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"headerImageUrl" must be a valid uri',
+      param: 'headerImageUrl',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for empty socials', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({socials: []});
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"socials" does not contain 1 required value(s)',
+      param: 'socials',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
 
 });
