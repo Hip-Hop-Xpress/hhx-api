@@ -465,6 +465,26 @@ describe('PUT /v1/projects/:id errors', () => {
   const invalidId = 501;
   const endpoint = `${base}/${invalidId}`;
 
+  it('tests for trying to update id (immutable)', async() => {
+
+    const res = await supertest(api)
+    .put(endpoint)
+    .set('Accept', /json/)
+    .send({id: 0}); 
+
+    const expectedError = {
+      type: IMMUTABLE_ATTR_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'The attribute "id" is immutable and cannot be updated!',
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
   it('tests for nonexistent id', async () => {
 
     const res = await supertest(api)

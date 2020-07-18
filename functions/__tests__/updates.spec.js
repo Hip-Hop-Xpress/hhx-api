@@ -8,7 +8,7 @@ const api = require('../index').app;
 
 // Constants
 const { OK, INVALID_PARAMS } = require('../errors/codes');
-const { INVALID_REQUEST_ERR, DOC_NOT_FOUND_ERR, DOC_ALRDY_EXISTS_ERR } = require('../errors/types');
+const { INVALID_REQUEST_ERR, DOC_NOT_FOUND_ERR, DOC_ALRDY_EXISTS_ERR, IMMUTABLE_ATTR_ERR } = require('../errors/types');
 const base = '/v1/updates';
 
 // TODO:  THIS IS SUBJECT TO CHANGE
@@ -485,12 +485,32 @@ describe('PUT /v1/updates/:id updates the update', () => {
  * PUT endpoint errors
  * - schema errors
  * - nonexistent ID errors
- * TODO: test for trying to update id
+ * - test for trying to update id
  */
 describe('PUT /v1/updates/:id errors', () => {
 
   const invalidId = 999999;
   const endpoint = `${base}/${invalidId}`;
+
+  it('tests for trying to update id (immutable)', async() => {
+
+    const res = await supertest(api)
+    .put(endpoint)
+    .set('Accept', /json/)
+    .send({id: 0});
+
+    const expectedError = {
+      type: IMMUTABLE_ATTR_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: 'The attribute "id" is immutable and cannot be updated!',
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
 
   it('tests for nonexistent id', async() => {
 
