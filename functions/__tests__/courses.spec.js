@@ -134,6 +134,10 @@ describe('GET endpoints', () => {
 
 });
 
+/**
+ * GET endpoints error tests
+ * - just testing doc_not_found_err
+ */
 describe('GET endpoints errors', () => {
 
   // Setup expected errors
@@ -161,8 +165,8 @@ describe('GET endpoints errors', () => {
     expect(response.body).toEqual(expectedError);
   });
 
-  it('GET /v1/courses/:id/members - nonexistent id', async () => {
-    const response = await supertest(api).get(base + `/${id}/members`);
+  it('GET /v1/courses/:id/images - nonexistent id', async () => {
+    const response = await supertest(api).get(base + `/${id}/images`);
 
     expect(response.status).toBe(INVALID_PARAMS);
     expect(response.body).toEqual(expectedError);
