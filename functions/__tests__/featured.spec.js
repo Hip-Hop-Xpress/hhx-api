@@ -78,15 +78,78 @@ const testFeatured = {
  */
 describe('GET endpoints', () => {
 
-  it('GET /v1/featured', async () => {});
+  it('GET /v1/featured', async () => {
 
-  it('GET /v1/featured/:id', async () => {});
+    const res = await supertest(api).get(base);
 
-  it('GET /v1/featured/:id/bio', async () => {});
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toHaveLength(numFeatured);
 
-  it('GET /v1/featured/:id/socials', async () => {});
+  });
 
-  it('GET /v1/featured/:id/images', async () => {});
+  it('GET /v1/featured/:id', async () => {
+
+    // Check first featured artist
+    const res = await supertest(api).get(base + '/0');
+
+    // Verify that the success response returns an object
+    expect(res.status).toBe(OK);
+    expect(typeof res.body).toEqual('object');
+
+    const featured = res.body;
+
+    // Verify the contents of the project object
+    expect(featured.id).toEqual(0);
+    expect(typeof featured.date).toEqual('string');
+    expect(typeof featured.current).toEqual('boolean');
+    expect(typeof featured.headerImageUrl).toEqual('string');
+
+    // Check that bio and socials both have entries
+    expect(Array.isArray(featured.bio)).toBe(true);
+    expect(featured.bio.length).toBeGreaterThan(0);
+
+    expect(Array.isArray(featured.socials)).toBe(true);
+    expect(featured.socials.length).toBeGreaterThan(0);
+
+    // Check that images length is >= 0
+    expect(Array.isArray(featured.images)).toBe(true);
+    expect(featured.images.length).toBeGreaterThanOrEqual(0);
+
+  });
+
+  it('GET /v1/featured/:id/bio', async () => {
+
+    const res = await supertest(api).get(base + '/0/bio');
+
+    // Verify success response returns array
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.length).toBeGreaterThan(0);
+
+  });
+
+  it('GET /v1/featured/:id/socials', async () => {
+
+    const res = await supertest(api).get(base + '/0/socials');
+
+    // Verify success response returns array
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toBeGreaterThan(0);
+
+  });
+
+  it('GET /v1/featured/:id/images', async () => {
+
+    const res = await supertest(api).get(base + '/0/description');
+
+    // Verify success response returns array
+    expect(res.status).toBe(OK);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toBeGreaterThanOrEqual(0);
+
+  });
 
 });
 
