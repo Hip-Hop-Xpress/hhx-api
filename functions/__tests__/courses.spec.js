@@ -348,29 +348,6 @@ describe('POST/DELETE course endpoint errors', () => {
 
   });
 
-  it('POST tests for empty images', async() => {
-
-    const res = await supertest(api)
-      .post(base)
-      .set('Accept', /json/)
-      .send({
-        ...testCourse,
-        images: []
-      });
-
-    const expectedError = {
-      type: INVALID_REQUEST_ERR,
-      code: INVALID_PARAMS.toString(),
-      message: '"images" must contain at least 1 items',
-      param: 'images',
-      original: null
-    };
-
-    expect(res.status).toBe(INVALID_PARAMS);
-    expect(res.body).toEqual(expectedError);
-
-  });
-
   it('POST tests for short start date', async () => {
 
     // Using unique ID for each test

@@ -34,7 +34,7 @@ const courseImage       = Joi.object({
                             url:     Joi.string().uri().required(),
                             caption: Joi.string().allow("").required(),
                           });
-const courseImages      = Joi.array().min(1).items(courseImage);
+const courseImages      = Joi.array().items(courseImage);
 
 // POST /courses schema
 const postSchema = Joi.object({
