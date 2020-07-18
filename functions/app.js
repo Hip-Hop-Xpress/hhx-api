@@ -25,6 +25,7 @@ const location = require('./routes/location');
 const updates = require('./routes/updates');
 const socials = require('./routes/socials');
 const courses = require('./routes/courses');
+const featured = require('./routes/featured');
 
 // Error imports
 const { URL_NOT_FOUND } = require('./errors/codes');
@@ -54,6 +55,7 @@ app.use('/v1/location',   location);
 app.use('/v1/updates',    updates);
 app.use('/v1/socials',    socials);
 app.use('/v1/courses',    courses);
+app.use('/v1/featured',   featured);
 
 // For unhandled routes
 app.all('*', (req, res, next) => {

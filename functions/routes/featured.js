@@ -28,6 +28,7 @@ const featuredString         = Joi.string().min(1);  // general non-empty string
 const featuredId             = Joi.number().integer().min(0);
 const featuredName           = featuredString;
 const featuredDate           = Joi.string().min(4);
+const featuredCurrent        = Joi.bool().disallow('yes', 'no');
 const featuredBio            = Joi.array().min(1).items(featuredString.required());
 const featuredHeaderImageUrl = Joi.string().uri();
 
@@ -45,26 +46,29 @@ const featuredSocial  = Joi.object({
                           handle: featuredString,
                           url: Joi.string().uri().required()
                         });
+const featuredSocials = Joi.array().min(1).items(featuredSocial);
 
 // POST /featured schema
 const postSchema = Joi.object({
   id:             featuredId.required(),
   name:           featuredName.required(),
   date:           featuredDate.required(),
+  current:        featuredCurrent.required(),
   bio:            featuredBio.required(),
   headerImageUrl: featuredHeaderImageUrl.required(),
   images:         featuredImages.required(),
-  social:         featuredSocial.required()
+  socials:        featuredSocials.required()
 });
 
 // PUT /featured/:id schema
 const putSchema = Joi.object({
   name:           featuredName,
   date:           featuredDate,
+  current:        featuredCurrent,
   bio:            featuredBio,
   headerImageUrl: featuredHeaderImageUrl,
   images:         featuredImages,
-  social:         featuredSocial
+  socials:        featuredSocials
 });
 
 /**
