@@ -1,0 +1,1 @@
+// Featured artists API route
