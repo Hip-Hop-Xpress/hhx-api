@@ -227,7 +227,29 @@ describe('POST/GET/DELETE featured artist test', () => {
  * - trying to post existing doc
  * - invalid schema
  */
-describe('POST /featured endpoint errors', () => {});
+describe('POST /featured endpoint errors', () => {
+
+  it('tests for existing document', async () => {
+
+  });
+
+  it('tests for negative id', async () => {});
+
+  it('tests for empty name', async () => {});
+
+  it('tests for short date', async () => {});
+
+  it('tests for empty bio', async () => {});
+
+  it('tests for invalid header image url', async () => {});
+
+  it('tests for invalid image in array', async () => {});
+
+  it('tests for empty socials', async () => {});
+
+  it('tests for invalid social in array', async () => {});
+  
+});
 
 /**
  * DELETE /featured endpoint errors
