@@ -566,7 +566,24 @@ describe('POST /featured endpoint errors', () => {
  */
 describe('DELETE /featured endpoint errors', () => {
 
-  it('tests for nonexistent doc', async () => {});
+  it('tests for nonexistent doc', async () => {
+
+    const nonexistentId = 404;
+
+    const res = await supertest(api).delete(`${base}/${nonexistentId}`);
+
+    const expectedError = {
+      type: DOC_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: `The requested featured artist with id ${nonexistentId} does not exist!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
 
 });
 
