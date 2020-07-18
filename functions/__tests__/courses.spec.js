@@ -258,7 +258,7 @@ describe('POST endpoint tests (tests /DELETE too)', () => {
 /**
  * POST /courses endpoint errors
  * - TODO: schema errors
- * - TODO: nonexistent ID errors
+ * - nonexistent ID errors
  * - already existing ID errors
  */
 describe('POST/DELETE course endpoint errors', () => {
@@ -266,7 +266,7 @@ describe('POST/DELETE course endpoint errors', () => {
   it('POST /courses tests for already existing id', async () => {
 
     const existingId = 0;  // assuming there's at least one existing course
-    const invalidUpdateReq = {
+    const invalidCourseReq = {
       ...testCourse,
       id: existingId
     };
@@ -275,12 +275,154 @@ describe('POST/DELETE course endpoint errors', () => {
     const res = await supertest(api)
       .post(base)
       .set('Accept', /json/)
-      .send(invalidUpdateReq);
+      .send(invalidCourseReq);
     
     const expectedError = {
       type: DOC_ALRDY_EXISTS_ERR,
       code: INVALID_PARAMS.toString(),
       message: `The requested course with id ${existingId} already exists!`,
+      param: 'id',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST tests for empty name', async() => {
+
+    const emptyName = '';
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send({
+        ...testCourse,
+        name: emptyName
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"name" is not allowed to be empty',
+      param: 'name',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST tests for empty description', async() => {
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send({
+        ...testCourse,
+        description: []
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"description" must contain at least 1 items',
+      param: 'description',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST tests for empty images', async() => {
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send({
+        ...testCourse,
+        images: []
+      });
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"images" must contain at least 1 items',
+      param: 'images',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST tests for short start date', async () => {
+
+    // Using unique ID for each test
+    const shortDate = {
+      ...testCourse,
+      startDate: '200'
+    };
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(shortDate);
+    
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"startDate" length must be at least 4 characters long',
+      param: 'startDate',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('POST tests for short end date', async () => {
+
+    // Using unique ID for each test
+    const shortDate = {
+      ...testCourse,
+      endDate: '200'
+    };
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(shortDate);
+    
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"endDate" length must be at least 4 characters long',
+      param: 'endDate',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('DELETE tests for nonexistent id', async() => {
+
+    const nonexistentId = 404;
+
+    const res = await supertest(api).delete(`${base}/${nonexistentId}`);
+
+    const expectedError = {
+      type: DOC_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: `The requested course with id ${nonexistentId} does not exist!`,
       param: 'id',
       original: null
     };
