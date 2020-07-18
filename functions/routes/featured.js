@@ -224,9 +224,9 @@ routes.delete('/:id', wrap(async (req, res, next) => {
 }));
 
 /**
- * POST /featured/:id/description
+ * POST /featured/:id/bio
  */
-routes.post('/:id/description', wrap(async (req, res, next) => {
+routes.post('/:id/bio', wrap(async (req, res, next) => {
   
   let newParagraphs = [];
   
@@ -249,15 +249,15 @@ routes.post('/:id/description', wrap(async (req, res, next) => {
       return sendNonexistentIdError(res, req.params.id, docName);
     }
 
-    // Get the current description and add the additions
-    let desc = doc.data().description;
+    // Get the current bio and add the additions
+    let newBio = doc.data().bio;
     for (let paragraph of newParagraphs) {
-      desc.push(paragraph);
+      newBio.push(paragraph);
     }
 
-    // Update the description and send response
-    docRef.update({description: desc});
-    return res.status(OK).send(desc);
+    // Update the bio and send response
+    docRef.update({bio: newBio});
+    return res.status(OK).send(newBio);
 
   });
 
@@ -267,15 +267,15 @@ routes.post('/:id/description', wrap(async (req, res, next) => {
 }));
 
 /**
- * GET /featured/:id/description
+ * GET /featured/:id/bio
  */
-routes.get('/:id/description', wrap(async (req, res, next) => {
+routes.get('/:id/bio', wrap(async (req, res, next) => {
   
   const document = db.collection(collection).doc(req.params.id);
   
   await document.get().then(doc => {
     if (doc.exists) {
-      return res.status(OK).send(doc.data().description);
+      return res.status(OK).send(doc.data().bio);
     } else {
       return sendNonexistentIdError(res, req.params.id, docName);
     }
@@ -284,62 +284,30 @@ routes.get('/:id/description', wrap(async (req, res, next) => {
 }));
 
 /**
- * POST /featured/:id/members
+ * POST /featured/:id/images
  */
-routes.post('/:id/members', wrap(async (req, res, next) => {
-  
-  let newParagraphs = [];
-  
-  // Check that the body is either string or array of strings, and
-  // add body contents to 'additions' if valid
-  if (typeof req.body === 'string' || req.body instanceof String) {
-    newParagraphs.push(req.body);
-  } else if (Array.isArray(req.body)) {
-    await featuredMembers.validateAsync(req.body);
-    newParagraphs = req.body;
-  } else {
-    return sendIncorrectTypeError(res, 'Body must be string or array of strings');
-  }
+routes.post('/:id/images', wrap(async (req, res, next) => {
 
-  const document = db.collection(collection).doc(req.params.id);
-  const docRef = document;
-
-  await document.get().then(doc => {
-    if (!doc.exists) {
-      return sendNonexistentIdError(res, req.params.id, docName);
-    }
-
-    // Get the current members and add new members
-    let members = doc.data().members;
-    for (let paragraph of newParagraphs) {
-      members.push(paragraph);
-    }
-
-    // Update the members and send response
-    docRef.update({members: members});
-    return res.status(OK).send(members);
-
-  });
-
-  // linting purposes
-  return null;
-  
 }));
 
-/**
- * GET /featured/:id/members
+ /**
+ * GET /featured/:id/images
  */
-routes.get('/:id/members', wrap(async (req, res, next) => {
-  
-  const document = db.collection(collection).doc(req.params.id);
-  
-  await document.get().then(doc => {
-    if (doc.exists) {
-      return res.status(OK).send(doc.data().members);
-    } else {
-      return sendNonexistentIdError(res, req.params.id, docName);
-    }
-  });
+routes.get('/:id/images', wrap(async (req, res, next) => {
+
+}));
+
+ /**
+ * POST /featured/:id/socials
+ */
+routes.post('/:id/socials', wrap(async (req, res, next) => {
+
+}));
+
+ /**
+ * GET /featured/:id/socials
+ */
+routes.get('/:id/socials', wrap(async (req, res, next) => {
 
 }));
 
