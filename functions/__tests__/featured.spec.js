@@ -169,13 +169,41 @@ describe('GET endpoint errors', () => {
     original: null
   };
 
-  it('GET /v1/featured/:id', async () => {});
+  it('GET /v1/featured/:id', async () => {
 
-  it('GET /v1/featured/:id/bio', async () => {});
+    const response = await supertest(api).get(base + `/${id}`);
 
-  it('GET /v1/featured/:id/socials', async () => {});
+    expect(response.status).toBe(INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
 
-  it('GET /v1/featured/:id/images', async () => {});
+  });
+
+  it('GET /v1/featured/:id/bio', async () => {
+
+    const response = await supertest(api).get(base + `/${id}/bio`);
+
+    expect(response.status).toBe(INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
+
+  });
+
+  it('GET /v1/featured/:id/socials', async () => {
+
+    const response = await supertest(api).get(base + `/${id}/socials`);
+
+    expect(response.status).toBe(INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
+
+  });
+
+  it('GET /v1/featured/:id/images', async () => {
+
+    const response = await supertest(api).get(base + `/${id}/images`);
+
+    expect(response.status).toBe(INVALID_PARAMS);
+    expect(response.body).toEqual(expectedError);
+
+  });
 
 });
 
