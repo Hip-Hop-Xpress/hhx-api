@@ -63,7 +63,7 @@ View the [error documentation](errors) for what to expect if your request fails.
 ### Create social platform
 `POST /v1/socials`
 
-Creates an update by including a [social media object](#the-social-media-object) (JSON) in the request body - all attributes are erquired.
+Creates an social media platform by including a [social media object](#the-social-media-object) (JSON) in the request body - all attributes are required.
 
 #### Parameters
 A valid [social media object](#the-social-media-object) (JSON) with correct attributes
