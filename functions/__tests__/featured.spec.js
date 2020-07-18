@@ -376,4 +376,20 @@ describe('PUT /featured/:id updates featured artist', () => {
  * - trying to update id
  * - incorrect schema
  */
-describe('PUT endpoint errors', () => {});
+describe('PUT endpoint errors', () => {
+
+  it('tests for updating id (immutable)', async () => {});
+
+  it('tests for empty name', async () => {});
+
+  it('tests for updating nonexistent id', async () => {});
+
+  it('tests for short date', async () => {});
+
+  it('tests for empty bio', async () => {});
+
+  it('tests for invalid header image url', async () => {});
+
+  it('tests for empty socials', async () => {});
+
+});
