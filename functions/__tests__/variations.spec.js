@@ -11,7 +11,13 @@ const api = require('../index').app;
 
 // Constants
 const { INVALID_PARAMS, OK } = require('../errors/codes');
-const { INVALID_REQUEST_ERR, DOC_NOT_FOUND_ERR, DOC_ALRDY_EXISTS_ERR } = require('../errors/types');
+const { 
+  INVALID_REQUEST_ERR, 
+  DOC_NOT_FOUND_ERR, 
+  DOC_ALRDY_EXISTS_ERR,
+  IMMUTABLE_ATTR_ERR
+} = require('../errors/types');
+
 const base = '/v1/variations';
 const numVariations = 2;
 
@@ -745,7 +751,6 @@ describe('PUT /v1/variations/:id updates variation', () => {
   };
 
   const updatedVariation = {
-    id: id,
     name: 'the updated variation',
     date: '2021',
     description: [
@@ -786,7 +791,10 @@ describe('PUT /v1/variations/:id updates variation', () => {
       .send(updatedVariation);
 
     expect(res.status).toBe(OK);
-    expect(res.body).toEqual(updatedVariation);
+    expect(res.body).toEqual({
+      ...updatedVariation,
+      id: initialVariation.id
+    });
 
   });
 

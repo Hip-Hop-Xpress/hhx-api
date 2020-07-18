@@ -463,7 +463,10 @@ describe('PUT /v1/updates/:id updates the update', () => {
     const putRes = await supertest(api)
       .put(endpointUrl)
       .set('Accept', /json/)
-      .send(updatedUpdate);
+      .send({
+        ...updatedUpdate,
+        id: undefined  // id cannot be included in PUT requests
+      });
 
     expect(putRes.status).toBe(OK);
     const update = putRes.body;
