@@ -29,7 +29,7 @@ These attributes are to be included in `POST` and `PUT` request bodies.
 
 Name | Type | Restrictions | Description
 -|-|-|-
-`id` | `number` | must be unique non-zero integer | unique identifier for update
+`id` | `number` | must be unique non-zero integer, cannot be updated once created | unique identifier for update
 `title` | `string` | must be non-empty | title of the update
 `author` | `string` | must be non-empty | the author of the update
 `body` | `Array` of `string` | must be non-empty | body text of the update

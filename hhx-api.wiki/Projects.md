@@ -34,7 +34,7 @@ Below is an example Project object:
 
 Name | Type | Restrictions | Description
 -|-|-|-
-`id` | `number` | must be unique non-zero integer | unique identifier for project
+`id` | `number` | must be unique non-zero integer, cannot be updated once created | unique identifier for project
 `name` | `string` | must be non-empty | name of project
 `description` | `Array` of `string` | must be non-empty | describes the project
 `members` | `Array` of `string` | must be non-empty | lists all members of the project

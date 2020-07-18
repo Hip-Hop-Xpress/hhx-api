@@ -7,6 +7,7 @@ const db = admin.firestore();
 
 // Error handling functions/constants
 const {
+  sendImmutableAttributeError,
   sendNonexistentIdError,
   sendExistingIdError,
   sendIncorrectTypeError,
@@ -36,7 +37,6 @@ const postSchema = Joi.object({
 });
 
 const putSchema = Joi.object({
-  id: updateId,
   title: updateTitle,
   author: updateAuthor,
   body: updateBody
@@ -173,6 +173,10 @@ routes.put('/:id', wrap(async (req, res, next) => {
   try {
     await putSchema.validateAsync(req.body);
   } catch (e) {
+    // If client tries updating id, send immutable attribute error
+    if (e.details[0].context.key === 'id') {
+      return sendImmutableAttributeError(res, 'id');
+    }
     return sendSchemaValidationError(res, e);
   }
 
