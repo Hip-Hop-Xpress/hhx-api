@@ -15,7 +15,7 @@ const {
 } = require('../errors/helpers');
 
 const wrap = require('../errors/wrap');
-const { OK } = require('../errors/codes');
+const { OK, SERVER_ERR } = require('../errors/codes');
 
 // Collection/doc name in Firestore
 const collection = 'featured';
@@ -93,16 +93,7 @@ routes.post('/', wrap(async (req, res, next) => {
 
   // Try creating a document, and throw error if the doc exists
   try {
-    await db.collection(collection).doc(`/${req.body.id}/`)
-      .create({
-        id: req.body.id,
-        name: req.body.name,
-        description: req.body.description,
-        members: req.body.members,
-        startDate: req.body.startDate,
-        endDate: req.body.endDate,
-        icon: req.body.icon
-      });
+    await db.collection(collection).doc(`/${req.body.id}/`).create(req.body);
   } catch (e) {
     return sendExistingIdError(res, req.body.id, docName);
   }
@@ -125,19 +116,7 @@ routes.get('/', wrap(async (req, res, next) => {
     let docs = snapshot.docs;
 
     for (let featured of docs) {
-      // Insert all data from server doc to response doc
-      const selectedItem = {
-        id: featured.id,
-        name: featured.data().name,
-        description: featured.data().description,
-        members: featured.data().members,
-        startDate: featured.data().startDate,
-        endDate: featured.data().endDate,
-        icon: featured.data().icon
-      };
-
-      // Put the response doc into the response list
-      response.push(selectedItem);
+      response.push(featured.data());
     }
 
     // Send the response once every doc has been put in
@@ -287,28 +266,28 @@ routes.get('/:id/bio', wrap(async (req, res, next) => {
  * POST /featured/:id/images
  */
 routes.post('/:id/images', wrap(async (req, res, next) => {
-
+  return res.status(SERVER_ERR).send();
 }));
 
  /**
  * GET /featured/:id/images
  */
 routes.get('/:id/images', wrap(async (req, res, next) => {
-
+  return res.status(SERVER_ERR).send();
 }));
 
  /**
  * POST /featured/:id/socials
  */
 routes.post('/:id/socials', wrap(async (req, res, next) => {
-
+  return res.status(SERVER_ERR).send();
 }));
 
  /**
  * GET /featured/:id/socials
  */
 routes.get('/:id/socials', wrap(async (req, res, next) => {
-
+  return res.status(SERVER_ERR).send();
 }));
 
 module.exports = routes;
