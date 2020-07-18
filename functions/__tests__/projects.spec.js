@@ -329,7 +329,7 @@ describe('POST description and members errors', () => {
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: 'Body must be string or array of strings',
+      message: 'Request body must be string or array of strings',
       param: null,
       original: null
     };

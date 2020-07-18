@@ -435,10 +435,10 @@ describe('POST/DELETE course endpoint errors', () => {
 });
 
 /**
- * POST errors for description and members
+ * POST errors for description and images
  * TODO: figure out how to send strings in request body
  */
-describe('POST description and members errors', () => {
+describe('POST description and images errors', () => {
 
   it('description - nonexistent id', async () => {
     // this id won't exist
@@ -456,7 +456,7 @@ describe('POST description and members errors', () => {
 
     const expectedError = {
       type: DOC_NOT_FOUND_ERR,
-      code: '422',
+      code: INVALID_PARAMS.toString(),
       message: `The requested course with id ${id} does not exist!`,
       param: 'id',
       original: null
@@ -480,7 +480,7 @@ describe('POST description and members errors', () => {
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: 'Body must be string or array of strings',
+      message: 'Request body must be string or array of strings',
       param: null,
       original: null
     };
@@ -490,23 +490,23 @@ describe('POST description and members errors', () => {
 
   });
 
-  it('members - nonexistent id', async () => {
+  it('images - nonexistent id', async () => {
     // this id won't exist
     const id = 600;
-    const members = [
-      'test member 1',
-      'test member 2'
+    const images = [
+      testImage,
+      testImage
     ];
 
     // Valid description, nonexistent id
     const res = await supertest(api)
-      .post(`${base}/${id}/members`)
+      .post(`${base}/${id}/images`)
       .set('Accept', /json/)
-      .send(members);
+      .send(images);
 
     const expectedError = {
       type: DOC_NOT_FOUND_ERR,
-      code: '422',
+      code: INVALID_PARAMS.toString(),
       message: `The requested course with id ${id} does not exist!`,
       param: 'id',
       original: null
@@ -517,7 +517,7 @@ describe('POST description and members errors', () => {
 
   });
 
-  it('members - incorrect type', async () => {
+  it('images - incorrect type', async () => {
     
     const id = 601;
 
@@ -530,8 +530,70 @@ describe('POST description and members errors', () => {
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: 'Body must be string or array of strings',
+      message: 'Request body must be string or array of strings',
       param: null,
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('images - invalid url', async () => {
+    // this id won't exist
+    const id = 0;
+
+    // The second image has an invalid url
+    const images = [
+      testImage,
+      {
+        ...testImage,
+        url: 'not a url'
+      }
+    ];
+
+    // Valid description, nonexistent id
+    const res = await supertest(api)
+      .post(`${base}/${id}/images`)
+      .set('Accept', /json/)
+      .send(images);
+
+    const expectedError = {
+      type: DOC_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"url" must be a valid uri',
+      param: 'url',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('images - undefined caption', async () => {
+    // this id won't exist
+    const id = 600;
+    const images = [
+      testImage,
+      {
+        ...testImage,
+        caption: undefined
+      }
+    ];
+
+    // Valid description, nonexistent id
+    const res = await supertest(api)
+      .post(`${base}/${id}/images`)
+      .set('Accept', /json/)
+      .send(images);
+
+    const expectedError = {
+      type: DOC_NOT_FOUND_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: `"caption" is required`,
+      param: 'caption',
       original: null
     };
 
