@@ -485,6 +485,7 @@ describe('PUT /v1/updates/:id updates the update', () => {
  * PUT endpoint errors
  * - schema errors
  * - nonexistent ID errors
+ * TODO: test for trying to update id
  */
 describe('PUT /v1/updates/:id errors', () => {
 

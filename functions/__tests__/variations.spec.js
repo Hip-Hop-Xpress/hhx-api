@@ -792,6 +792,10 @@ describe('PUT /v1/variations/:id updates variation', () => {
 
 });
 
+/**
+ * PUT endpoint error tests
+ * TODO: test for trying to update id
+ */
 describe('PUT /v1/variations/:id errors', () => {
 
   const invalidId = 501;
