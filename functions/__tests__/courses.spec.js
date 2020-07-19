@@ -505,7 +505,7 @@ describe('POST description and images errors', () => {
   });
 
   it('images - invalid url', async () => {
-    // this id won't exist
+    // Existing id
     const id = 0;
 
     // The second image has an invalid url
@@ -537,8 +537,10 @@ describe('POST description and images errors', () => {
   });
 
   it('images - undefined caption', async () => {
-    // this id won't exist
-    const id = 600;
+    // Existing id
+    const id = 0;
+
+    // Invalid image schema
     const images = [
       testImage,
       {

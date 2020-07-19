@@ -4,7 +4,8 @@ The Hip Hop Xpress aims to feature talented artists in the Champaign-Urbana area
 ### Guide
 * [The Featured artist object](#the-featured-artist-object)
   * [Attributes](#attributes)
-* [The Featured artist 'Image' object](#the-featured-artist-'image'-object)
+* [The Featured artist 'Image' object](#the-image-object)
+* [The Featured artist 'Social media' object](#the-social-media-object)
 * [Endpoints](#endpoints)
   * [Overview](#overview)
   * [Usage](#usage)
@@ -46,7 +47,7 @@ Name | Type | Restrictions | Description
 `bio` | `Array` of `string` | must be non-empty | describes the featured artist
 `headerImageUrl` | `string` | must be a valid url | the main image of the artist, to be displayed as a header or other prominent feature
 `images` | `Array` of image `Object`s | can be empty, contents must follow the [image schema](#the-image-object) | all images to be displayed for this artist
-`socials` | `Array` of Social media `Object`s | must be non-empty, contents must follow the [social media object schema](#the-social-media-object) | lists all social media platforms for featured artist
+`socials` | `Array` of Social media `Object`s | must be non-empty, contents must follow the [social media object schema](#the-social-media-object), no duplicates | lists all social media platforms for featured artist
 
 ## The Image object
 Image object schema for `images` array in the featured artist object. Each field is required when [creating new images.](#add-images)
@@ -64,7 +65,7 @@ Name | Type | Restrictions | Description
 `caption` | `string` | none, can be empty | briefly describes the image
 
 ## The Social media object
-Social media schema for `socials` array in the featured artist object. Each field is required when [adding social media platforms](#add-social)
+Social media schema for `socials` array in the featured artist object. Each field is required when [adding social media platforms](#create-social-platform). You cannot have more than one social media object with the same `type`.
 ```json
 {
   "type": "instagram",
@@ -76,7 +77,7 @@ Social media schema for `socials` array in the featured artist object. Each fiel
 ### Attributes
 Name | Type | Restrictions | Description
 -|-|-|-
-`type` | `string` | must be a social media type as listed [here](https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type), cannot be updated once created | the specific social media platform, also specifies which platform to render on buttons and other components
+`type` | `string` | must be a social media type as listed [here](https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type), cannot be updated once created, cannot have duplicates | the specific social media platform, also specifies which platform to render on buttons and other components
 `handle` | `string` | must be nonempty | the social media handle/username
 `url` | `string` | must be a valid url | the social media URL
 

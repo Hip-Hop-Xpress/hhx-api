@@ -34,7 +34,7 @@ Historical artists | :x: | :x: | :x:
 [Variations](variations) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 [Courses](courses) | :heavy_check_mark: | :heavy_check_mark: | :x:
 [Projects](projects) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
-Featured artists | :x: | :x: | :x:
+[Featured artists](featured-artists) | :heavy_check_mark: | :heavy_check_mark: | :x:
 [Updates](updates) | :heavy_check_mark: | :heavy_check_mark: | :x:
 [Location](location) | :heavy_check_mark: | :heavy_check_mark: | :x:
 [Social Media](social-media) | :heavy_check_mark: | :heavy_check_mark: | :x:

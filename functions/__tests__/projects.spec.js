@@ -467,7 +467,6 @@ describe('PUT /v1/projects/:id updates project', () => {
 
 /**
  * PUT endpoint errors
- * TODO: test for trying to update id
  */
 describe('PUT /v1/projects/:id errors', () => {
 

@@ -77,7 +77,7 @@ const sendExistingIdError = (res, id, docName) => {
  * 
  * @param {Response} res the error Response to be sent
  * @param {String} paramName name of identifier attribute
- * @param {number} param an invalid identifer (already points to document)
+ * @param {number|string} param an invalid identifer (already points to document)
  * @param {String} docName name of document in collection 
  * @returns {Response} the response with correct status and body
  */
