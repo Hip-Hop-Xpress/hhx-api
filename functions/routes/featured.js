@@ -82,6 +82,7 @@ const putSchema = Joi.object({
  *   POST, GET               /featured/:id/socials
  * 
  * TODO: add support for query strings eventually
+ * TODO: prevent adding multiple social medias of same type
  */
 
  /**
