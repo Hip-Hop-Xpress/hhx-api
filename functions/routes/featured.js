@@ -12,6 +12,7 @@ const {
   sendNonexistentIdError,
   sendIncorrectTypeError,
   sendSchemaValidationError,
+  sendExistingDocError,
 } = require('../errors/helpers');
 
 const wrap = require('../errors/wrap');
@@ -358,14 +359,97 @@ routes.get('/:id/images', wrap(async (req, res, next) => {
  * POST /featured/:id/socials
  */
 routes.post('/:id/socials', wrap(async (req, res, next) => {
-  return res.status(SERVER_ERR).send();
+  
+  // Initialize list of images to add
+  let newSocials = [];
+
+  // Check whether request body is an array of images, 
+  // a single image, or neither
+  try {
+
+    if (Array.isArray(req.body)) {
+      // Validate all image objects before adding
+      for (const social of req.body) {
+        const validation = featuredSocial.validate(social);
+
+        // Throw error if image is invalid
+        if (validation.error !== undefined) {
+          throw validation.error;
+        } else if (validation.errors !== undefined) {
+          throw validation.errors;
+        }
+
+        newSocials.push(social);
+      }
+    } else if (typeof req.body === "object") {
+      // Validate single image
+      // Note: validateAsync throws an error for you
+      await featuredSocial.validateAsync(req.body);
+      newSocials.push(req.body);
+    } else {
+      // Send error if request body is incorrect type
+      return sendIncorrectTypeError(
+        res, 
+        'Request body must be (array of) Social media object(s)'
+      );
+    }
+
+  } catch (e) {
+    // Schema validation errors end up here
+    return sendSchemaValidationError(res, e);
+  }
+  
+  // Once all socials have been validated, add them to the variation with id
+  let socials = [];
+  const document = db.collection(collection).doc(req.params.id);
+  const docRef = document;
+
+  await document.get().then(doc => {
+    if (!doc.exists) {
+      return sendNonexistentIdError(res, req.params.id, docName);
+    }
+
+    // Fetch original socials and add new socials
+    socials = doc.data().socials;
+
+
+    // Add new socials
+    for (const newSocial of newSocials) {
+      // If a social of the same type already exists, throw error
+      for (const existingSocial of doc.data().socials) {
+        if (newSocial.type === existingSocial.type) {
+          return sendExistingDocError(res, 'type', newSocial.type, docName);
+        }
+      }
+
+      socials.push(newSocial);
+    }
+
+    docRef.update({socials: socials});
+    return res.status(OK).send(socials);
+
+  });
+
+  // linting purposes
+  return null;
+
 }));
 
 /**
  * GET /featured/:id/socials
  */
 routes.get('/:id/socials', wrap(async (req, res, next) => {
-  return res.status(SERVER_ERR).send();
+  
+  const document = db.collection(collection).doc(req.params.id);
+  
+  await document.get().then(doc => {
+    if (doc.exists) {
+      return res.status(OK).send(doc.data().socials);
+    } else {
+      return sendNonexistentIdError(res, req.params.id, docName);
+    }
+  });
+
 }));
 
 module.exports = routes;

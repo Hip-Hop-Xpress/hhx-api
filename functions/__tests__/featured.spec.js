@@ -136,7 +136,7 @@ describe('GET endpoints', () => {
     // Verify success response returns array
     expect(res.status).toBe(OK);
     expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body).toBeGreaterThan(0);
+    expect(res.body.length).toBeGreaterThan(0);
 
   });
 
@@ -147,7 +147,7 @@ describe('GET endpoints', () => {
     // Verify success response returns array
     expect(res.status).toBe(OK);
     expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body).toBeGreaterThanOrEqual(0);
+    expect(res.body.length).toBeGreaterThanOrEqual(0);
 
   });
 
