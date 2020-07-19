@@ -31,6 +31,7 @@ A quick explanation of the table:
 Endpoint | Implemented | Tested | Connected to App
 -|-|-|-
 Historical artists | :x: | :x: | :x:
+[Participants](participants) | :heavy_check_mark: | :heavy_check_mark: | :x:
 [Variations](variations) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 [Courses](courses) | :heavy_check_mark: | :heavy_check_mark: | :x:
 [Projects](projects) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
