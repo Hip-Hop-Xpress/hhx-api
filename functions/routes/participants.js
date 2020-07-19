@@ -30,7 +30,6 @@ const participantDescription = Joi.array().min(1).items(Joi.string().required())
 const participantImage       = Joi.object({
                                url:            Joi.string().uri().required(),
                                caption:        Joi.string().allow("").required(),
-                               componentImage: Joi.bool().required()
                             });
 const participantImages      = Joi.array().min(1).items(participantImage);
                             

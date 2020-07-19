@@ -120,7 +120,6 @@ describe('GET endpoints', () => {
     const image = images[0];
     expect(image.url).not.toBeUndefined();
     expect(image.caption).not.toBeUndefined();
-    expect(image.componentImage).not.toBeUndefined();
 
   });
 
@@ -199,7 +198,7 @@ describe('GET endpoint errors', () => {
  * - deletes the test participant after all tests run
  * 
  */
-describe('POST endpoint tests (tests DELETE too)', () => {
+describe('POST/DELETE endpoint tests', () => {
 
   // Mock participant/image/description to add for POST requests
   const testParticipant1 = testParticipant;
@@ -265,7 +264,6 @@ describe('POST endpoint tests (tests DELETE too)', () => {
     let newImages = images.map(img => (
       {
         url: img.url,
-        componentImage: false,
         caption: (i++).toString()
       }
     ));
@@ -611,7 +609,7 @@ describe('POST /v1/participants + /:id/images schema errors', () => {
       testImage,
       {
         ...testImage,
-        componentImage: undefined
+        url: undefined
       },
       testImage
     ];
@@ -626,8 +624,8 @@ describe('POST /v1/participants + /:id/images schema errors', () => {
     const expectedError = {
       type: INVALID_REQUEST_ERR,
       code: INVALID_PARAMS.toString(),
-      message: '"componentImage" is required',
-      param: 'componentImage',
+      message: '"url" is required',
+      param: 'url',
       original: null
     };
 

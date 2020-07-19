@@ -57,7 +57,7 @@ app.use('/v1/updates',     updates);
 app.use('/v1/socials',     socials);
 app.use('/v1/courses',     courses);
 app.use('/v1/featured',    featured);
-app.use('v1/participants', participants);
+app.use('/v1/participants', participants);
 
 // For unhandled routes
 app.all('*', (req, res, next) => {
