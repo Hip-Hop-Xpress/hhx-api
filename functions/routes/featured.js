@@ -93,6 +93,14 @@ routes.post('/', wrap(async (req, res, next) => {
   try {
     await postSchema.validateAsync(req.body);
   } catch (e) {
+    // If the type is not valid, send a special error message
+    if (e.details[0].context.key === 'type') {
+      return sendIncorrectTypeError(
+        res,
+        `"${e.details[0].context.value}" is not one of the social media types for react-native-elements social icon: https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type`,
+        'type'
+      );
+    }
     return sendSchemaValidationError(res, e);
   }
 
@@ -396,6 +404,17 @@ routes.post('/:id/socials', wrap(async (req, res, next) => {
 
   } catch (e) {
     // Schema validation errors end up here
+
+    // If the type is not valid, send a special error message
+    if (e.details[0].context.key === 'type') {
+      return sendIncorrectTypeError(
+        res,
+        `"${e.details[0].context.value}" is not one of the social media types for react-native-elements social icon: https://react-native-elements.github.io/react-native-elements/docs/social_icon.html#type`,
+        'type'
+      );
+    }
+    
+    // Otherwise send a normal schema error
     return sendSchemaValidationError(res, e);
   }
   
@@ -409,9 +428,7 @@ routes.post('/:id/socials', wrap(async (req, res, next) => {
       return sendNonexistentIdError(res, req.params.id, docName);
     }
 
-    // Fetch original socials and add new socials
     socials = doc.data().socials;
-
 
     // Add new socials
     for (const newSocial of newSocials) {

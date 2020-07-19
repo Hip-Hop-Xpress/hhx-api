@@ -291,10 +291,11 @@ describe('POST/GET/DELETE featured artist test', () => {
 
     const endpoint = `${base}/${testFeatured.id}/socials`;
     const newSocials = [
-      testSocial,
-      testSocial,
-      testSocial,
-      testSocial
+      {
+        type: 'wordpress',
+        handle: 'wordpress',
+        url: 'https://wordpress.org/'
+      }
     ];
 
     const expectedNewLength = testFeatured.socials.length + newSocials.length;
@@ -774,7 +775,7 @@ describe('POST /socials endpoint errors', () => {
     const expectedError = {
       type: DOC_ALRDY_EXISTS_ERR,
       code: INVALID_PARAMS.toString(),
-      message: 'Featured artist with id: 0 already has social with type: "instagram"',
+      message: `The requested featured artist with type: "${existingType}" already exists!`,
       param: 'type',
       original: null
     };
