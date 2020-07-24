@@ -31,11 +31,11 @@ A quick explanation of the table:
 Endpoint | Implemented | Tested | Connected to App
 -|-|-|-
 [Historic artists](historic-artists) | :x: | :x: | :x:
-[Participants](participants) | :heavy_check_mark: | :heavy_check_mark: | :x:
+[Participants](participants) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 [Variations](variations) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 [Courses](courses) | :heavy_check_mark: | :heavy_check_mark: | :x:
 [Projects](projects) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 [Featured artists](featured-artists) | :heavy_check_mark: | :heavy_check_mark: | :x:
-[Updates](updates) | :heavy_check_mark: | :heavy_check_mark: | :x:
+[Updates](updates) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 [Location](location) | :heavy_check_mark: | :heavy_check_mark: | :x:
 [Social Media](social-media) | :heavy_check_mark: | :heavy_check_mark: | :x:
