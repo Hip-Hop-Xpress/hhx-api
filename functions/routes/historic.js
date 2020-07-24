@@ -1,0 +1,1 @@
+// Historic artists API route
