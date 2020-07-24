@@ -35,7 +35,7 @@ afterAll(async () => {
 });
 
 /**
- * Historics Endpoints Unit Tests
+ * Historic Artists Endpoints Unit Tests
  * 
  * NOTE: all tests look at the production Firestore database
  */
@@ -45,6 +45,8 @@ afterAll(async () => {
 const testHistoric = {
   id: 999,
   name: 'test historic',
+  born: '2000',
+  died: '2020',
   images: [
     {
       url: 'https://www.google.com',
@@ -93,6 +95,8 @@ describe('GET endpoints', () => {
 
     // Verify the contents of the historic object
     expect(historic.id).toEqual(0);
+    expect(historic.born.length).toBeGreaterThanOrEqual(4);
+    expect(historic.born.length).toBeGreaterThanOrEqual(4);
 
     // Check that the description and images arrays both have entries
     expect(Array.isArray(historic.description)).toBe(true);
@@ -187,10 +191,6 @@ describe('GET endpoint errors', () => {
 
 /**
  * POST endpoint tests
- * 
- * Had issues including data in the request body for POST requests
- * Solved with this: https://github.com/visionmedia/supertest/issues/168#issuecomment-66533114
- * tl;dr: having express use body parser (see app.js)
  * 
  * This test suite:
  * - creates a test/mock historic (still put in production database)
@@ -413,6 +413,58 @@ describe('POST /v1/historic errors', () => {
       code: INVALID_PARAMS.toString(),
       message: '"name" is not allowed to be empty',
       param: 'name',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests short birth date', async () => {
+
+    const shortBirthDate = {
+      ...testHistoric,
+      id: 630,
+      born: '200'
+    };
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(shortBirthDate);
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"born" length must be at least 4 characters long',
+      param: 'born',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests short death date', async () => {
+
+    const shortDeathDate = {
+      ...testHistoric,
+      id: 630,
+      died: '200'
+    };
+
+    const res = await supertest(api)
+      .post(base)
+      .set('Accept', /json/)
+      .send(shortDeathDate);
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"died" length must be at least 4 characters long',
+      param: 'died',
       original: null
     };
 
@@ -709,6 +761,8 @@ describe('PUT /v1/historic/:id updates historic', () => {
 
   const updatedHistoric = {
     name: 'the updated historic',
+    born: 'May 1, 2000',
+    died: 'May 1, 2020',
     description: [
       'this is the description...',
       '... of the updated historic'
@@ -817,6 +871,46 @@ describe('PUT /v1/historic/:id errors', () => {
       code: INVALID_PARAMS.toString(),
       message: '"name" is not allowed to be empty',
       param: 'name',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for short birth date', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({born: '1'});
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"born" length must be at least 4 characters long',
+      param: 'born',
+      original: null
+    };
+
+    expect(res.status).toBe(INVALID_PARAMS);
+    expect(res.body).toEqual(expectedError);
+
+  });
+
+  it('tests for short death date', async () => {
+
+    const res = await supertest(api)
+      .put(endpoint)
+      .set('Accept', /json/)
+      .send({died: '1'});
+
+    const expectedError = {
+      type: INVALID_REQUEST_ERR,
+      code: INVALID_PARAMS.toString(),
+      message: '"died" length must be at least 4 characters long',
+      param: 'died',
       original: null
     };
 
