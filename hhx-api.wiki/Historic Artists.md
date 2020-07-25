@@ -33,7 +33,8 @@ Name | Type | Restrictions | Description
 -|-|-|-
 `id` | `number` | must be unique non-zero integer, cannot be updated once created | unique identifier for historic artist
 `name` | `string` | must be non-empty | display name for historic artist
-`date` | `string` | must be 4 characters or more | describes the time period that the artist was historic
+`born` | `string` | must be 4 characters or more | describes the date the artist was born
+`died` | `string` or `null` | must be 4 characters or more | describes the date the artist died, or `null` if the artist is still alive
 `description` | `Array` of `string` | must be non-empty | describes the historic artist
 `images` | `Array` of image `Object`s | can be empty, contents must follow the [image schema](#the-image-object) | all images to be displayed for this artist
 

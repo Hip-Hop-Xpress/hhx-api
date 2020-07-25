@@ -27,6 +27,7 @@ const socials = require('./routes/socials');
 const courses = require('./routes/courses');
 const featured = require('./routes/featured');
 const participants = require('./routes/participants');
+const historic = require('./routes/historic');
 
 // Error imports
 const { URL_NOT_FOUND } = require('./errors/codes');
@@ -50,14 +51,15 @@ app.get('/alive', (req, res) => {
 /**
  * Hip Hop Xpress Endpoint routes
  */
-app.use('/v1/variations',  variations);
-app.use('/v1/projects',    projects);
-app.use('/v1/location',    location);
-app.use('/v1/updates',     updates);
-app.use('/v1/socials',     socials);
-app.use('/v1/courses',     courses);
-app.use('/v1/featured',    featured);
+app.use('/v1/variations',   variations);
+app.use('/v1/projects',     projects);
+app.use('/v1/location',     location);
+app.use('/v1/updates',      updates);
+app.use('/v1/socials',      socials);
+app.use('/v1/courses',      courses);
+app.use('/v1/featured',     featured);
 app.use('/v1/participants', participants);
+app.use('/v1/historic',     historic);
 
 // For unhandled routes
 app.all('*', (req, res, next) => {
