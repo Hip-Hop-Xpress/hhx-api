@@ -155,7 +155,7 @@ describe('GET endpoint errors', () => {
   const expectedError = {
     type: DOC_NOT_FOUND_ERR,
     code: INVALID_PARAMS.toString(),
-    message: `The requested historic with id ${id} does not exist!`,
+    message: `The requested historic artist with id ${id} does not exist!`,
     param: 'id',
     original: null
   };
@@ -334,7 +334,7 @@ describe('POST /v1/historic errors', () => {
     const expectedError = {
       type: DOC_ALRDY_EXISTS_ERR,
       code: INVALID_PARAMS.toString(),
-      message: `The requested historic with id ${existingId} already exists!`,
+      message: `The requested historic artist with id ${existingId} already exists!`,
       param: 'id',
       original: null
     };
@@ -643,7 +643,7 @@ describe('POST /v1/historic + /:id/images schema errors', () => {
     const expectedError = {
       type: DOC_NOT_FOUND_ERR,
       code: '422',
-      message: `The requested historic with id ${id} does not exist!`,
+      message: `The requested historic artist with id ${id} does not exist!`,
       param: 'id',
       original: null
     };
@@ -710,7 +710,7 @@ describe('POST /v1/historic/:id/description errors', () => {
     const expectedError = {
       type: DOC_NOT_FOUND_ERR,
       code: '422',
-      message: `The requested historic with id ${id} does not exist!`,
+      message: `The requested historic artist with id ${id} does not exist!`,
       param: 'id',
       original: null
     };
@@ -849,7 +849,7 @@ describe('PUT /v1/historic/:id errors', () => {
     const expectedError = {
       type: DOC_NOT_FOUND_ERR,
       code: INVALID_PARAMS.toString(),
-      message: `The requested historic with id ${invalidId} does not exist!`,
+      message: `The requested historic artist with id ${invalidId} does not exist!`,
       param: 'id',
       original: null
     };
