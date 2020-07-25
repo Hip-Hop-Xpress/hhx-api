@@ -27,7 +27,7 @@ const docName = 'historic artist';
 const historicId          = Joi.number().integer().min(0);
 const historicName        = Joi.string().min(1);
 const historicBorn        = Joi.string().min(4);
-const historicDied        = Joi.string().min(4);
+const historicDied        = Joi.string().min(4).allow(null);
 const historicDescription = Joi.array().min(1).items(Joi.string().required());
 const historicImage       = Joi.object({
                                url:            Joi.string().uri().required(),
