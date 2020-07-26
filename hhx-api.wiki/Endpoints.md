@@ -30,7 +30,7 @@ A quick explanation of the table:
 
 Endpoint | Implemented | Tested | Connected to App
 -|-|-|-
-[Historic artists](historic-artists) | :x: | :x: | :x:
+[Historic artists](historic-artists) | :heavy_check_mark: | :heavy_check_mark: | :x:
 [Participants](participants) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 [Variations](variations) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 [Courses](courses) | :heavy_check_mark: | :heavy_check_mark: | :x:
