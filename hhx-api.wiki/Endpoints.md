@@ -30,12 +30,12 @@ A quick explanation of the table:
 
 Endpoint | Implemented | Tested | Connected to App
 -|-|-|-
-[Historic artists](historic-artists) | :heavy_check_mark: | :heavy_check_mark: | :x:
+[Historic artists](historic-artists) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 [Participants](participants) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 [Variations](variations) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
-[Courses](courses) | :heavy_check_mark: | :heavy_check_mark: | :x:
+[Courses](courses) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 [Projects](projects) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
-[Featured artists](featured-artists) | :heavy_check_mark: | :heavy_check_mark: | :x:
+[Featured artists](featured-artists) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
 [Updates](updates) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
-[Location](location) | :heavy_check_mark: | :heavy_check_mark: | :x:
-[Social Media](social-media) | :heavy_check_mark: | :heavy_check_mark: | :x:
+[Location](location) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
+[Social Media](social-media) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
