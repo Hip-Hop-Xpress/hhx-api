@@ -137,7 +137,38 @@ routes.get('/:id', wrap(async (req, res, next) => {
  */
 routes.put('/:id', wrap(async (req, res, next) => {
 
-  return res.status(OK).send();
+  // Request should include push token as a string
+  const requestPushToken = req.body;
+
+  // Check that request body contains valid Expo push token
+  if (!Expo.isExpoPushToken(requestPushToken)) {
+    console.error(requestPushToken);
+    return sendInvalidPushTokenError(req);
+  }
+
+  const document = db.collection(collection).doc(req.params.id);
+  const docRef = document;
+
+  await document.get().then(doc => {
+    if (!doc.exists) {
+      return sendNonexistentIdError(res, req.params.id, docName);
+    }
+
+    const currentDate = new Date();
+    const updatedTokenDoc = {
+      pushToken: requestPushToken,
+      lastUpdated: admin.firestore.Timestamp.fromDate(currentDate)
+    };
+
+    // Update doc in Firestore and send updated document with Timestamp as string
+    docRef.update(updatedTokenDoc);
+    return res.status(OK).send({
+      pushToken: updatedTokenDoc.pushToken,
+      lastUpdated: currentDate.toString()
+    });
+
+
+  });
 
 }));
 
