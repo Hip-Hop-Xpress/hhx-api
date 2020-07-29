@@ -2,41 +2,20 @@
 // Used to hold Expo notification push tokens
 // https://docs.expo.io/push-notifications/sending-notifications/
 
-const Joi = require('@hapi/joi');
 const routes = require('express').Router();
 const admin = require('firebase-admin');
+const { firestore } = require('firebase-admin');
 const { Expo } = require('expo-server-sdk');
 const db = admin.firestore();
-let expo = new Expo();
 
 // Error handling functions/constants
-const {
-  sendNonexistentIdError,
-  sendIncorrectTypeError,
-  sendSchemaValidationError,
-} = require('../errors/helpers');
-
+const {sendNonexistentIdError,} = require('../errors/helpers');
 const wrap = require('../errors/wrap');
 const { OK, INVALID_PARAMS } = require('../errors/codes');
 const { INVALID_REQUEST_ERR } = require('../errors/types');
-const { firestore } = require('firebase-admin');
 
-const collection = 'tokens';
+const collectionName = 'tokens';
 const docName = 'push token';
-
-/**
- * TODO: Schematics for your data
- */
-
-// TODO: schema for POST requests
-const postSchema = Joi.object({
-
-});
-
-// TODO: schema for PUT requests
-const putSchema = Joi.object({
-
-});
 
 const sendInvalidPushTokenError = (res) => {
 
@@ -78,7 +57,7 @@ routes.post('/', wrap(async (req, res, next) => {
   }
   
   // Retrieve existing token if it already exists
-  const tokenCollection = db.collection(collection);
+  const tokenCollection = db.collection(collectionName);
   const receivedCollection = await tokenCollection.get();
   let existingToken = receivedCollection.docs.find(doc => 
     doc.data().pushToken === requestPushToken
@@ -110,7 +89,7 @@ routes.post('/', wrap(async (req, res, next) => {
  */
 routes.get('/:id', wrap(async (req, res, next) => {
 
-  const document = db.collection(collection).doc(req.params.id);
+  const document = db.collection(collectionName).doc(req.params.id);
 
   await document.get().then(doc => {
     if (doc.exists) {
@@ -146,7 +125,7 @@ routes.put('/:id', wrap(async (req, res, next) => {
     return sendInvalidPushTokenError(req);
   }
 
-  const document = db.collection(collection).doc(req.params.id);
+  const document = db.collection(collectionName).doc(req.params.id);
   const docRef = document;
 
   await document.get().then(doc => {
@@ -167,8 +146,9 @@ routes.put('/:id', wrap(async (req, res, next) => {
       lastUpdated: currentDate.toString()
     });
 
-
   });
+
+  return null;
 
 }));
 
@@ -177,7 +157,7 @@ routes.put('/:id', wrap(async (req, res, next) => {
  */
 routes.delete('/:id', wrap(async (req, res, next) => {
 
-  const document = db.collection(collection).doc(req.params.id);
+  const document = db.collection(collectionName).doc(req.params.id);
   const docRef = document;
 
   await document.get().then(doc => {
@@ -196,7 +176,6 @@ routes.delete('/:id', wrap(async (req, res, next) => {
   });
 
 }));
-
 
 
 module.exports = routes;
