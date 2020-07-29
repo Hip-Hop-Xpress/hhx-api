@@ -14,6 +14,14 @@ Generally, this endpoint route should only be used by developers of the HHX mobi
 The documentation for this endpoint will also be limited.
 
 ## Schema
+```json
+{
+  "pushToken": "ExponentPushToken[**********************]",
+  "lastUpdated": "some timestamp information as a string"
+}
+```
+The `lastUpdated` field will be kept in Firebase internally as a Timestamp, but will be converted to a string upon retrieval.
+
 `POST` and `PUT` endpoints will evaluate each push token using methods provided by `expo-server-sdk`. If any requests contain invalid push tokens, they will return errors (of which the format is TBD).
 
 # Endpoints:

@@ -7,6 +7,7 @@ const routes = require('express').Router();
 const admin = require('firebase-admin');
 const { Expo } = require('expo-server-sdk');
 const db = admin.firestore();
+let expo = new Expo();
 
 // Error handling functions/constants
 const {
@@ -16,7 +17,9 @@ const {
 } = require('../errors/helpers');
 
 const wrap = require('../errors/wrap');
-const { OK } = require('../errors/codes');
+const { OK, INVALID_PARAMS } = require('../errors/codes');
+const { INVALID_REQUEST_ERR } = require('../errors/types');
+const { firestore } = require('firebase-admin');
 
 const collection = 'tokens';
 const docName = 'push token';
@@ -34,6 +37,18 @@ const postSchema = Joi.object({
 const putSchema = Joi.object({
 
 });
+
+const sendInvalidPushTokenError = (res) => {
+
+  return res.status(INVALID_PARAMS).send({
+    type: INVALID_REQUEST_ERR,
+    code: INVALID_PARAMS.toString(),
+    message: 'Invalid push token',
+    param: null,
+    original: null
+  });
+
+}
 
 /**
  * Token endpoints
@@ -54,7 +69,39 @@ const putSchema = Joi.object({
  */
 routes.post('/', wrap(async (req, res, next) => {
 
-  return res.status(OK).send();
+  // Request should include push token as a string
+  const requestPushToken = req.body;
+
+  if (!Expo.isExpoPushToken(requestPushToken)) {
+    console.error(requestPushToken);
+    return sendInvalidPushTokenError(res);
+  }
+  
+  // Retrieve existing token if it already exists
+  const tokenCollection = db.collection(collection);
+  const receivedCollection = await tokenCollection.get();
+  let existingToken = receivedCollection.docs.find(doc => 
+    doc.data().pushToken === requestPushToken
+  );
+  
+  const tokenDoc = {
+    pushToken: requestPushToken,
+    lastUpdated: firestore.Timestamp.fromDate(new Date())
+  };
+
+  if (existingToken === undefined) {
+    // If the token doesn't exist, add to collection with new id
+    await tokenCollection.add(tokenDoc);
+  } else {
+    // If token already exists, just update the timestamp
+    await tokenCollection.doc(existingToken.id).update(tokenDoc);
+  }
+
+  // Send the token document as added in Firestore
+  return res.status(OK).send({
+    pushToken: tokenDoc.pushToken,
+    lastUpdated: tokenDoc.lastUpdated.toDate().toString()
+  });
 
 }));
 

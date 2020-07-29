@@ -28,6 +28,7 @@ const courses = require('./routes/courses');
 const featured = require('./routes/featured');
 const participants = require('./routes/participants');
 const historic = require('./routes/historic');
+const tokens = require('./routes/tokens');
 
 // Error imports
 const { URL_NOT_FOUND } = require('./errors/codes');
@@ -60,6 +61,7 @@ app.use('/v1/courses',      courses);
 app.use('/v1/featured',     featured);
 app.use('/v1/participants', participants);
 app.use('/v1/historic',     historic);
+app.use('/v1/tokens',       tokens);
 
 // For unhandled routes
 app.all('*', (req, res, next) => {
