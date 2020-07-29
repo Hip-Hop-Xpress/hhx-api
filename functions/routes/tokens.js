@@ -177,7 +177,23 @@ routes.put('/:id', wrap(async (req, res, next) => {
  */
 routes.delete('/:id', wrap(async (req, res, next) => {
 
-  return res.status(OK).send();
+  const document = db.collection(collection).doc(req.params.id);
+  const docRef = document;
+
+  await document.get().then(doc => {
+    if (!doc.exists) {
+      return sendNonexistentIdError(res, req.params.id, docName);
+    }
+    
+    const deletedPushToken = doc.data();
+    docRef.delete();
+
+    // Return string representations of deleted update's Timestamps
+    return res.status(OK).send({
+      pushToken: deletedPushToken.pushToken,
+      lastUpdated: deletedPushToken.lastUpdated.toDate().toString()
+    });
+  });
 
 }));
 
