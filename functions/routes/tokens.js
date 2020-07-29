@@ -110,7 +110,25 @@ routes.post('/', wrap(async (req, res, next) => {
  */
 routes.get('/:id', wrap(async (req, res, next) => {
 
-  return res.status(OK).send();
+  const document = db.collection(collection).doc(req.params.id);
+
+  await document.get().then(doc => {
+    if (doc.exists) {
+
+      // Fetch and send data if variation of :id is found
+      let pushTokenDoc = doc.data();
+
+      // Convert Timestamp to string representations of Date
+      return res.status(OK).send({
+        pushToken: pushTokenDoc.pushToken,
+        lastUpdated: pushTokenDoc.lastUpdated.toDate().toString()
+      });
+
+    } else {
+      // If ID is not found, send error response
+      return sendNonexistentIdError(res, req.params.id, docName);
+    }
+  });
 
 }));
 
