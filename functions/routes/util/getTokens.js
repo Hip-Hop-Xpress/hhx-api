@@ -6,7 +6,7 @@ const db = admin.firestore();
 /**
  * Grabs all Expo push tokens in Firestore collection
  * @param {String} collectionName name of tokens collection
- * @return {Array} array of Expo push tokens, as strings 
+ * @return {Array<String>} array of Expo push tokens, as strings 
  */
 const getTokens = async (collectionName) => {
   // Query the collection and setup response
@@ -27,3 +27,5 @@ const getTokens = async (collectionName) => {
     return expoPushTokens;
   });
 }
+
+export default getTokens;
