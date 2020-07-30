@@ -2,7 +2,9 @@
 // https://github.com/expo/expo-server-sdk-node
 
 import getTokens from './getTokens';
+import storePushTickets from './storePushTickets';
 import { Expo } from 'expo-server-sdk';
+import { OK } from '../../errors/codes';
 
 const tokensCollectionName = 'tokens';
 
@@ -81,7 +83,10 @@ const sendPushNotifs = async (title, body, data) => {
       return formattedTicket;
     });
 
-    // TODO: store formatted push tickets in database
+    const responseCode = await storePushTickets(formattedTickets);
+    if (responseCode === OK) {
+      console.log('Tickets successfully stored');
+    }
 
   } catch (e) {
     console.error(e);

@@ -1,5 +1,6 @@
 // Stores Expo push tickets into Firestore
 
+const { OK, SERVER_ERR } = require('../../errors/codes');
 const admin = require('firebase-admin');
 const db = admin.firestore();
 
@@ -20,8 +21,13 @@ const storePushTickets = async (formattedPushTickets) => {
       // Put push ticket into database
       db.collection(collectionName).add(pushTicketDoc);
     }
+
+    return OK;
+
   } catch (e) {
+    // TODO: throw error here to catch by middleware... yeah definitely need to do error classes lol
     console.error('Error storing push tickets', e);
+    return SERVER_ERR;
   }
 }
 
