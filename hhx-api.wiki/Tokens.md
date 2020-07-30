@@ -49,3 +49,22 @@ Given an `id` and a valid push token in the request body, the endpoint will upda
 `DELETE /v1/tokens/:id`
 
 Given an `id`, the endpoint will delete the push token at that `id`.
+
+# Tickets
+Whenever a push notification is sent, it sends back a ticket. These need to be stored to be assessed in case errors occur when sending push notifications.
+
+They will be stored in the following format:
+```json
+{
+  "status": "status of request",
+  "message": "message or null",
+  "details": {
+    "error": "some error code, 'details' can also be null"
+  },
+  "expoPushToken": "the push token if successful",
+  "receiptId": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+  "created": "kept as Timestamp in Firestore"
+}
+```
+
+#### [Back to top](#tokens-endpoint)
