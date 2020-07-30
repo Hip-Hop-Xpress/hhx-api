@@ -67,11 +67,22 @@ const sendPushNotifs = async (title, body, data) => {
     });
   }
 
-  // Send push notifications using Expo
+  // Send push notifications using Expo and save tickets
   try {
     const tickets = await sendMessageChunks(expo, messages);
-    // TODO: handle receipts from tickets
-    // TODO: store all tickets in db
+    const formattedTickets = tickets.map((ticket, index) => {
+      // Format each ticket to match schema for Firestore
+      const formattedTicket = {};
+      formattedTicket.status = ticket.status;
+      formattedTicket.expoPushToken = pushTokens[index];  // this may not work
+      if (ticket.id) formattedTicket.receiptId = ticket.id;
+      if (ticket.message) formattedTicket.message = ticket.message;
+      if (ticket.details) formattedTicket.details = ticket.details;
+      return formattedTicket;
+    });
+
+    // TODO: store formatted push tickets in database
+
   } catch (e) {
     console.error(e);
   }
