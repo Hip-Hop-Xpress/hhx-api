@@ -10,9 +10,13 @@ const {
   sendIncorrectTypeError,
   sendSchemaValidationError,
 } = require('../errors/helpers');
-
 const wrap = require('../errors/wrap');
 const { OK } = require('../errors/codes');
+
+const collectionName = 'notifications';
+
+const sendPushNotifs = require('./util/sendPushNotifs');
+const { firestore } = require('firebase-admin');
 
 /**
  * Schematics for notification data data
@@ -34,7 +38,7 @@ const postSchema = Joi.object({
  *   POST /notifs
  */
 
-routes.post('/', wrap(async (req, res, next) => {
+routes.post('/', (async (req, res, next) => {
 
   try {
     await postSchema.validateAsync(req.body);
@@ -42,8 +46,18 @@ routes.post('/', wrap(async (req, res, next) => {
     return sendSchemaValidationError(res, e);
   }
 
-  // TODO: send push notification to Expo servers
-  // TODO: store notification data in database for archival reasons ig
+  // Send push notification to Expo servers
+  const notification = req.body;
+  await sendPushNotifs(notification.title, notification.body, notification.data); 
+  
+  // Store notification data in database for archival reasons
+  const dateCreated = new Date();
+  await db.collection(collectionName).add({
+    ...notification,
+    created: firestore.Timestamp.fromDate(dateCreated)
+  });
+
+  return res.status(OK).send({...notification, created: dateCreated.toString()});
 
 }));
 
