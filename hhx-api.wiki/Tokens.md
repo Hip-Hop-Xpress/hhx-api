@@ -23,7 +23,7 @@ The documentation for this endpoint will also be limited.
 ```
 The `lastUpdated` field will be kept in Firebase internally as a Timestamp, but will be converted to a string upon retrieval.
 
-When performing `POST` and `PUT` requests, make sure the header `Content-Type` is set to `text/plain`, and include just the Expo push token as a string in the request body.
+When performing `POST` and `PUT` requests, send the push token in the field as designated in the schema - all other fields will be ignored.
 
 `POST` and `PUT` endpoints will evaluate each push token using methods provided by `expo-server-sdk`. If any requests contain invalid push tokens, they will return errors (of which the format will look like something from [here](errors)).
 

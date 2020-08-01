@@ -49,10 +49,13 @@ const sendInvalidPushTokenError = (res) => {
 routes.post('/', wrap(async (req, res, next) => {
 
   // Request should include push token as a string
-  const requestPushToken = req.body;
+  const requestPushToken = req.body.pushToken;
 
   if (!Expo.isExpoPushToken(requestPushToken)) {
-    console.error(requestPushToken);
+    console.error(
+      'The following received in POST /v1/tokens and is not a push token: ',
+      requestPushToken
+    );
     return sendInvalidPushTokenError(res);
   }
   
@@ -117,11 +120,14 @@ routes.get('/:id', wrap(async (req, res, next) => {
 routes.put('/:id', wrap(async (req, res, next) => {
 
   // Request should include push token as a string
-  const requestPushToken = req.body;
+  const requestPushToken = req.body.pushToken;
 
   // Check that request body contains valid Expo push token
   if (!Expo.isExpoPushToken(requestPushToken)) {
-    console.error(requestPushToken);
+    console.error(
+      'The following received in PUT /v1/tokens/:id and is not a push token: ', 
+      requestPushToken
+    );
     return sendInvalidPushTokenError(req);
   }
 

@@ -45,7 +45,7 @@ const sendMessageChunks = async (expo, messages) => {
  * @param {String} body body of notification
  * @param {Object} data JSON data to be included in notification
  */
-const sendPushNotifs = async (title, body, data) => {
+const sendPushNotifs = async (title, body, data={}) => {
   let expo = new Expo();
   let messages = [];
 
