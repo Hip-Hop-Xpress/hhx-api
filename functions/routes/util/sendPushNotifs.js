@@ -1,10 +1,10 @@
 // Used to send push notifs and handle errors from Expo regarding notifs
 // https://github.com/expo/expo-server-sdk-node
 
-import getTokens from './getTokens';
-import storePushTickets from './storePushTickets';
-import { Expo } from 'expo-server-sdk';
-import { OK } from '../../errors/codes';
+const getTokens = require('./getTokens');
+const storePushTickets = require('./storePushTickets');
+const { Expo } = require('expo-server-sdk');
+const { OK } = require('../../errors/codes');
 
 const tokensCollectionName = 'tokens';
 
@@ -94,4 +94,6 @@ const sendPushNotifs = async (title, body, data={}) => {
 
 }
 
-export default sendPushNotifs;
+module.exports = {
+  sendPushNotifs
+};

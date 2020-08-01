@@ -28,4 +28,6 @@ const getTokens = async (collectionName) => {
   });
 }
 
-export default getTokens;
+module.exports = {
+  getTokens
+};

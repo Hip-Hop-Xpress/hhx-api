@@ -31,4 +31,6 @@ const storePushTickets = async (formattedPushTickets) => {
   }
 }
 
-export default storePushTickets;
+module.exports = {
+  storePushTickets
+};
