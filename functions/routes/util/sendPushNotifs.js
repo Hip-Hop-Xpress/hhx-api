@@ -1,10 +1,10 @@
 // Used to send push notifs and handle errors from Expo regarding notifs
 // https://github.com/expo/expo-server-sdk-node
 
-const getTokens = require('./getTokens');
-const storePushTickets = require('./storePushTickets');
+const { getTokens } = require('./getTokens');
+const { storePushTickets } = require('./storePushTickets');
 const { Expo } = require('expo-server-sdk');
-const { OK } = require('../../errors/codes');
+const { OK, SERVER_ERR } = require('../../errors/codes');
 
 const tokensCollectionName = 'tokens';
 
@@ -20,20 +20,18 @@ const sendMessageChunks = async (expo, messages) => {
   let chunks = expo.chunkPushNotifications(messages);
   let tickets = [];
 
-  (async () => {
-    // Send each chunk one at a time
-    for (let chunk of chunks) {
-      try {
-        // FIXME: hopefully having await in for loop is ok...
-        // eslint-disable-next-line no-await-in-loop
-        let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-        console.log(ticketChunk);
-        tickets.push(...ticketChunk);
-      } catch (e) {
-        console.error(e);
-      }
+  // Send each chunk one at a time
+  for (let chunk of chunks) {
+    try {
+      // FIXME: hopefully having await in for loop is ok...
+      // eslint-disable-next-line no-await-in-loop
+      let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+      console.log(ticketChunk);
+      tickets.push(...ticketChunk);
+    } catch (e) {
+      console.error(e);
     }
-  })();
+  }
 
   return tickets;
 }
@@ -49,7 +47,8 @@ const sendPushNotifs = async (title, body, data={}) => {
   let expo = new Expo();
   let messages = [];
 
-  const pushTokens = getTokens(tokensCollectionName);
+  const pushTokens = await getTokens(tokensCollectionName);
+  console.log("sendPushNotifs -> pushTokens", pushTokens)
   for (let pushToken of pushTokens) {
     // Check that each push token is valid
     if (!Expo.isExpoPushToken(pushToken)) {
@@ -84,7 +83,7 @@ const sendPushNotifs = async (title, body, data={}) => {
     });
 
     const responseCode = await storePushTickets(formattedTickets);
-    if (responseCode === OK) {
+    if (responseCode !== SERVER_ERR) {
       console.log('Tickets successfully stored');
     }
 

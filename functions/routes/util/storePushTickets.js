@@ -11,6 +11,8 @@ const collectionName = 'tickets';
  * @param {Array<Object>} formattedPushTickets push tickets formatted 
  */
 const storePushTickets = async (formattedPushTickets) => {
+  const results = [];
+
   try {
     for (let pushTicketDoc of formattedPushTickets) {
       // If doc doesn't have timestamp already, add it
@@ -19,10 +21,11 @@ const storePushTickets = async (formattedPushTickets) => {
       }
   
       // Put push ticket into database
-      db.collection(collectionName).add(pushTicketDoc);
+      results.push(db.collection(collectionName).add(pushTicketDoc));
     }
 
-    return OK;
+    const awaitResults = await Promise.all(results);
+    return awaitResults;
 
   } catch (e) {
     // TODO: throw error here to catch by middleware... yeah definitely need to do error classes lol

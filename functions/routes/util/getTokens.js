@@ -14,7 +14,7 @@ const getTokens = async (collectionName) => {
   let expoPushTokens = [];
 
   // Get all documents from collection
-  await query.get().then(snapshot => {
+  return await query.get().then(snapshot => {
     let docs = snapshot.docs;
 
     for (let pushTokenDoc of docs) {

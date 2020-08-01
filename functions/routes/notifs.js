@@ -15,7 +15,7 @@ const { OK } = require('../errors/codes');
 
 const collectionName = 'notifications';
 
-const sendPushNotifs = require('./util/sendPushNotifs');
+const { sendPushNotifs } = require('./util/sendPushNotifs');
 const { firestore } = require('firebase-admin');
 
 /**
@@ -38,7 +38,7 @@ const postSchema = Joi.object({
  *   POST /notifs
  */
 
-routes.post('/', (async (req, res, next) => {
+routes.post('/', wrap(async (req, res, next) => {
 
   try {
     await postSchema.validateAsync(req.body);
