@@ -48,7 +48,6 @@ const sendPushNotifs = async (title, body, data={}) => {
   let messages = [];
 
   const pushTokens = await getTokens(tokensCollectionName);
-  console.log("sendPushNotifs -> pushTokens", pushTokens)
   for (let pushToken of pushTokens) {
     // Check that each push token is valid
     if (!Expo.isExpoPushToken(pushToken)) {
