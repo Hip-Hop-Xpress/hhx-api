@@ -123,6 +123,19 @@ routes.post('/tickets', wrap(async (req, res, next) => {
     }
   }
 
+  // Delete tickets that have 'ok' response
+  const successfulTickets = 
+    await db.collection(ticketsCollectionName).where('status', '==', 'ok').get();
+  
+  const successfulTicketIds = [];
+  successfulTickets.forEach(doc => successfulTicketIds.push(doc.id));
+
+  const deletionResults = [];
+  for (let id of successfulTicketIds) {
+    deletionResults.push(db.collection(ticketsCollectionName).doc(id).delete());
+  }
+  await Promise.all(deletionResults);
+
   return res.status(OK).send();
 
 }));
