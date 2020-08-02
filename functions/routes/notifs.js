@@ -78,36 +78,51 @@ routes.post('/', wrap(async (req, res, next) => {
  * - Takes tickets in collection that are at least an hour old and
  *   sends them to Expo for receipts
  * - Logs all receipts that contain errors 
+ * 
+ * TODO: break this up into multiple endpoints/functions?
+ * 
+ * Taken mainly from here:
+ * https://farazpatankar.com/push-notifications-in-react-native/
  */
 routes.post('/tickets', wrap(async (req, res, next) => {
 
-  // Grab tickets from collection
+  // Grab tickets from collection that are an hour older or more
   let receiptIds = [];
-  const tickets = await db.collection(ticketsCollectionName).get();
+  const tickets = await db.collection(ticketsCollectionName)
+    .where('created', '<=', firestore.Timestamp.fromMillis(Date.now() - hourToMs))
+    .get();
+  
+  let errorTickets = [];
   for (let ticketDoc of tickets.docs) {
-    const ticketData = ticketDoc.data();
-
-    // Skip tickets that are younger than an hour
-    const ticketTime = ticketData.created;
-    if (Date.now() - ticketTime.toDate().getTime() < hourToMs) continue;
-
     // Get all receipt id's from tickets that have them
-    if (ticketData.receiptId) receiptIds.push(ticketData.receiptId);
+    const ticketData = ticketDoc.data();
+    if (ticketData.receiptId) {
+      receiptIds.push(ticketData.receiptId);
+    } else {
+      // If the ticket doesn't have an id, it is an error
+      // Send those in the response
+      errorTickets.push({
+        ...ticketData,
+        created: ticketData.created.toDate().toString()
+      })
+    }
   }
 
   // Chunk receipt ids and handle them as chunks
+  let errorReceipts = [];
   let expo = new Expo();
   const receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
   for (let chunk of receiptIdChunks) {
     try {
+      // FIXME: change if there are too many receipts?
       // eslint-disable-next-line no-await-in-loop
       let receipts = await expo.getPushNotificationReceiptsAsync(chunk);
       for (let receiptId in receipts) {
         let { status, message, details } = receipts[receiptId];
         if (status === 'ok') {
-          console.log('ok');
           continue;
         } else if (status === 'error') {
+          errorReceipts.push(receipts[receiptId]);
           console.error(`There was an error sending a notification: ${message}`);
           if (details && details.error) {
             console.error(`The error code is ${details.error}`);
@@ -125,7 +140,10 @@ routes.post('/tickets', wrap(async (req, res, next) => {
 
   // Delete tickets that have 'ok' response
   const successfulTickets = 
-    await db.collection(ticketsCollectionName).where('status', '==', 'ok').get();
+    await db.collection(ticketsCollectionName)
+      .where('status', '==', 'ok')
+      .where('created', '<=', firestore.Timestamp.fromMillis(Date.now() - hourToMs))
+      .get();
   
   const successfulTicketIds = [];
   successfulTickets.forEach(doc => successfulTicketIds.push(doc.id));
@@ -136,7 +154,13 @@ routes.post('/tickets', wrap(async (req, res, next) => {
   }
   await Promise.all(deletionResults);
 
-  return res.status(OK).send();
+  // TODO: write documentation about this response
+  return res.status(OK).send({
+    receiptsRead: receiptIds.length,
+    deletedTickets: successfulTicketIds.length,
+    errorTickets: errorTickets,
+    errorReceipts: errorReceipts
+  });
 
 }));
 
