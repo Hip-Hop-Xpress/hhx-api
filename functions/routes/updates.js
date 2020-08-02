@@ -4,6 +4,7 @@ const Joi = require('@hapi/joi');
 const routes = require('express').Router();
 const admin = require('firebase-admin');
 const db = admin.firestore();
+const { sendPushNotifs } = require('./util/sendPushNotifs');
 
 // Error handling functions/constants
 const {
@@ -83,8 +84,12 @@ routes.post('/', wrap(async (req, res, next) => {
   } catch (e) {
     return sendExistingIdError(res, req.body.id, docName);
   }
+
+  // Send push notification about new update
+  const updateBody = req.body.body[0];
+  await sendPushNotifs(req.body.title, updateBody, { screen: 'updates' });
   
-  return res.status(OK).send(req.body);
+  return res.status(OK).send({...req.body, dateCreated: currentDate.toString()});
 
 })); 
 
