@@ -119,7 +119,7 @@ routes.get('/', wrap(async (req, res, next) => {
       const selectedItem = {
         id: update.id,
         title: update.data().title,
-        dateCreated: update.data().dateCreated.toDate().toString(),
+        dateCreated: update.data().dateCreated.toDate(),
         lastUpdated: lastUpdated,
         author: update.data().author,
         body: update.data().body,
@@ -129,8 +129,14 @@ routes.get('/', wrap(async (req, res, next) => {
       response.push(selectedItem);
     }
 
+    // Sort updates from latest to oldest
+    response.sort((u1, u2) => u2.dateCreated - u1.dateCreated);
+
     // Send the response once every doc has been put in
-    return res.status(OK).send(response);
+    return res.status(OK).send(response.map(u => ({
+      ...u,
+      dateCreated: u.dateCreated.toString()
+    })));
   });
 
 }));
