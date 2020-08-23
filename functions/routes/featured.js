@@ -1,6 +1,5 @@
 // Featured artists API route
 
-const Joi = require('@hapi/joi');
 const routes = require('express').Router();
 const admin = require('firebase-admin');
 const db = admin.firestore();
@@ -16,61 +15,19 @@ const {
 } = require('../errors/helpers');
 
 const wrap = require('../errors/wrap');
-const { OK, SERVER_ERR } = require('../errors/codes');
+const { OK } = require('../errors/codes');
+
+const { 
+  postSchema, 
+  putSchema, 
+  featuredBio, 
+  featuredImage, 
+  featuredSocial 
+} = require('../models/featured');
 
 // Collection/doc name in Firestore
 const collection = 'featured';
 const docName = 'featured artist';
-
-/**
- * Schematics for Featured artist data
- */
-const featuredString         = Joi.string().min(1);  // general non-empty string
-const featuredId             = Joi.number().integer().min(0);
-const featuredName           = featuredString;
-const featuredDate           = Joi.string().min(4);
-const featuredCurrent        = Joi.bool().disallow('yes', 'no');
-const featuredBio            = Joi.array().min(1).items(featuredString.required());
-const featuredHeaderImageUrl = Joi.string().uri();
-
-// Image schematics
-const featuredImage  = Joi.object({
-                         url:     Joi.string().uri().required(),
-                         caption: Joi.string().allow("").required(),
-                       });
-const featuredImages = Joi.array().items(featuredImage);
-
-// Social media schematics
-const socialTypeRegex = new RegExp('^(angellist|codepen|envelope|etsy|facebook|flickr|foursquare|github-alt|github|gitlab|instagram|linkedin|medium|pinterest|quora|reddit-alien|soundcloud|stack-overflow|steam|stumbleupon|tumblr|twitch|twitter|google|google-plus-official|vimeo|vk|weibo|wordpress|youtube)$');
-const featuredSocial  = Joi.object({
-                          type: Joi.string().regex(socialTypeRegex),
-                          handle: featuredString,
-                          url: Joi.string().uri().required()
-                        });
-const featuredSocials = Joi.array().min(1).items(featuredSocial);
-
-// POST /featured schema
-const postSchema = Joi.object({
-  id:             featuredId.required(),
-  name:           featuredName.required(),
-  date:           featuredDate.required(),
-  current:        featuredCurrent.required(),
-  bio:            featuredBio.required(),
-  headerImageUrl: featuredHeaderImageUrl.required(),
-  images:         featuredImages.required(),
-  socials:        featuredSocials.required()
-});
-
-// PUT /featured/:id schema
-const putSchema = Joi.object({
-  name:           featuredName,
-  date:           featuredDate,
-  current:        featuredCurrent,
-  bio:            featuredBio,
-  headerImageUrl: featuredHeaderImageUrl,
-  images:         featuredImages,
-  socials:        featuredSocials
-});
 
 /**
  * Featured artists endpoints
