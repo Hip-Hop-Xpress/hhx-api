@@ -1,6 +1,7 @@
 // Featured artist Object schema
 
 const Joi = require('@hapi/joi');
+const socialTypeRegex = require('./socialTypes');
 
 /**
  * Schematics for Featured artist data
@@ -21,7 +22,6 @@ const featuredImage  = Joi.object({
 const featuredImages = Joi.array().items(featuredImage);
 
 // Social media schematics
-const socialTypeRegex = new RegExp('^(angellist|codepen|envelope|etsy|facebook|flickr|foursquare|github-alt|github|gitlab|instagram|linkedin|medium|pinterest|quora|reddit-alien|soundcloud|stack-overflow|steam|stumbleupon|tumblr|twitch|twitter|google|google-plus-official|vimeo|vk|weibo|wordpress|youtube)$');
 const featuredSocial  = Joi.object({
                           type: Joi.string().regex(socialTypeRegex),
                           handle: featuredString,
