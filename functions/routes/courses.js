@@ -16,7 +16,12 @@ const {
 const wrap = require('../errors/wrap');
 const { OK } = require('../errors/codes');
 
-const { postSchema, putSchema } = require('../models/courses');
+const { 
+  postSchema, 
+  putSchema, 
+  courseDescription, 
+  courseImage 
+} = require('../models/courses');
 
 // Collection/doc name in Firestore
 const collection = 'courses';

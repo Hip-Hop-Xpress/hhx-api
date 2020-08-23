@@ -35,5 +35,7 @@ const putSchema = Joi.object({
 
 module.exports = {
   postSchema,
-  putSchema
+  putSchema,
+  courseDescription,
+  courseImage
 };
