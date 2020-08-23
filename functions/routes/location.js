@@ -13,26 +13,15 @@ const { OK } = require('../errors/codes');
 
 // Collection/doc name in Firestore
 const collection = 'location';
-const locationId = 'bus';  // doc id in Firestore
+const locationId = 'bus'; // doc id in Firestore
 
-/**
- * Schematics for location
- */
-const locationName = Joi.string().min(1);
-const locationLat  = Joi.number().min(-90).max(90);
-const locationLng  = Joi.number().min(-180).max(180);
-
-const locationSchema = Joi.object({
-  name:      locationName,
-  latitude:  locationLat,
-  longitude: locationLng
-});
+const { locationSchema } = require('../models/location');
 
 /**
  * Location endpoints
- * 
+ *
  *   GET, PUT /location
- * 
+ *
  * TODO: use Firestore's GeoPoint type:
  *       https://firebase.google.com/docs/reference/js/firebase.firestore.GeoPoint
  */
@@ -40,43 +29,45 @@ const locationSchema = Joi.object({
 /**
  * GET /location
  */
-routes.get('/', wrap(async (req, res) => {
-    
-  const locationDoc = db.collection(collection).doc(locationId);
+routes.get(
+  '/',
+  wrap(async (req, res) => {
+    const locationDoc = db.collection(collection).doc(locationId);
 
-  await locationDoc.get().then(doc => {
-    let locationData = doc.data();
-    return res.status(OK).send(locationData);
-  });
-
-}));
+    await locationDoc.get().then((doc) => {
+      let locationData = doc.data();
+      return res.status(OK).send(locationData);
+    });
+  })
+);
 
 /**
  * PUT /location
  */
-routes.put('/', wrap(async (req, res, next) => {
+routes.put(
+  '/',
+  wrap(async (req, res, next) => {
+    // Validate schema before updating
+    try {
+      await locationSchema.validateAsync(req.body);
+    } catch (e) {
+      return sendSchemaValidationError(res, e);
+    }
 
-  // Validate schema before updating
-  try {
-    await locationSchema.validateAsync(req.body);
-  } catch (e) {
-    return sendSchemaValidationError(res, e);
-  }
+    const document = db.collection(collection).doc(locationId);
+    const docRef = document;
 
-  const document = db.collection(collection).doc(locationId);
-  const docRef = document;
+    await document.get().then((doc) => {
+      docRef.update(req.body);
 
-  await document.get().then(doc => {
-    docRef.update(req.body);
+      // Spread operator to combine old data with updated data
+      // Shared fields are overwritten by rightmost object (updated data)
+      return res.status(OK).send({ ...doc.data(), ...req.body });
+    });
 
-    // Spread operator to combine old data with updated data
-    // Shared fields are overwritten by rightmost object (updated data)
-    return res.status(OK).send({...doc.data(), ...req.body});
-  });
-
-  // linting purposes
-  return null;
-
-}));
+    // linting purposes
+    return null;
+  })
+);
 
 module.exports = routes;
