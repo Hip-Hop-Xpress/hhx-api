@@ -15,6 +15,7 @@ const historicImage       = Joi.object({
                                caption:        Joi.string().allow("").required(),
                             });
 const historicImages      = Joi.array().min(1).items(historicImage);
+const historicSpotify     = Joi.string().uri();
                             
 
 /**
@@ -26,7 +27,8 @@ const postSchema = Joi.object({
   born:        historicBorn.required(),
   died:        historicDied.required(),
   description: historicDescription.required(),
-  images:      historicImages.required()
+  images:      historicImages.required(),
+  spotify:     historicSpotify,
 });
 
 // PUT /historics/:id schema
@@ -35,7 +37,8 @@ const putSchema = Joi.object({
   born:        historicBorn,
   died:        historicDied,
   description: historicDescription,
-  images:      historicImages
+  images:      historicImages,
+  spotify:     historicSpotify,
 });
 
 module.exports = {
