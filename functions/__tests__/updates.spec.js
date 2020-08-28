@@ -12,7 +12,7 @@ const { INVALID_REQUEST_ERR, DOC_NOT_FOUND_ERR, DOC_ALRDY_EXISTS_ERR, IMMUTABLE_
 const base = '/v1/updates';
 
 // TODO:  THIS IS SUBJECT TO CHANGE
-const numUpdates = 4;
+const numUpdates = 5;
 
 let adminInitStub;
 const functionsTest = test();
