@@ -26,6 +26,7 @@ Each historic artist object holds data in JSON format. **All attributes are requ
       "caption": "Jackson performing"
     }
   ],
+  "spotify": "https://open.spotify.com/artist/3fMbdgg4jU18AjLCKBhRSm",
 }
 ```
 ### Attributes
@@ -37,6 +38,7 @@ Name | Type | Restrictions | Description
 `died` | `string` or `null` | must be 4 characters or more | describes the date the artist died, or `null` if the artist is still alive
 `description` | `Array` of `string` | must be non-empty | describes the historic artist
 `images` | `Array` of image `Object`s | can be empty, contents must follow the [image schema](#the-image-object) | all images to be displayed for this artist
+`spotify` | `string` | can be null/undefined, otherwise must be URL | the Spotify URL for the artist 
 
 ## The Image object
 Image object schema for `images` array in the historic artist object. Each field is required when [creating new images.](#add-images)
